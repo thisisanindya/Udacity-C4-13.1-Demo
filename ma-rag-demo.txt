@@ -1,5 +1,5 @@
 Initializing and populating database...
-Database contains 19 patients, 50 claims, and 10 complaints
+Database contains 20 patients, 50 claims, and 10 complaints
 
 === Insurance Claim Complaint Resolution Demo ===
 
@@ -11,54 +11,54 @@ Generating a random complaint...
 │                                                                                                │
 │ Generate a random complaint for us to handle in this demo.                                     │
 │             Store the values of 0, 0 amd 0 in corresponding local variables                    │
-│             and rember them for all subsquent tool call till the final answer call.            │
+│             and remember them for all subsquent tool call till the final answer call.          │
 │                                                                                                │
 ╰─ OpenAIServerModel - gpt-4o-mini ──────────────────────────────────────────────────────────────╯
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Calling tool: 'generate_random_complaint' with arguments: {}                                   │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': True, 'patient_id': 1544, 'claim_id': 'CLM-842061', 'complaint_text': 'I
-was told procedure 99214 would be covered by my insurance, but claim CLM-842061 was denied.'}
-[Step 1: Duration 1.95 seconds| Input tokens: 1,089 | Output tokens: 13]
+Observations: {'success': True, 'patient_id': 1827, 'claim_id': 'CLM-115245', 'complaint_text': 'I
+believe my claim CLM-115245 was denied in error. My doctor says this is a covered procedure.'}
+[Step 1: Duration 1.92 seconds| Input tokens: 1,088 | Output tokens: 13]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'handle_customer_complaint' with arguments: {'patient_id': 1544,                 │
-│ 'complaint_text': 'I was told procedure 99214 would be covered by my insurance, but claim      │
-│ CLM-842061 was denied.', 'claim_id': 'CLM-842061'}                                             │
+│ Calling tool: 'handle_customer_complaint' with arguments: {'patient_id': 1827,                 │
+│ 'complaint_text': 'I believe my claim CLM-115245 was denied in error. My doctor says this is a │
+│ covered procedure.', 'claim_id': 'CLM-115245'}                                                 │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 ╭────────────────────────────────── New run - customer_service ──────────────────────────────────╮
 │                                                                                                │
-│ Submit a complaint for patient 1544 about claim CLM-842061.                                    │
-│                 The complaint says: "I was told procedure 99214 would be covered by my         │
-│ insurance, but claim CLM-842061 was denied."                                                   │
+│ Submit a complaint for patient 1827 about claim CLM-115245.                                    │
+│                 The complaint says: "I believe my claim CLM-115245 was denied in error. My     │
+│ doctor says this is a covered procedure."                                                      │
 │                                                                                                │
 │                 Use the submit_complaint tool.                                                 │
 │                                                                                                │
 ╰─ OpenAIServerModel - gpt-4o-mini ──────────────────────────────────────────────────────────────╯
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'submit_complaint' with arguments: {'patient_id': 1544, 'claim_id':              │
-│ 'CLM-842061', 'description': 'I was told procedure 99214 would be covered by my insurance, but │
-│ claim CLM-842061 was denied.'}                                                                 │
+│ Calling tool: 'submit_complaint' with arguments: {'patient_id': 1827, 'claim_id':              │
+│ 'CLM-115245', 'description': 'I believe my claim CLM-115245 was denied in error. My doctor     │
+│ says this is a covered procedure.'}                                                            │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 Observations: {'success': True, 'message': 'Complaint submitted successfully', 'complaint_id': 
-'CMPL-6147'}
-[Step 1: Duration 3.77 seconds| Input tokens: 1,807 | Output tokens: 54]
+'CMPL-4218'}
+[Step 1: Duration 2.51 seconds| Input tokens: 1,806 | Output tokens: 53]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Calling tool: 'final_answer' with arguments: {'answer': 'Complaint submitted successfully with │
-│ complaint ID CMPL-6147.'}                                                                      │
+│ complaint ID: CMPL-4218.'}                                                                     │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: Complaint submitted successfully with complaint ID CMPL-6147.
-[Step 2: Duration 1.48 seconds| Input tokens: 3,806 | Output tokens: 79]
+Final answer: Complaint submitted successfully with complaint ID: CMPL-4218.
+[Step 2: Duration 2.88 seconds| Input tokens: 3,803 | Output tokens: 79]
 ╭────────────────────────────────── New run - medical_reviewer ──────────────────────────────────╮
 │                                                                                                │
-│ Review complaint CMPL-6147 about claim CLM-842061 for patient 1544.                            │
-│                 The complaint says: "I was told procedure 99214 would be covered by my         │
-│ insurance, but claim CLM-842061 was denied."                                                   │
+│ Review complaint CMPL-4218 about claim CLM-115245 for patient 1827.                            │
+│                 The complaint says: "I believe my claim CLM-115245 was denied in error. My     │
+│ doctor says this is a covered procedure."                                                      │
 │                                                                                                │
-│                 Remember the values of 1544, CLM-842061 amd CMPL-6147 for all subsquent tool   │
+│                 Remember the values of 1827, CLM-115245 amd CMPL-4218 for all subsquent tool   │
 │ call till the final answer.                                                                    │
 │                                                                                                │
 │                 First, get claim details using get_claim_details tool.                         │
@@ -72,77 +72,81 @@ Final answer: Complaint submitted successfully with complaint ID CMPL-6147.
 ╰─ OpenAIServerModel - gpt-4o-mini ──────────────────────────────────────────────────────────────╯
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_claim_details' with arguments: {'claim_id': 'CLM-842061'}                   │
+│ Calling tool: 'get_claim_details' with arguments: {'claim_id': 'CLM-115245'}                   │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': True, 'claim': {'id': 'CLM-842061', 'patient_id': 1544, 'service_date': 
-'2024-07-28', 'status': 'denied', 'procedure_code': '99214', 'amount': 51.33, 'decision_reason': 
-'Pre-authorization required but not obtained.', 'timestamp': '2025-11-11T19:17:56.116529', 
-'complaint_history': |{'timestamp': '2025-11-11T19:18:04.633218', 'text': 'I was told procedure 
-99214 would be covered by my insurance, but claim CLM-842061 was denied.'}]}}
-[Step 1: Duration 1.59 seconds| Input tokens: 1,652 | Output tokens: 20]
+Observations: {'success': True, 'claim': {'id': 'CLM-115245', 'patient_id': 1827, 'service_date': 
+'2024-07-23', 'status': 'denied', 'procedure_code': '81003', 'amount': 259.83, 'decision_reason': 
+'Experimental/investigational procedure.', 'timestamp': '2025-11-11T19:35:46.630710', 
+'complaint_history': |{'timestamp': '2025-11-11T19:35:46.631040', 'text': 'The amount charged is 
+much higher than what was quoted to me.'}, {'timestamp': '2025-11-11T19:35:55.106430', 'text': 'I 
+believe my claim CLM-115245 was denied in error. My doctor says this is a covered procedure.'}]}}
+[Step 1: Duration 2.08 seconds| Input tokens: 1,651 | Output tokens: 20]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'find_similar_claims' with arguments: {'claim': {'id': 'CLM-842061',             │
-│ 'patient_id': 1544, 'service_date': '2024-07-28', 'status': 'denied', 'procedure_code':        │
-│ '99214', 'amount': 51.33, 'decision_reason': 'Pre-authorization required but not obtained.'},  │
-│ 'access_level': 'ADMIN'}                                                                       │
+│ Calling tool: 'find_similar_claims' with arguments: {'claim': {'id': 'CLM-115245',             │
+│ 'patient_id': 1827, 'service_date': '2024-07-23', 'status': 'denied', 'procedure_code':        │
+│ '81003', 'amount': 259.83, 'decision_reason': 'Experimental/investigational procedure.',       │
+│ 'timestamp': '2025-11-11T19:35:46.630710', 'complaint_history': [{'timestamp':                 │
+│ '2025-11-11T19:35:46.631040', 'text': 'The amount charged is much higher than what was quoted  │
+│ to me.'}, {'timestamp': '2025-11-11T19:35:55.106430', 'text': 'I believe my claim CLM-115245   │
+│ was denied in error. My doctor says this is a covered procedure.'}]}, 'access_level': 'ADMIN'} │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 #######################
-Claim --->  {'id': 'CLM-842061', 'patient_id': 1544, 'service_date': '2024-07-28', 'status': 'denied', 'procedure_code': '99214', 'amount': 51.33, 'decision_reason': 'Pre-authorization required but not obtained.'}        access_level --->  ADMIN
+Claim --->  {'id': 'CLM-115245', 'patient_id': 1827, 'service_date': '2024-07-23', 'status': 'denied', 'procedure_code': '81003', 'amount': 259.83, 'decision_reason': 'Experimental/investigational procedure.', 'timestamp': '2025-11-11T19:35:46.630710', 'complaint_history': [{'timestamp': '2025-11-11T19:35:46.631040', 'text': 'The amount charged is much higher than what was quoted to me.'}, {'timestamp': '2025-11-11T19:35:55.106430', 'text': 'I believe my claim CLM-115245 was denied in error. My doctor says this is a covered procedure.'}]}        access_level --->  ADMIN
 #######################
-Observations: {'query_claim': {'id': 'CLM-842061', 'patient_id': 1544, 'service_date': 
-'2024-07-28', 'status': 'denied', 'procedure_code': '99214', 'amount': 51.33, 'decision_reason': 
-'Pre-authorization required but not obtained.'}, 'results_count': 0, 'similar_claims': |]}
-[Step 2: Duration 3.49 seconds| Input tokens: 3,544 | Output tokens: 135]
+Observations: {'query_claim': {'id': 'CLM-115245', 'patient_id': 1827, 'service_date': 
+'2024-07-23', 'status': 'denied', 'procedure_code': '81003', 'amount': 259.83, 'decision_reason': 
+'Experimental/investigational procedure.', 'timestamp': '2025-11-11T19:35:46.630710', 
+'complaint_history': |{'timestamp': '2025-11-11T19:35:46.631040', 'text': 'The amount charged is 
+much higher than what was quoted to me.'}, {'timestamp': '2025-11-11T19:35:55.106430', 'text': 'I 
+believe my claim CLM-115245 was denied in error. My doctor says this is a covered procedure.'}]}, 
+'results_count': 0, 'similar_claims': |]}
+[Step 2: Duration 6.02 seconds| Input tokens: 3,578 | Output tokens: 235]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'search_knowledge_base' with arguments: {'query': 'procedure 99214 insurance     │
+│ Calling tool: 'search_knowledge_base' with arguments: {'query': 'procedure code 81003          │
 │ coverage', 'access_level': 'ADMIN'}                                                            │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'query': 'procedure 99214 insurance coverage', 'results_count': 1, 'results': 
-|{'topic': 'insurance policy limitations', 'content': 'All insurance policies have coverage 
-limitations and exclusions. Common limitations include annual maximums, lifetime maximums for 
-certain procedures, waiting periods for specific treatments, and exclusions for pre-existing 
-conditions.', 'privacy_level': 'public', 'similarity_score': 0.2283237296269537}]}
-[Step 3: Duration 2.24 seconds| Input tokens: 5,748 | Output tokens: 161]
+Observations: {'query': 'procedure code 81003 coverage', 'results_count': 0, 'results': |]}
+[Step 3: Duration 1.46 seconds| Input tokens: 6,149 | Output tokens: 261]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'respond_to_complaint' with arguments: {'complaint_id': 'CMPL-6147', 'response': │
-│ "Thank you for your complaint regarding claim CLM-842061. After reviewing the details, it      │
-│ appears that the claim was denied due to a lack of pre-authorization required for procedure    │
-│ code 99214. Please note that all insurance policies, including yours, may have coverage        │
-│ limitations and exclusions for certain procedures. It's essential to verify pre-authorization  │
-│ for specific treatments to avoid such issues in the future. If you have any further questions  │
-│ or require assistance, feel free to reach out.", 'responder': 'Customer Service Team',         │
-│ 'resolve': False}                                                                              │
+│ Calling tool: 'respond_to_complaint' with arguments: {'complaint_id': 'CMPL-4218', 'response': │
+│ 'Dear Patient, \n\nThank you for reaching out regarding your claim CLM-115245. After reviewing │
+│ your complaint and the details of your claim, it appears that the claim was denied because the │
+│ procedure associated with procedure code 81003 is classified as experimental/investigational.  │
+│ Unfortunately, this means it is not covered under your policy. \n\nWe found no similar claims  │
+│ that would provide a basis for reconsideration, and our knowledge base does not indicate any   │
+│ coverage for this specific procedure. \n\nWe understand this may be disappointing, and if you  │
+│ believe there are additional details or further evidence that may support your claim, please   │
+│ feel free to share, and we can reevaluate the situation. \n\nSincerely,\n[Your Name/Role]',    │
+│ 'responder': 'Claims Department', 'resolve': False}                                            │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 Observations: {'success': True, 'message': 'Response added successfully', 'complaint_status': 
 'open'}
-[Step 4: Duration 3.33 seconds| Input tokens: 8,151 | Output tokens: 292]
+[Step 4: Duration 6.84 seconds| Input tokens: 8,851 | Output tokens: 451]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 5 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint CMPL-6147 regarding     │
-│ claim CLM-842061 for patient 1544 was successfully responded to. The response clarified that   │
-│ the claim was denied due to lack of pre-authorization for procedure code 99214, and noted the  │
-│ importance of verifying pre-authorization to avoid such issues in the future.'}                │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'Response to complaint CMPL-4218 has   │
+│ been successfully recorded, addressing the denial of claim CLM-115245. The complaint remains   │
+│ open for any further information or evidence from the patient.'}                               │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: The complaint CMPL-6147 regarding claim CLM-842061 for patient 1544 was successfully
-responded to. The response clarified that the claim was denied due to lack of pre-authorization 
-for procedure code 99214, and noted the importance of verifying pre-authorization to avoid such 
-issues in the future.
-[Step 5: Duration 2.57 seconds| Input tokens: 10,898 | Output tokens: 368]
+Final answer: Response to complaint CMPL-4218 has been successfully recorded, addressing the 
+denial of claim CLM-115245. The complaint remains open for any further information or evidence 
+from the patient.
+[Step 5: Duration 2.88 seconds| Input tokens: 12,013 | Output tokens: 502]
 ########################
-claim_id --->  CLM-842061      complaint_id --->  CMPL-6147         patient_id --->  1544
+claim_id --->  CLM-115245      complaint_id --->  CMPL-4218         patient_id --->  1827
 ########################
 ╭────────────────────────────────── New run - customer_service ──────────────────────────────────╮
 │                                                                                                │
-│ Provide a final response to complaint CMPL-6147 about claim CLM-842061.                        │
+│ Provide a final response to complaint CMPL-4218 about claim CLM-115245.                        │
 │                                                                                                │
-│                 Remember the values of 1544, CLM-842061 amd CMPL-6147 for all subsquent tool   │
+│                 Remember the values of 1827, CLM-115245 amd CMPL-4218 for all subsquent tool   │
 │ call till the final answer.                                                                    │
 │                                                                                                │
 │                 First, get the complaint history using  tool                                   │
-│ <smolagents.tools.tool.<locals>.SimpleTool object at 0x7f39b66c0830>.                          │
+│ <smolagents.tools.tool.<locals>.SimpleTool object at 0x7ca4808206e0>.                          │
 │                 Consider the medical review already provided.                                  │
 │                                                                                                │
 │                 Provide a final response that is empathetic and clear about the decision.      │
@@ -152,55 +156,115 @@ claim_id --->  CLM-842061      complaint_id --->  CMPL-6147         patient_id -
 ╰─ OpenAIServerModel - gpt-4o-mini ──────────────────────────────────────────────────────────────╯
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_complaint_history' with arguments: {'complaint_id': 'CMPL-6147',            │
-│ 'access_level': '1544'}                                                                        │
+│ Calling tool: 'get_complaint_history' with arguments: {'complaint_id': 'CMPL-4218'}            │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': False, 'error': 'Complaint not found or access denied'}
-[Step 1: Duration 5.43 seconds| Input tokens: 1,879 | Output tokens: 29]
+Observations: {'success': True, 'complaint': {'complaint_id': 'CMPL-4218', 'patient_id': 1827, 
+'claim_id': 'CLM-115245', 'status': 'open', 'created_at': '2025-11-11T19:35:55.106416', 
+'description': 'I believe my claim CLM-115245 was denied in error. My doctor says this is a 
+covered procedure.', 'updated_at': '2025-11-11T19:36:14.388854', 'resolution': '', 
+'response_history': |{'timestamp': '2025-11-11T19:36:14.388842', 'text': 'Dear Patient, \n\nThank 
+you for reaching out regarding your claim CLM-115245. After reviewing your complaint and the 
+details of your claim, it appears that the claim was denied because the procedure associated with 
+procedure code 81003 is classified as experimental/investigational. Unfortunately, this means it 
+is not covered under your policy. \n\nWe found no similar claims that would provide a basis for 
+reconsideration, and our knowledge base does not indicate any coverage for this specific 
+procedure. \n\nWe understand this may be disappointing, and if you believe there are additional 
+details or further evidence that may support your claim, please feel free to share, and we can 
+reevaluate the situation. \n\nSincerely,\n|Your Name/Role]', 'responder': 'Claims Department'}]}}
+[Step 1: Duration 1.55 seconds| Input tokens: 1,878 | Output tokens: 23]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_complaint_history' with arguments: {'complaint_id': 'CMPL-6147',            │
-│ 'access_level': '1544'}                                                                        │
+│ Calling tool: 'respond_to_complaint' with arguments: {'complaint_id': 'CMPL-4218', 'response': │
+│ 'Dear Patient,\n\nThank you for your patience as we reviewed your complaint regarding claim    │
+│ CLM-115245. We understand that the denial of coverage for your procedure, which your doctor    │
+│ believes is necessary, is both frustrating and concerning.\n\nAfter a thorough review of your  │
+│ case and the medical information provided, we reaffirm that the procedure is classified as     │
+│ experimental/investigational, which unfortunately means it is not covered under our current    │
+│ policy guidelines. We empathize with your situation and recognize the critical nature of the   │
+│ decisions surrounding your healthcare.\n\nIf there are further details or additional evidence  │
+│ that could support your claim, please do not hesitate to share with us. We are here to assist  │
+│ you and will gladly reevaluate your circumstances.\n\nThank you for allowing us to address     │
+│ your concerns. We hope to resolve this situation in the best way                               │
+│ possible.\n\nSincerely,\n[Your Name/Role]', 'responder': 'Claims Department', 'resolve': True} │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': False, 'error': 'Complaint not found or access denied'}
-[Step 2: Duration 2.97 seconds| Input tokens: 3,889 | Output tokens: 58]
+Observations: {'success': True, 'message': 'Response added successfully', 'complaint_status': 
+'resolved'}
+[Step 2: Duration 5.15 seconds| Input tokens: 4,164 | Output tokens: 241]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_claim_details' with arguments: {'claim_id': 'CLM-842061', 'access_level':   │
-│ '1544'}                                                                                        │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'The final response has been           │
+│ successfully submitted for complaint CMPL-4218 regarding claim CLM-115245, and the complaint   │
+│ status is now marked as resolved.'}                                                            │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': False, 'error': 'Claim not found or access denied'}
-[Step 3: Duration 2.62 seconds| Input tokens: 6,027 | Output tokens: 84]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'Unable to retrieve the complaint      │
-│ history or claim details for complaint CMPL-6147 and claim CLM-842061 due to access denial.    │
-│ Please check your access permissions or the validity of the IDs.'}                             │
-╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: Unable to retrieve the complaint history or claim details for complaint CMPL-6147 
-and claim CLM-842061 due to access denial. Please check your access permissions or the validity of
-the IDs.
-[Step 4: Duration 8.04 seconds| Input tokens: 8,290 | Output tokens: 137]
-Observations: {'success': True, 'complaint_id': 'CMPL-6147', 'claim_id': 'CLM-842061', 
-'resolution': 'We have reviewed your complaint and our decision is to uphold the original claim 
-determination based on your policy coverage.'}
-[Step 2: Duration 40.30 seconds| Input tokens: 3,352 | Output tokens: 66]
+Final answer: The final response has been successfully submitted for complaint CMPL-4218 regarding
+claim CLM-115245, and the complaint status is now marked as resolved.
+[Step 3: Duration 1.95 seconds| Input tokens: 6,966 | Output tokens: 286]
+Observations: {'success': True, 'complaint_id': 'CMPL-4218', 'claim_id': 'CLM-115245', 
+'resolution': 'Dear Patient,\n\nThank you for your patience as we reviewed your complaint 
+regarding claim CLM-115245. We understand that the denial of coverage for your procedure, which 
+your doctor believes is necessary, is both frustrating and concerning.\n\nAfter a thorough review 
+of your case and the medical information provided, we reaffirm that the procedure is classified as
+experimental/investigational, which unfortunately means it is not covered under our current policy
+guidelines. We empathize with your situation and recognize the critical nature of the decisions 
+surrounding your healthcare.\n\nIf there are further details or additional evidence that could 
+support your claim, please do not hesitate to share with us. We are here to assist you and will 
+gladly reevaluate your circumstances.\n\nThank you for allowing us to address your concerns. We 
+hope to resolve this situation in the best way possible.\n\nSincerely,\n|Your Name/Role]'}
+[Step 2: Duration 37.34 seconds| Input tokens: 3,890 | Output tokens: 58]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint (CMPL-6147) regarding   │
-│ claim CLM-842061 has been reviewed, and the resolution indicates that the original claim       │
-│ determination is upheld based on the policy coverage.'}                                        │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint was successfully        │
+│ handled. The resolution provided was: Dear Patient,\n\nThank you for your patience as we       │
+│ reviewed your complaint regarding claim CLM-115245. We understand that the denial of coverage  │
+│ for your procedure, which your doctor believes is necessary, is both frustrating and           │
+│ concerning.\n\nAfter a thorough review of your case and the medical information provided, we   │
+│ reaffirm that the procedure is classified as experimental/investigational, which unfortunately │
+│ means it is not covered under our current policy guidelines. We empathize with your situation  │
+│ and recognize the critical nature of the decisions surrounding your healthcare.\n\nIf there    │
+│ are further details or additional evidence that could support your claim, please do not        │
+│ hesitate to share with us. We are here to assist you and will gladly reevaluate your           │
+│ circumstances.\n\nThank you for allowing us to address your concerns. We hope to resolve this  │
+│ situation in the best way possible.\n\nSincerely,\n[Your Name/Role]'}                          │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: The complaint (CMPL-6147) regarding claim CLM-842061 has been reviewed, and the 
-resolution indicates that the original claim determination is upheld based on the policy coverage.
-[Step 3: Duration 2.42 seconds| Input tokens: 4,794 | Output tokens: 116]
+Final answer: The complaint was successfully handled. The resolution provided was: Dear Patient,
+
+Thank you for your patience as we reviewed your complaint regarding claim CLM-115245. We 
+understand that the denial of coverage for your procedure, which your doctor believes is 
+necessary, is both frustrating and concerning.
+
+After a thorough review of your case and the medical information provided, we reaffirm that the 
+procedure is classified as experimental/investigational, which unfortunately means it is not 
+covered under our current policy guidelines. We empathize with your situation and recognize the 
+critical nature of the decisions surrounding your healthcare.
+
+If there are further details or additional evidence that could support your claim, please do not 
+hesitate to share with us. We are here to assist you and will gladly reevaluate your 
+circumstances.
+
+Thank you for allowing us to address your concerns. We hope to resolve this situation in the best 
+way possible.
+
+Sincerely,
+[Your Name/Role]
+[Step 3: Duration 5.76 seconds| Input tokens: 5,493 | Output tokens: 264]
 <class 'smolagents.agent_types.AgentText'>
 ###################
- Complaint_result -->  The complaint (CMPL-6147) regarding claim CLM-842061 has been reviewed, and the resolution indicates that the original claim determination is upheld based on the policy coverage.
+ Complaint_result -->  The complaint was successfully handled. The resolution provided was: Dear Patient,
+
+Thank you for your patience as we reviewed your complaint regarding claim CLM-115245. We understand that the denial of coverage for your procedure, which your doctor believes is necessary, is both frustrating and concerning.
+
+After a thorough review of your case and the medical information provided, we reaffirm that the procedure is classified as experimental/investigational, which unfortunately means it is not covered under our current policy guidelines. We empathize with your situation and recognize the critical nature of the decisions surrounding your healthcare.
+
+If there are further details or additional evidence that could support your claim, please do not hesitate to share with us. We are here to assist you and will gladly reevaluate your circumstances.
+
+Thank you for allowing us to address your concerns. We hope to resolve this situation in the best way possible.
+
+Sincerely,
+[Your Name/Role]
 ###################
 
 ###################
-complaint_lines --->  ['The complaint (CMPL-6147) regarding claim CLM-842061 has been reviewed, and the resolution indicates that the original claim determination is upheld based on the policy coverage.']
+complaint_lines --->  ['The complaint was successfully handled. The resolution provided was: Dear Patient,', '', 'Thank you for your patience as we reviewed your complaint regarding claim CLM-115245. We understand that the denial of coverage for your procedure, which your doctor believes is necessary, is both frustrating and concerning.', '', 'After a thorough review of your case and the medical information provided, we reaffirm that the procedure is classified as experimental/investigational, which unfortunately means it is not covered under our current policy guidelines. We empathize with your situation and recognize the critical nature of the decisions surrounding your healthcare.', '', 'If there are further details or additional evidence that could support your claim, please do not hesitate to share with us. We are here to assist you and will gladly reevaluate your circumstances.', '', 'Thank you for allowing us to address your concerns. We hope to resolve this situation in the best way possible.', '', 'Sincerely,', '[Your Name/Role]']
 ###################
 ########################
 claim_id --->  0      complaint_id --->  0         patient_id --->  0
@@ -209,7 +273,7 @@ claim_id --->  0      complaint_id --->  0         patient_id --->  0
 Now handling the complaint through our agentic RAG system...
 ╭──────────────────────────────────── New run - orchestrator ────────────────────────────────────╮
 │                                                                                                │
-│ Remember the values of 0, 0 amd 0 from the previous tool call                                  │
+│ Remember the values of 0, 0 amd 0 from the previous tool call.                                 │
 │         and for all subsquent tool call till the final answer.                                 │
 │                                                                                                │
 │         Handle this customer complaint:                                                        │
@@ -238,93 +302,68 @@ Now handling the complaint through our agentic RAG system...
 │ 'description': ''}                                                                             │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 Observations: {'success': False, 'error': 'Claim not found'}
-[Step 1: Duration 1.97 seconds| Input tokens: 1,779 | Output tokens: 26]
+[Step 1: Duration 1.50 seconds| Input tokens: 1,779 | Output tokens: 26]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Calling tool: 'retrieve_claim_history' with arguments: {'patient_id': 0, 'access_level': None} │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 Observations: {'patient_id': 0, 'claims_count': 0, 'claims': |]}
-[Step 2: Duration 1.69 seconds| Input tokens: 3,678 | Output tokens: 47]
+[Step 2: Duration 1.69 seconds| Input tokens: 3,679 | Output tokens: 47]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'No claims found for patient 0,        │
-│ therefore a complaint cannot be submitted.'}                                                   │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'No claims found for patient 0.        │
+│ Complaint cannot be submitted.'}                                                               │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: No claims found for patient 0, therefore a complaint cannot be submitted.
-[Step 3: Duration 4.30 seconds| Input tokens: 5,693 | Output tokens: 75]
+Final answer: No claims found for patient 0. Complaint cannot be submitted.
+[Step 3: Duration 1.44 seconds| Input tokens: 5,695 | Output tokens: 73]
 Observations: {'success': False, 'error': 'Failed to register complaint', 'message': 'No claims 
-found for patient 0, therefore a complaint cannot be submitted.'}
-[Step 1: Duration 9.91 seconds| Input tokens: 2,015 | Output tokens: 28]
+found for patient 0. Complaint cannot be submitted.'}
+[Step 1: Duration 6.27 seconds| Input tokens: 2,016 | Output tokens: 26]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Calling tool: 'generate_random_complaint' with arguments: {}                                   │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': True, 'patient_id': 1262, 'claim_id': 'CLM-555267', 'complaint_text': "I
-don't understand why my claim CLM-555267 was denied. Can you please explain?"}
-[Step 2: Duration 1.27 seconds| Input tokens: 3,272 | Output tokens: 41]
+Observations: {'success': True, 'patient_id': 1328, 'claim_id': 'CLM-517922', 'complaint_text': 'I
+was told procedure 97110 would be covered by my insurance, but claim CLM-517922 was denied.'}
+[Step 2: Duration 1.11 seconds| Input tokens: 3,272 | Output tokens: 39]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'handle_customer_complaint' with arguments: {'patient_id': 1262,                 │
-│ 'complaint_text': "I don't understand why my claim CLM-555267 was denied. Can you please       │
-│ explain?", 'claim_id': 'CLM-555267'}                                                           │
+│ Calling tool: 'handle_customer_complaint' with arguments: {'patient_id': 1328,                 │
+│ 'complaint_text': 'I was told procedure 97110 would be covered by my insurance, but claim      │
+│ CLM-517922 was denied.', 'claim_id': 'CLM-517922'}                                             │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 ╭────────────────────────────────── New run - customer_service ──────────────────────────────────╮
 │                                                                                                │
-│ Submit a complaint for patient 1262 about claim CLM-555267.                                    │
-│                 The complaint says: "I don't understand why my claim CLM-555267 was denied.    │
-│ Can you please explain?"                                                                       │
+│ Submit a complaint for patient 1328 about claim CLM-517922.                                    │
+│                 The complaint says: "I was told procedure 97110 would be covered by my         │
+│ insurance, but claim CLM-517922 was denied."                                                   │
 │                                                                                                │
 │                 Use the submit_complaint tool.                                                 │
 │                                                                                                │
 ╰─ OpenAIServerModel - gpt-4o-mini ──────────────────────────────────────────────────────────────╯
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'submit_complaint' with arguments: {'patient_id': 1262, 'claim_id':              │
-│ 'CLM-555267', 'description': "I don't understand why my claim CLM-555267 was denied. Can you   │
-│ please explain?"}                                                                              │
+│ Calling tool: 'submit_complaint' with arguments: {'patient_id': 1328, 'claim_id':              │
+│ 'CLM-517922', 'description': 'I was told procedure 97110 would be covered by my insurance, but │
+│ claim CLM-517922 was denied.'}                                                                 │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 Observations: {'success': True, 'message': 'Complaint submitted successfully', 'complaint_id': 
-'CMPL-7270'}
-[Step 1: Duration 2.05 seconds| Input tokens: 1,802 | Output tokens: 49]
+'CMPL-1646'}
+[Step 1: Duration 2.41 seconds| Input tokens: 1,807 | Output tokens: 54]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_complaint_history' with arguments: {'complaint_id': 'CMPL-7270'}            │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'Complaint submitted successfully with │
+│ complaint ID: CMPL-1646.'}                                                                     │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': True, 'complaint': {'complaint_id': 'CMPL-7270', 'patient_id': 1262, 
-'claim_id': 'CLM-555267', 'status': 'open', 'created_at': '2025-11-11T19:18:57.614357', 
-'description': "I don't understand why my claim CLM-555267 was denied. Can you please explain?", 
-'updated_at': '2025-11-11T19:18:57.614357', 'resolution': '', 'response_history': |]}}
-[Step 2: Duration 1.84 seconds| Input tokens: 3,786 | Output tokens: 108]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_claim_details' with arguments: {'claim_id': 'CLM-555267', 'access_level':   │
-│ None}                                                                                          │
-╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': False, 'error': 'Claim not found or access denied'}
-[Step 3: Duration 2.45 seconds| Input tokens: 5,989 | Output tokens: 171]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'retrieve_claim_history' with arguments: {'patient_id': 1262, 'access_level':    │
-│ None}                                                                                          │
-╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'patient_id': 1262, 'claims_count': 0, 'claims': |]}
-[Step 4: Duration 1.67 seconds| Input tokens: 8,310 | Output tokens: 193]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 5 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint CMPL-7270 has been      │
-│ successfully submitted for patient 1262 regarding claim CLM-555267. The status of the          │
-│ complaint is currently open.'}                                                                 │
-╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: The complaint CMPL-7270 has been successfully submitted for patient 1262 regarding 
-claim CLM-555267. The status of the complaint is currently open.
-[Step 5: Duration 1.92 seconds| Input tokens: 10,748 | Output tokens: 239]
+Final answer: Complaint submitted successfully with complaint ID: CMPL-1646.
+[Step 2: Duration 1.32 seconds| Input tokens: 3,805 | Output tokens: 80]
 ╭────────────────────────────────── New run - medical_reviewer ──────────────────────────────────╮
 │                                                                                                │
-│ Review complaint CMPL-7270 about claim CLM-555267 for patient 1262.                            │
-│                 The complaint says: "I don't understand why my claim CLM-555267 was denied.    │
-│ Can you please explain?"                                                                       │
+│ Review complaint CMPL-1646 about claim CLM-517922 for patient 1328.                            │
+│                 The complaint says: "I was told procedure 97110 would be covered by my         │
+│ insurance, but claim CLM-517922 was denied."                                                   │
 │                                                                                                │
-│                 Remember the values of 1262, CLM-555267 amd CMPL-7270 for all subsquent tool   │
+│                 Remember the values of 1328, CLM-517922 amd CMPL-1646 for all subsquent tool   │
 │ call till the final answer.                                                                    │
 │                                                                                                │
 │                 First, get claim details using get_claim_details tool.                         │
@@ -338,84 +377,78 @@ claim CLM-555267. The status of the complaint is currently open.
 ╰─ OpenAIServerModel - gpt-4o-mini ──────────────────────────────────────────────────────────────╯
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_claim_details' with arguments: {'claim_id': 'CLM-555267'}                   │
+│ Calling tool: 'get_claim_details' with arguments: {'claim_id': 'CLM-517922'}                   │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': True, 'claim': {'id': 'CLM-555267', 'patient_id': 1262, 'service_date': 
-'2024-07-18', 'status': 'denied', 'procedure_code': '43239', 'amount': 231.12, 'decision_reason': 
-'Insufficient documentation provided.', 'timestamp': '2025-11-11T19:17:56.116372', 
-'complaint_history': |{'timestamp': '2025-11-11T19:18:57.614370', 'text': "I don't understand why 
-my claim CLM-555267 was denied. Can you please explain?"}]}}
-[Step 1: Duration 1.45 seconds| Input tokens: 1,647 | Output tokens: 20]
+Observations: {'success': True, 'claim': {'id': 'CLM-517922', 'patient_id': 1328, 'service_date': 
+'2024-07-17', 'status': 'denied', 'procedure_code': '97110', 'amount': 62.26, 'decision_reason': 
+'Pre-authorization required but not obtained.', 'timestamp': '2025-11-11T19:35:46.630679', 
+'complaint_history': |{'timestamp': '2025-11-11T19:35:46.630967', 'text': 'The explanation of 
+benefits is confusing and unclear.'}, {'timestamp': '2025-11-11T19:36:45.112018', 'text': 'I was 
+told procedure 97110 would be covered by my insurance, but claim CLM-517922 was denied.'}]}}
+[Step 1: Duration 1.57 seconds| Input tokens: 1,652 | Output tokens: 20]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'find_similar_claims' with arguments: {'claim': {'id': 'CLM-555267',             │
-│ 'patient_id': 1262, 'service_date': '2024-07-18', 'status': 'denied', 'procedure_code':        │
-│ '43239', 'amount': 231.12, 'decision_reason': 'Insufficient documentation provided.'},         │
+│ Calling tool: 'find_similar_claims' with arguments: {'claim': {'id': 'CLM-517922',             │
+│ 'patient_id': 1328, 'service_date': '2024-07-17', 'status': 'denied', 'procedure_code':        │
+│ '97110', 'amount': 62.26, 'decision_reason': 'Pre-authorization required but not obtained.'},  │
 │ 'access_level': 'ADMIN'}                                                                       │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 #######################
-Claim --->  {'id': 'CLM-555267', 'patient_id': 1262, 'service_date': '2024-07-18', 'status': 'denied', 'procedure_code': '43239', 'amount': 231.12, 'decision_reason': 'Insufficient documentation provided.'}        access_level --->  ADMIN
+Claim --->  {'id': 'CLM-517922', 'patient_id': 1328, 'service_date': '2024-07-17', 'status': 'denied', 'procedure_code': '97110', 'amount': 62.26, 'decision_reason': 'Pre-authorization required but not obtained.'}        access_level --->  ADMIN
 #######################
-Observations: {'query_claim': {'id': 'CLM-555267', 'patient_id': 1262, 'service_date': 
-'2024-07-18', 'status': 'denied', 'procedure_code': '43239', 'amount': 231.12, 'decision_reason': 
-'Insufficient documentation provided.'}, 'results_count': 0, 'similar_claims': |]}
-[Step 2: Duration 2.49 seconds| Input tokens: 3,525 | Output tokens: 132]
+Observations: {'query_claim': {'id': 'CLM-517922', 'patient_id': 1328, 'service_date': 
+'2024-07-17', 'status': 'denied', 'procedure_code': '97110', 'amount': 62.26, 'decision_reason': 
+'Pre-authorization required but not obtained.'}, 'results_count': 0, 'similar_claims': |]}
+[Step 2: Duration 3.20 seconds| Input tokens: 3,581 | Output tokens: 135]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'search_knowledge_base' with arguments: {'query': 'claim denial due to           │
-│ insufficient documentation', 'access_level': 'ADMIN'}                                          │
+│ Calling tool: 'search_knowledge_base' with arguments: {'query': 'Procedure 97110 coverage      │
+│ insurance', 'access_level': 'ADMIN'}                                                           │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'query': 'claim denial due to insufficient documentation', 'results_count': 2, 
-'results': |{'topic': 'claim denial', 'content': 'Claims may be denied for various reasons 
-including: service not covered under plan, insufficient documentation, exceeding coverage limits, 
-experimental procedures, lack of pre-authorization, out-of-network providers, non-medical 
-necessity, duplicate claims, eligibility issues, or coverage by another plan.', 'privacy_level': 
-'public', 'similarity_score': 0.3029287964954833}, {'topic': 'appeal process', 'content': 
-'Patients have the right to appeal claim denials. The process involves submitting a written 
-request with supporting documentation within 60 days of the denial. Appeals are reviewed by 
-medical professionals not involved in the initial decision.', 'privacy_level': 'public', 
-'similarity_score': 0.19500791771917547}]}
-[Step 3: Duration 1.28 seconds| Input tokens: 5,703 | Output tokens: 158]
+Observations: {'query': 'Procedure 97110 coverage insurance', 'results_count': 1, 'results': 
+|{'topic': 'insurance policy limitations', 'content': 'All insurance policies have coverage 
+limitations and exclusions. Common limitations include annual maximums, lifetime maximums for 
+certain procedures, waiting periods for specific treatments, and exclusions for pre-existing 
+conditions.', 'privacy_level': 'public', 'similarity_score': 0.2283237296269537}]}
+[Step 3: Duration 1.48 seconds| Input tokens: 5,820 | Output tokens: 161]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'respond_to_complaint' with arguments: {'complaint_id': 'CMPL-7270', 'response': │
-│ 'Dear Patient, \n\nRegarding your complaint about claim CLM-555267, I understand your concerns │
-│ about the denial. Your claim was denied due to insufficient documentation provided during the  │
-│ claim submission. \n\nClaims may be denied for various reasons, and in your case, it was       │
-│ determined that the documentation did not meet the required standards for processing. \n\nIf   │
-│ you believe that you can provide additional information or documentation to support your       │
-│ claim, you have the right to appeal this decision. The appeal process involves submitting a    │
-│ written request along with any supporting documentation within 60 days of the denial. The      │
-│ appeal will be reviewed by medical professionals who were not involved in the initial          │
-│ decision.\n\nPlease let us know if you would like assistance in this process. \n\nBest         │
-│ regards,\nYour Support Team', 'responder': 'Support Team', 'resolve': False}                   │
+│ Calling tool: 'respond_to_complaint' with arguments: {'complaint_id': 'CMPL-1646', 'response': │
+│ 'Dear Patient, \n\nThank you for reaching out regarding your concern with claim CLM-517922.    │
+│ After reviewing your claim, I see that the procedure 97110 was denied due to the lack of       │
+│ pre-authorization, which is a requirement for coverage under your insurance policy. \n\nI      │
+│ understand that you were informed this procedure would be covered; however, there are common   │
+│ limitations in insurance policies that can affect coverage, including requirements for         │
+│ pre-authorization. \n\nIf you have further questions or would like assistance with the appeals │
+│ process, please feel free to contact us. We are here to help. \n\nBest regards,\n[Your Name]', │
+│ 'responder': 'Claims Department', 'resolve': False}                                            │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 Observations: {'success': True, 'message': 'Response added successfully', 'complaint_status': 
 'open'}
-[Step 4: Duration 5.30 seconds| Input tokens: 8,170 | Output tokens: 355]
+[Step 4: Duration 5.50 seconds| Input tokens: 8,258 | Output tokens: 331]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 5 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint CMPL-7270 regarding     │
-│ claim CLM-555267 for patient 1262 has been reviewed. The claim was denied due to insufficient  │
-│ documentation provided. A response has been sent to the patient explaining the reason for the  │
-│ denial and outlining the appeal process.'}                                                     │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint CMPL-1646 has been      │
+│ successfully responded to regarding claim CLM-517922 for patient 1328. The response addressed  │
+│ the denial of the procedure 97110 due to lack of pre-authorization and provided information on │
+│ common limitations of insurance coverage.'}                                                    │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: The complaint CMPL-7270 regarding claim CLM-555267 for patient 1262 has been 
-reviewed. The claim was denied due to insufficient documentation provided. A response has been 
-sent to the patient explaining the reason for the denial and outlining the appeal process.
-[Step 5: Duration 2.56 seconds| Input tokens: 11,111 | Output tokens: 421]
+Final answer: The complaint CMPL-1646 has been successfully responded to regarding claim 
+CLM-517922 for patient 1328. The response addressed the denial of the procedure 97110 due to lack 
+of pre-authorization and provided information on common limitations of insurance coverage.
+[Step 5: Duration 2.18 seconds| Input tokens: 11,118 | Output tokens: 397]
 ########################
-claim_id --->  CLM-555267      complaint_id --->  CMPL-7270         patient_id --->  1262
+claim_id --->  CLM-517922      complaint_id --->  CMPL-1646         patient_id --->  1328
 ########################
 ╭────────────────────────────────── New run - customer_service ──────────────────────────────────╮
 │                                                                                                │
-│ Provide a final response to complaint CMPL-7270 about claim CLM-555267.                        │
+│ Provide a final response to complaint CMPL-1646 about claim CLM-517922.                        │
 │                                                                                                │
-│                 Remember the values of 1262, CLM-555267 amd CMPL-7270 for all subsquent tool   │
+│                 Remember the values of 1328, CLM-517922 amd CMPL-1646 for all subsquent tool   │
 │ call till the final answer.                                                                    │
 │                                                                                                │
 │                 First, get the complaint history using  tool                                   │
-│ <smolagents.tools.tool.<locals>.SimpleTool object at 0x7f39b66c0830>.                          │
+│ <smolagents.tools.tool.<locals>.SimpleTool object at 0x7ca4808206e0>.                          │
 │                 Consider the medical review already provided.                                  │
 │                                                                                                │
 │                 Provide a final response that is empathetic and clear about the decision.      │
@@ -425,109 +458,106 @@ claim_id --->  CLM-555267      complaint_id --->  CMPL-7270         patient_id -
 ╰─ OpenAIServerModel - gpt-4o-mini ──────────────────────────────────────────────────────────────╯
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 1 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'get_complaint_history' with arguments: {'complaint_id': 'CMPL-7270'}            │
+│ Calling tool: 'get_complaint_history' with arguments: {'complaint_id': 'CMPL-1646'}            │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Observations: {'success': True, 'complaint': {'complaint_id': 'CMPL-7270', 'patient_id': 1262, 
-'claim_id': 'CLM-555267', 'status': 'open', 'created_at': '2025-11-11T19:18:57.614357', 
-'description': "I don't understand why my claim CLM-555267 was denied. Can you please explain?", 
-'updated_at': '2025-11-11T19:19:16.017921', 'resolution': '', 'response_history': |{'timestamp': 
-'2025-11-11T19:19:16.017910', 'text': 'Dear Patient, \n\nRegarding your complaint about claim 
-CLM-555267, I understand your concerns about the denial. Your claim was denied due to insufficient
-documentation provided during the claim submission. \n\nClaims may be denied for various reasons, 
-and in your case, it was determined that the documentation did not meet the required standards for
-processing. \n\nIf you believe that you can provide additional information or documentation to 
-support your claim, you have the right to appeal this decision. The appeal process involves 
-submitting a written request along with any supporting documentation within 60 days of the denial.
-The appeal will be reviewed by medical professionals who were not involved in the initial 
-decision.\n\nPlease let us know if you would like assistance in this process. \n\nBest 
-regards,\nYour Support Team', 'responder': 'Support Team'}]}}
-[Step 1: Duration 1.58 seconds| Input tokens: 1,879 | Output tokens: 23]
+Observations: {'success': True, 'complaint': {'complaint_id': 'CMPL-1646', 'patient_id': 1328, 
+'claim_id': 'CLM-517922', 'status': 'open', 'created_at': '2025-11-11T19:36:45.112004', 
+'description': 'I was told procedure 97110 would be covered by my insurance, but claim CLM-517922 
+was denied.', 'updated_at': '2025-11-11T19:36:58.185592', 'resolution': '', 'response_history': 
+|{'timestamp': '2025-11-11T19:36:58.185579', 'text': 'Dear Patient, \n\nThank you for reaching out
+regarding your concern with claim CLM-517922. After reviewing your claim, I see that the procedure
+97110 was denied due to the lack of pre-authorization, which is a requirement for coverage under 
+your insurance policy. \n\nI understand that you were informed this procedure would be covered; 
+however, there are common limitations in insurance policies that can affect coverage, including 
+requirements for pre-authorization. \n\nIf you have further questions or would like assistance 
+with the appeals process, please feel free to contact us. We are here to help. \n\nBest 
+regards,\n|Your Name]', 'responder': 'Claims Department'}]}}
+[Step 1: Duration 2.02 seconds| Input tokens: 1,878 | Output tokens: 23]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 2 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'respond_to_complaint' with arguments: {'complaint_id': 'CMPL-7270', 'response': │
-│ 'Dear Patient, \n\nThank you for your patience regarding your complaint about claim            │
-│ CLM-555267. We truly understand how concerning it can be to have a claim denied, especially    │
-│ when clarity on the decision is needed. \n\nAs mentioned in our previous communication, your   │
-│ claim was denied due to insufficient documentation. We sincerely apologize for any confusion   │
-│ this has caused. We encourage you to consider gathering any additional supporting documents,   │
-│ as you still have the option to appeal this decision. Our team is here to assist you           │
-│ throughout this process if you choose to pursue it. \n\nWe appreciate your understanding, and  │
-│ we are committed to helping resolve this matter. \n\nBest regards, \nYour Support Team',       │
-│ 'responder': 'Support Team', 'resolve': True}                                                  │
+│ Calling tool: 'respond_to_complaint' with arguments: {'complaint_id': 'CMPL-1646', 'response': │
+│ 'Dear Patient,\n\nThank you for your patience while we reviewed your complaint regarding claim │
+│ CLM-517922. We understand how frustrating it can be to have a procedure denied, especially     │
+│ when you were informed it would be covered by your insurance. \n\nAfter thorough consideration │
+│ and review of your case, it appears that the denial for procedure 97110 was due to the absence │
+│ of pre-authorization, which is a standard requirement for coverage under your policy. We       │
+│ sincerely apologize for any miscommunication you may have experienced regarding this           │
+│ matter.\n\nIf you have any further questions or would like to discuss the appeal process,      │
+│ please do not hesitate to reach out to us. Your satisfaction is important to us, and we are    │
+│ here to assist you.\n\nBest regards,\n[Your Name]', 'responder': 'Claims Department',          │
+│ 'resolve': True}                                                                               │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
 Observations: {'success': True, 'message': 'Response added successfully', 'complaint_status': 
 'resolved'}
-[Step 2: Duration 4.25 seconds| Input tokens: 4,171 | Output tokens: 201]
+[Step 2: Duration 4.56 seconds| Input tokens: 4,142 | Output tokens: 218]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 3 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint CMPL-7270 about claim   │
-│ CLM-555267 has been successfully resolved with an empathetic response provided, clarifying the │
-│ reasons for the claim denial and offering assistance for a potential appeal.'}                 │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'The final response to complaint       │
+│ CMPL-1646 regarding claim CLM-517922 has been successfully submitted and the complaint is now  │
+│ resolved.'}                                                                                    │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: The complaint CMPL-7270 about claim CLM-555267 has been successfully resolved with 
-an empathetic response provided, clarifying the reasons for the claim denial and offering 
-assistance for a potential appeal.
-[Step 3: Duration 1.98 seconds| Input tokens: 6,900 | Output tokens: 255]
-Observations: {'success': True, 'complaint_id': 'CMPL-7270', 'claim_id': 'CLM-555267', 
-'resolution': 'Dear Patient, \n\nThank you for your patience regarding your complaint about claim 
-CLM-555267. We truly understand how concerning it can be to have a claim denied, especially when 
-clarity on the decision is needed. \n\nAs mentioned in our previous communication, your claim was 
-denied due to insufficient documentation. We sincerely apologize for any confusion this has 
-caused. We encourage you to consider gathering any additional supporting documents, as you still 
-have the option to appeal this decision. Our team is here to assist you throughout this process if
-you choose to pursue it. \n\nWe appreciate your understanding, and we are committed to helping 
-resolve this matter. \n\nBest regards, \nYour Support Team'}
-[Step 3: Duration 34.39 seconds| Input tokens: 6,001 | Output tokens: 95]
+Final answer: The final response to complaint CMPL-1646 regarding claim CLM-517922 has been 
+successfully submitted and the complaint is now resolved.
+[Step 3: Duration 3.10 seconds| Input tokens: 6,879 | Output tokens: 259]
+Observations: {'success': True, 'complaint_id': 'CMPL-1646', 'claim_id': 'CLM-517922', 
+'resolution': 'Dear Patient,\n\nThank you for your patience while we reviewed your complaint 
+regarding claim CLM-517922. We understand how frustrating it can be to have a procedure denied, 
+especially when you were informed it would be covered by your insurance. \n\nAfter thorough 
+consideration and review of your case, it appears that the denial for procedure 97110 was due to 
+the absence of pre-authorization, which is a standard requirement for coverage under your policy. 
+We sincerely apologize for any miscommunication you may have experienced regarding this 
+matter.\n\nIf you have any further questions or would like to discuss the appeal process, please 
+do not hesitate to reach out to us. Your satisfaction is important to us, and we are here to 
+assist you.\n\nBest regards,\n|Your Name]'}
+[Step 3: Duration 30.98 seconds| Input tokens: 6,009 | Output tokens: 80]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Step 4 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ╭────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint has been successfully   │
-│ registered with complaint ID: CMPL-7270. The resolution provided is:\n\n"Dear                  │
-│ Patient,\n\nThank you for your patience regarding your complaint about claim CLM-555267. We    │
-│ truly understand how concerning it can be to have a claim denied, especially when clarity on   │
-│ the decision is needed.\n\nAs mentioned in our previous communication, your claim was denied   │
-│ due to insufficient documentation. We sincerely apologize for any confusion this has caused.   │
-│ We encourage you to consider gathering any additional supporting documents, as you still have  │
-│ the option to appeal this decision. Our team is here to assist you throughout this process if  │
-│ you choose to pursue it.\n\nWe appreciate your understanding, and we are committed to helping  │
-│ resolve this matter.\n\nBest regards,\nYour Support Team".'}                                   │
+│ Calling tool: 'final_answer' with arguments: {'answer': 'The complaint was successfully        │
+│ handled, and the resolution provided was: Dear Patient,\n\nThank you for your patience while   │
+│ we reviewed your complaint regarding claim CLM-517922. We understand how frustrating it can be │
+│ to have a procedure denied, especially when you were informed it would be covered by your      │
+│ insurance. \n\nAfter thorough consideration and review of your case, it appears that the       │
+│ denial for procedure 97110 was due to the absence of pre-authorization, which is a standard    │
+│ requirement for coverage under your policy. We sincerely apologize for any miscommunication    │
+│ you may have experienced regarding this matter.\n\nIf you have any further questions or would  │
+│ like to discuss the appeal process, please do not hesitate to reach out to us. Your            │
+│ satisfaction is important to us, and we are here to assist you.\n\nBest regards,\n[Your        │
+│ Name]'}                                                                                        │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────╯
-Final answer: The complaint has been successfully registered with complaint ID: CMPL-7270. The 
-resolution provided is:
+Final answer: The complaint was successfully handled, and the resolution provided was: Dear 
+Patient,
 
-"Dear Patient,
+Thank you for your patience while we reviewed your complaint regarding claim CLM-517922. We 
+understand how frustrating it can be to have a procedure denied, especially when you were informed
+it would be covered by your insurance. 
 
-Thank you for your patience regarding your complaint about claim CLM-555267. We truly understand 
-how concerning it can be to have a claim denied, especially when clarity on the decision is 
-needed.
+After thorough consideration and review of your case, it appears that the denial for procedure 
+97110 was due to the absence of pre-authorization, which is a standard requirement for coverage 
+under your policy. We sincerely apologize for any miscommunication you may have experienced 
+regarding this matter.
 
-As mentioned in our previous communication, your claim was denied due to insufficient 
-documentation. We sincerely apologize for any confusion this has caused. We encourage you to 
-consider gathering any additional supporting documents, as you still have the option to appeal 
-this decision. Our team is here to assist you throughout this process if you choose to pursue it.
-
-We appreciate your understanding, and we are committed to helping resolve this matter.
+If you have any further questions or would like to discuss the appeal process, please do not 
+hesitate to reach out to us. Your satisfaction is important to us, and we are here to assist you.
 
 Best regards,
-Your Support Team".
-[Step 4: Duration 4.79 seconds| Input tokens: 7,718 | Output tokens: 271]
+[Your Name]
+[Step 4: Duration 6.27 seconds| Input tokens: 7,754 | Output tokens: 264]
 ########################
 claim_id --->  0      complaint_id --->  0         patient_id --->  0
 ########################
-######### resolution_result --->  The complaint has been successfully registered with complaint ID: CMPL-7270. The resolution provided is:
+######### resolution_result --->  The complaint was successfully handled, and the resolution provided was: Dear Patient,
 
-"Dear Patient,
+Thank you for your patience while we reviewed your complaint regarding claim CLM-517922. We understand how frustrating it can be to have a procedure denied, especially when you were informed it would be covered by your insurance. 
 
-Thank you for your patience regarding your complaint about claim CLM-555267. We truly understand how concerning it can be to have a claim denied, especially when clarity on the decision is needed.
+After thorough consideration and review of your case, it appears that the denial for procedure 97110 was due to the absence of pre-authorization, which is a standard requirement for coverage under your policy. We sincerely apologize for any miscommunication you may have experienced regarding this matter.
 
-As mentioned in our previous communication, your claim was denied due to insufficient documentation. We sincerely apologize for any confusion this has caused. We encourage you to consider gathering any additional supporting documents, as you still have the option to appeal this decision. Our team is here to assist you throughout this process if you choose to pursue it.
-
-We appreciate your understanding, and we are committed to helping resolve this matter.
+If you have any further questions or would like to discuss the appeal process, please do not hesitate to reach out to us. Your satisfaction is important to us, and we are here to assist you.
 
 Best regards,
-Your Support Team".
+[Your Name]
 
 ###################
-resolution_lines --->  ['The complaint has been successfully registered with complaint ID: CMPL-7270. The resolution provided is:', '', '"Dear Patient,', '', 'Thank you for your patience regarding your complaint about claim CLM-555267. We truly understand how concerning it can be to have a claim denied, especially when clarity on the decision is needed.', '', 'As mentioned in our previous communication, your claim was denied due to insufficient documentation. We sincerely apologize for any confusion this has caused. We encourage you to consider gathering any additional supporting documents, as you still have the option to appeal this decision. Our team is here to assist you throughout this process if you choose to pursue it.', '', 'We appreciate your understanding, and we are committed to helping resolve this matter.', '', 'Best regards,', 'Your Support Team".']
+resolution_lines --->  ['The complaint was successfully handled, and the resolution provided was: Dear Patient,', '', 'Thank you for your patience while we reviewed your complaint regarding claim CLM-517922. We understand how frustrating it can be to have a procedure denied, especially when you were informed it would be covered by your insurance. ', '', 'After thorough consideration and review of your case, it appears that the denial for procedure 97110 was due to the absence of pre-authorization, which is a standard requirement for coverage under your policy. We sincerely apologize for any miscommunication you may have experienced regarding this matter.', '', 'If you have any further questions or would like to discuss the appeal process, please do not hesitate to reach out to us. Your satisfaction is important to us, and we are here to assist you.', '', 'Best regards,', '[Your Name]']
 ############### WORKED SO FAR ###############
 
 Demo completed successfully! Thank you for trying the Multi-Agent RAG System.
