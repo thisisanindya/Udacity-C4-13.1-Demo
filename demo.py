@@ -380,7 +380,6 @@ class VectorClaimSearch:
         for claim in claims_list:
             # Combine procedure code with decision reason and other text fields
             text = f"{claim.procedure_code} {database.procedure_codes.get(claim.procedure_code, '')} {claim.decision_reason}"
-            #print("text ---> ", text)
             # Add complaint text if available
             if claim.complaint_history:
                 for complaint in claim.complaint_history:
@@ -740,16 +739,16 @@ def find_similar_claims(claim: Dict, access_level: str = PrivacyLevel.AGENT) -> 
         Dictionary containing similar claims with similarity scores
     """
     # Ensure vector claim search is initialized with the latest claims
-    #print("#######################")
-    #print("Claim ---> ", claim)
+    print("#######################")
+    print("Claim ---> ", claim, "       access_level ---> ", access_level)
     if not vector_claim_search.is_initialized:
         vector_claim_search.update_claims(list(database.claims.values()))
     
     # Perform vector-based semantic search
     similar = vector_claim_search.search(claim, access_level)
     
-    #("similar ---> ", similar)
-    #print("#######################")
+    ("similar ---> ", similar)
+    print("#######################")
     return {
         'query_claim': claim,
         'results_count': len(similar),
@@ -1060,15 +1059,21 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                 Review complaint {complaint_id} about claim {claim_id} for patient {patient_id}.
                 The complaint says: "{complaint_text}"
                 
+                Remember the values of {patient_id}, {claim_id} amd {complaint_id} for all subsquent tool call till the final answer. 
+
                 First, get claim details using get_claim_details tool.
-                Then search for similar claims using find_similar_claims tool.
+                Then search for similar claims using find_similar_claims tool
+                with claim object and access level as ADMIN as input paramaters.
                 Also search knowledge_base for relevant information.
                 
                 Based on your analysis, provide a response to the complaint.
                 Use respond_to_complaint tool to record your response.
                 """
             )
-            
+            print("########################")
+            print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+            print("########################")
+
             # Extract medical review info for reference
             medical_response = ''
             if hasattr(medical_review, 'tool_calls') and medical_review.tool_calls:
@@ -1081,7 +1086,9 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                 f"""
                 Provide a final response to complaint {complaint_id} about claim {claim_id}.
                 
-                First, get the complaint history using get_complaint_history tool.
+                Remember the values of {patient_id}, {claim_id} amd {complaint_id} for all subsquent tool call till the final answer. 
+
+                First, get the complaint history using  tool {get_complaint_history}.
                 Consider the medical review already provided.
                 
                 Provide a final response that is empathetic and clear about the decision.
@@ -1161,7 +1168,6 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
             """,
         )
 
-
 def run_demo():
     # Initialize and populate database
     print('Initializing and populating database...')
@@ -1174,12 +1180,40 @@ def run_demo():
     # Run the complaint handling demo
     print('\n=== Insurance Claim Complaint Resolution Demo ===\n')
     
+    # Use these to hold key identifiers
+    patient_id = 0
+    claim_id = 0
+    complaint_id = 0
+    print("########################")
+    print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+    print("########################")
+
     # Generate a random complaint
     print('Generating a random complaint...')
+    
     complaint_result = orchestrator.run(
-        'Generate a random complaint for us to handle in this demo.'
+        f"""Generate a random complaint for us to handle in this demo.
+            Store the values of {patient_id}, {claim_id} amd {complaint_id} in corresponding local variables
+            and rember them for all subsquent tool call till the final answer call. 
+        """
     )
     
+    print(type(complaint_result))
+    print("###################")
+    print(" Complaint_result --> ", complaint_result.to_string())
+    print("###################")
+    
+    print()
+    complaint_lines = complaint_result.to_string().splitlines()
+    print("###################")
+    print("complaint_lines ---> ", complaint_lines)
+    print("###################")
+
+    print("########################")
+    print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+    print("########################")
+
+    '''
     # Extract complaint data from the result
     complaint_data = None
     if (hasattr(complaint_result, 'tool_calls') and complaint_result.tool_calls): 
@@ -1201,26 +1235,41 @@ def run_demo():
     print(f"Generated complaint: {complaint_data['complaint_text']}")
     print(f"For patient ID: {complaint_data['patient_id']}")
     print(f"About claim ID: {complaint_data['claim_id']}")
-
+    '''
+    
     # Handle the complaint
     print('\nNow handling the complaint through our agentic RAG system...')
     resolution_result = orchestrator.run(
         f"""
+        Remember the values of {patient_id}, {claim_id} amd {complaint_id} from the previous tool call 
+        and for all subsquent tool call till the final answer. 
+
         Handle this customer complaint:
-        - Patient ID: {complaint_data['patient_id']}
-        - Claim ID: {complaint_data['claim_id']}
-        - Complaint: "{complaint_data['complaint_text']}"
+        - Patient ID: {patient_id},
+        - Claim ID: {claim_id},
         
         Use the handle_customer_complaint tool.
         """
     )
+
+    print("########################")
+    print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+    print("########################")
+
+    print("######### resolution_result ---> ", resolution_result.to_string())
+    print()
+    resolution_lines = resolution_result.to_string().splitlines()
+    print("###################")
+    print("resolution_lines ---> ", resolution_lines)
+    print("############### WORKED SO FAR ###############")
     
+    '''
     # Extract resolution info from tool calls
     resolution_info = None
     if hasattr(resolution_result, 'tool_calls') and resolution_result.tool_calls:
         for call in resolution_result.tool_calls:
             if call.name == 'handle_customer_complaint':
-                resolution_info = call.arguments
+               resolution_info = call.arguments
                 break
     
     # Check if we got a successful resolution
@@ -1247,6 +1296,7 @@ def run_demo():
         if resolution_info and 'recommendation' in resolution_info:
             print(f"Recommendation: {resolution_info['recommendation']}")
         return False  # Return failure
+    '''
 
 if __name__ == '__main__':
     demo_result = run_demo()
