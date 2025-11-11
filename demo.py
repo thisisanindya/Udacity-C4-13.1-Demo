@@ -1194,7 +1194,7 @@ def run_demo():
     complaint_result = orchestrator.run(
         f"""Generate a random complaint for us to handle in this demo.
             Store the values of {patient_id}, {claim_id} amd {complaint_id} in corresponding local variables
-            and rember them for all subsquent tool call till the final answer call. 
+            and remember them for all subsquent tool call till the final answer call. 
         """
     )
     
@@ -1241,7 +1241,7 @@ def run_demo():
     print('\nNow handling the complaint through our agentic RAG system...')
     resolution_result = orchestrator.run(
         f"""
-        Remember the values of {patient_id}, {claim_id} amd {complaint_id} from the previous tool call 
+        Remember the values of {patient_id}, {claim_id} amd {complaint_id} from the previous tool call. 
         and for all subsquent tool call till the final answer. 
 
         Handle this customer complaint:
@@ -1302,3 +1302,4 @@ if __name__ == '__main__':
     demo_result = run_demo()
     if demo_result is not False:  # Only show this message if the demo didn't explicitly fail
         print('\nDemo completed successfully! Thank you for trying the Multi-Agent RAG System.')
+
