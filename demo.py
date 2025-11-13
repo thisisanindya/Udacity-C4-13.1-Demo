@@ -989,6 +989,7 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                 Dictionary containing the complaint handling result
             """
             # Step 1: If claim_id not provided, try to find relevant claims
+
             if not claim_id:
                 claims_result = self.customer_service.run(
                     f"""
@@ -999,7 +1000,7 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                     Then identify which claim they're referring to.
                     """
                 )
-                
+            
                 # Parse the response to extract the claim_id using text content from the agent
                 text_content = str(claims_result)
                 if 'CLM-' in text_content:
@@ -1008,7 +1009,7 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                     potential_claim_id = text_content[start_idx:end_idx]
                     if potential_claim_id.startswith('CLM-') and len(potential_claim_id) >= 9:
                         claim_id = potential_claim_id
-            
+                    
             # If we still don't have a claim_id, we can't proceed
             if not claim_id:
                 return {
@@ -1052,14 +1053,11 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                     'message': str(complaint_result)
                 }
             
-            #print("########## complaint_id ---> ", complaint_id)
             # Step 3: Get medical review
             medical_review = self.medical_reviewer.run(
                 f"""
                 Review complaint {complaint_id} about claim {claim_id} for patient {patient_id}.
                 The complaint says: "{complaint_text}"
-                
-                Remember the values of {patient_id}, {claim_id} amd {complaint_id} for all subsquent tool call till the final answer. 
 
                 First, get claim details using get_claim_details tool.
                 Then search for similar claims using find_similar_claims tool
@@ -1071,7 +1069,7 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                 """
             )
             print("########################")
-            print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+            print("444 --- claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
             print("########################")
 
             # Extract medical review info for reference
@@ -1085,8 +1083,6 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
             final_response = self.customer_service.run(
                 f"""
                 Provide a final response to complaint {complaint_id} about claim {claim_id}.
-                
-                Remember the values of {patient_id}, {claim_id} amd {complaint_id} for all subsquent tool call till the final answer. 
 
                 First, get the complaint history using  tool {get_complaint_history}.
                 Consider the medical review already provided.
@@ -1095,7 +1091,9 @@ class ComplaintResolutionOrchestrator(ToolCallingAgent):
                 Use respond_to_complaint tool with resolve=true to finish handling this complaint.
                 """
             )
-            
+            print("########################")
+            print("555 --- claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+            print("########################")
             # Extract final decision and message
             resolution = ''
             if hasattr(final_response, 'tool_calls') and final_response.tool_calls:
@@ -1184,8 +1182,9 @@ def run_demo():
     patient_id = 0
     claim_id = 0
     complaint_id = 0
+    
     print("########################")
-    print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+    print("111 --- claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
     print("########################")
 
     # Generate a random complaint
@@ -1210,7 +1209,7 @@ def run_demo():
     print("###################")
 
     print("########################")
-    print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+    print("222 --- claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
     print("########################")
 
     '''
@@ -1253,7 +1252,7 @@ def run_demo():
     )
 
     print("########################")
-    print("claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
+    print("333 --- claim_id ---> ", claim_id, "     complaint_id ---> ", complaint_id, "        patient_id ---> ", patient_id)
     print("########################")
 
     print("######### resolution_result ---> ", resolution_result.to_string())
