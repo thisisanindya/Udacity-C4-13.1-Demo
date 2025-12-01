@@ -349,6 +349,7 @@ def handle_claim_with_fraud_check(claim_data: Dict) -> Dict:
         Dictionary containing the claim processing result with fraud assessment
     """
     # Step 1: Process the new claim
+    print("CHECK-111 ---> ", type(self.claim_processor))
     process_result = self.claim_processor.run(
         f"""
         Process this new claim:
@@ -360,6 +361,7 @@ def handle_claim_with_fraud_check(claim_data: Dict) -> Dict:
         Use the process_new_claim tool.
         """
     )
+    print("CHECK-222 ---> ", process_result)
     
     # Extract claim_id from the result
     claim_id = None
