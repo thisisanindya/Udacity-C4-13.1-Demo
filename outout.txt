@@ -1,7 +1,7 @@
 project student$ python test.py
 Loading openai_api_key... 
 Initializing Database...
-/workspace/agentic-ai-c4-exercises-demos/project/test.py:1466: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
+/workspace/agentic-ai-c4-exercises-demos/project/test.py:1459: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.
   quote_requests_sample["request_date"] = pd.to_datetime(
 ---> Function (generate_financial_report): Get financial report as of '2025-04-01'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
@@ -33,17 +33,17 @@ Inventory Value: $4940.30
 ---> Function (get_stock_level): Get stock for 'A4 glossy paper' as of '2025-04-01'
 ---> Check for quantity =  200
 ---> medium quantity
----> discounted price =  180.0
+---> discounted price =  0.0
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'heavy cardstock (white)' as of '2025-04-01'
 ---> Check for quantity =  100
 ---> medium quantity
----> discounted price =  90.0
+---> discounted price =  0.0
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'colored paper (assorted colors)' as of '2025-04-01'
 ---> Check for quantity =  100
 ---> medium quantity
----> discounted price =  45.0
+---> discounted price =  0.0
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
 Traceback (most recent call last):
   File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 643, in _process_response
@@ -69,13 +69,13 @@ object
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1547, in <module>
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1540, in <module>
     results = run_test_scenarios()
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1507, in run_test_scenarios
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1500, in run_test_scenarios
     response = multi_agent_workflow.run(request_with_date)
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1438, in run
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1431, in run
     response = self.process_order(context)
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1360, in process_order
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test.py", line 1353, in process_order
     quoting_response = self.agents["quoting"].run_sync(
   File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/agent/abstract.py", line 347, in run_sync
     return _utils.get_event_loop().run_until_complete(
