@@ -712,6 +712,10 @@ def calculate_discount(item_name: str, unit_price: float, quantity: float, curre
             - current_date: str
 
     """
+
+    # Debug log, comment if not required
+    print(f"---> Function (calculate_discount): Calculate discount for '{item_name}'")
+
     discount = 0
     if quantity < 100:
         discount = 0.05
@@ -731,9 +735,12 @@ def calculate_discount(item_name: str, unit_price: float, quantity: float, curre
         "current_date": current_date
     }
 
-# >>>>>>>>>>>>>>>>>>>>>>
 def calculate_price(items: list, order_size: str = "medium") -> dict:
     """Calculate pricing for requested items with bulk discounts."""
+
+    # Debug log, comment if not required
+    print(f"---> Function (calculate_price): Calculate price for '{items}'")
+
     total_cost = 0
     item_details = []
     
@@ -747,20 +754,6 @@ def calculate_price(items: list, order_size: str = "medium") -> dict:
         if item_info:
             unit_price = item_info["unit_price"]
             subtotal = quantity * unit_price
-            '''
-            # Apply bulk discounts based on order size and quantity
-            discount_rate = 0
-            if order_size == "large":
-                discount_rate = 0.15 if quantity > 1000 else 0.10
-            elif order_size == "medium":
-                discount_rate = 0.05 if quantity > 500 else 0.03
-            elif quantity > 100:
-                discount_rate = 0.02
-            
-            discount = subtotal * discount_rate
-            final_price = subtotal - discount
-            '''
-
             item_details.append({
                 "item_name": item_name,
                 "quantity": quantity,
@@ -770,7 +763,6 @@ def calculate_price(items: list, order_size: str = "medium") -> dict:
                 #"discount": discount,
                 "final_price": subtotal
             })
-            
             total_cost += final_price
     
     return {
@@ -781,15 +773,14 @@ def calculate_price(items: list, order_size: str = "medium") -> dict:
 
 def generate_quote(customer_request: str, items: list, order_size: str) -> dict:
     """Generate a comprehensive quote for the customer."""
+
+    # Debug log, comment if not required
+    print(f"---> Function (generate_quote): Generate quote for '{items}'")
+
     pricing = calculate_price(items, order_size)
     
     # Create quote explanation
     explanation = f"Thank for {order_size} ordering with Beaver's! "
-    
-    '''
-    if pricing["total_cost"] > 500:
-        explanation += "We've applied bulk discounts to provide you with the best value. "
-    '''
 
     explanation += "Your order includes: "
     for item in pricing["items"]:
@@ -808,9 +799,6 @@ def generate_quote(customer_request: str, items: list, order_size: str) -> dict:
         "order_size": order_size
     }    
 
-# TBD def generate_quote_tool() -> Dict:    
-# >>>>>>>>>>>>>>>>>>>>>>
-
 ########################
 ########################
 ########################
@@ -825,7 +813,7 @@ def generate_quote(customer_request: str, items: list, order_size: str) -> dict:
 print("Loading openai_api_key... ")
 dotenv.load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
-print("Checking OPENAI_API_KEY = ", openai_api_key)
+# print("Checking OPENAI_API_KEY = ", openai_api_key)
 
 # Define tools for the agents
 create_transaction_tool = Tool(
