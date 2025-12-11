@@ -962,8 +962,12 @@ sales_tools = [create_transaction_tool, get_supplier_delivery_date_tool]
 # Define output model for the orchestration agent
 class BeaverOrchetrator(BaseModel):
     classification: Literal["QUERY", "ORDER"]
-
+'''
 class InventoryResponse(BaseModel):
+    answer: str
+    ok_to_proceed: bool
+'''
+class AgentResponse(BaseModel):
     answer: str
     ok_to_proceed: bool
 
@@ -1052,20 +1056,19 @@ inventory_agent = Agent(
                                     - and will call create transaction tool of sales agent via the orchestrator 
                                     - to finally store the data in database
 
-
 							Always be empathetic and helpful to the customer.
 
 							- Output Format:       
 							Return a JSON object using the following Pydantic schema:
 
 							```python
-							class InventoryResponse(BaseModel):
+							class AgentResponse(BaseModel):
 							answer: str
 							ok_to_proceed: bool
 
 							""",
 							tools=inventory_tools,
-							output_type=InventoryResponse
+							output_type=AgentResponse
 						)
 
 # The Quoting agent
@@ -1112,8 +1115,18 @@ quoting_agent = Agent(
 
 						You are not responsible to check stock or create transactions. Focus only on creating an optimized offer. 
 						Always be empathetic and helpful to the customer.
-						""",
-						tools=quoting_tools
+
+						- Output Format:       
+                        Return a JSON object using the following Pydantic schema:
+
+                        ```python
+                        class AgentResponse(BaseModel):
+                        answer: str
+                        ok_to_proceed: bool
+
+                        """,
+                        tools=quoting_tools,
+                        output_type=AgentResponse
 					)
 
 # Define Discount agent
@@ -1138,11 +1151,21 @@ discounting_agent = Agent(
                             4. Finally pass all these calclated values to sales agent via the orchestrator
 						
 						Always be empathetic and helpful to the customer.
+                        
+                        - Tools:
+						- `calculate_discount_tool`: Calculate discount
 
-						- Tools:
-						- `apply_discount_tool`: Estimated delivery date
-						""",
-						tools=discounting_tools
+                        - Output Format:       
+                        Return a JSON object using the following Pydantic schema:
+
+                        ```python
+                        class AgentResponse(BaseModel):
+                        answer: str
+                        ok_to_proceed: bool
+
+                        """,
+                        tools=discounting_tools,
+                        output_type=AgentResponse
 					)
 
 # Define Sales agent
@@ -1181,8 +1204,18 @@ sales_agent = Agent(
 						- Tools:
 						- `get_supplier_delivery_date`: Estimated delivery date
 						- `create_transaction`: Store the sale record
-						""",
-						tools=sales_tools
+						
+                        - Output Format:       
+                        Return a JSON object using the following Pydantic schema:
+
+                        ```python
+                        class AgentResponse(BaseModel):
+                        answer: str
+                        ok_to_proceed: bool
+
+                        """,
+                        tools=sales_tools,
+                        output_type=AgentResponse
 					)
 
 # Define Receipt Agent
@@ -1246,7 +1279,17 @@ receipt_agent = Agent(
 						Thank you for your business with Beaver's !!!
 						
 						Always be empathetic and helpful to the customer.
-						"""
+
+						- Output Format:       
+                        Return a JSON object using the following Pydantic schema:
+
+                        ```python
+                        class AgentResponse(BaseModel):
+                        answer: str
+                        ok_to_proceed: bool
+
+						""",
+						output_type=AgentResponse
 					)
 
 class WorkflowContext(BaseModel):
