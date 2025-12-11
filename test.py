@@ -1432,6 +1432,7 @@ class MultiAgentWorkflow:
         This method orchestrates the agents to handle the request and return a response.
         """
         # Create workflow context
+        print("CHECKPOINT-0.0 ---> ", customer_request)
         context = WorkflowContext(
             request_id=f"REQ_{datetime.now().strftime('%Y%m%d%H%M%S')}",
             original_request=customer_request
@@ -1442,7 +1443,8 @@ class MultiAgentWorkflow:
             customer_request,
             deps=context
         )
-        print(f"---> Orchestration Agent classified request as: {orchestration_response.output.classification}")
+        print(f"CHECKPOINT-0.1 ---> context - ", context)
+        print(f"CHECKPOINT-0.2 ---> Orchestration Agent classified request as: {orchestration_response.output.classification}")
 
         # Step 2: Based on classification, route to appropriate agents
         if orchestration_response.output.classification == "QUERY":
@@ -1456,15 +1458,13 @@ class MultiAgentWorkflow:
 
         return response
 
-
 # Run your test scenarios by writing them here. Make sure to keep track of them.
-
 
 def run_test_scenarios():
     print("Initializing Database...")
     init_database(db_engine)
     try:
-        quote_requests_sample = pd.read_csv("quote_requests_sample.csv")
+        quote_requests_sample = pd.read_csv("quote_requests_sample1.csv")
         quote_requests_sample["request_date"] = pd.to_datetime(
             quote_requests_sample["request_date"], format="%m/%d/%y", errors="coerce"
         )
@@ -1473,7 +1473,7 @@ def run_test_scenarios():
     except Exception as e:
         print(f"FATAL: Error loading test data: {e}")
         return
-
+    '''
     # quote_requests_sample = pd.read_csv("quote_requests_sample.csv")
     quote_requests_sample = pd.read_csv("quote_requests_sample1.csv")
 
@@ -1482,6 +1482,7 @@ def run_test_scenarios():
         quote_requests_sample["request_date"]
     )
     quote_requests_sample = quote_requests_sample.sort_values("request_date")
+    '''
 
     # Get initial state
     initial_date = quote_requests_sample["request_date"].min().strftime("%Y-%m-%d")
