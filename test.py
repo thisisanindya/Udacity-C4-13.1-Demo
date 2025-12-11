@@ -1335,6 +1335,8 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["inventory"] += 1
 
+        print("CHECKPOINT-1 ---> ", inventory_response.output.ok_to_proceed)
+        print("CHECKPOINT-1 ---> ", inventory_response.output.answer)
         if not inventory_response.output.ok_to_proceed:
             # If inventory agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
@@ -1351,6 +1353,13 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["quoting"] += 1
 
+        print("CHECKPOINT-2 ---> ", quoting_response.output.ok_to_proceed)
+        print("CHECKPOINT-2 ---> ", quoting_response.output.answer)
+        if not quoting_response.output.ok_to_proceed:
+            # If quoting agent indicates order cannot proceed, return a message
+            print(f"Order cannot be processed: {quoting_response.output.answer}")
+            return quoting_response.output.answer
+
         # Call discounting agent to to calculate discount
         discount_prompt = f"""
             User Request: {context.original_request}
@@ -1363,8 +1372,13 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["discounting"] += 1
 
-
-        ##########
+        print("CHECKPOINT-3 ---> ", discount_response.output.ok_to_proceed)
+        print("CHECKPOINT-3 ---> ", discount_response.output.answer)
+        if not discount_response.output.ok_to_proceed:
+            # If discounting agent indicates order cannot proceed, return a message
+            print(f"Order cannot be processed: {discount_response.output.answer}")
+            return discount_response.output.answer
+        
 
         # Call sales agent to finalize the order
         sales_prompt = f"""
@@ -1379,7 +1393,13 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["sales"] += 1
 
-        
+        print("CHECKPOINT-4 ---> ", sales_response.output.ok_to_proceed)
+        print("CHECKPOINT-4 ---> ", sales_response.output.answer)
+        if not sales_response.output.ok_to_proceed:
+            # If sales agent indicates order cannot proceed, return a message
+            print(f"Order cannot be processed: {sales_response.output.answer}")
+            return sales_response.output.answer
+
         # Call receipt agent to generate an receipt for the order
         receipt_prompt = f"""
             User Request: {context.original_request}
@@ -1394,10 +1414,17 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["receipt"] += 1
 
+        print("CHECKPOINT-5 ---> ", receipt_response.output.ok_to_proceed)
+        print("CHECKPOINT-5 ---> ", receipt_response.output.answer)
+        if not receipt_response.output.ok_to_proceed:
+            # If receipt agent indicates order cannot proceed, return a message
+            print(f"Order cannot be processed: {receipt_response.output.answer}")
+            return receipt_response.output.answer
+
         # Return the final response from the sales agent
-        return receipt_response.output
+        #return receipt_response.output
         
-        #return sales_response.output
+        return sales_response.output
 
     def run(self, customer_request: str) -> str:
         """
