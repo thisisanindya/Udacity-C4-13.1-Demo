@@ -736,7 +736,17 @@ def calculate_discount(item_name: str, unit_price: float, quantity: float, curre
     }
 
 def calculate_price(items: list, order_size: str = "medium") -> dict:
-    """Calculate pricing for requested items with bulk discounts."""
+    """Calculate pricing for requested items with bulk discounts.
+    Args: 
+        items (list): item list
+        order_size (str): Size of all orders
+
+    Returns:
+        Dict: A dictionary with below keys
+            - 'items' : list of items,
+            - 'total_cost': total cost,
+            - 'order_size': order size
+    """
 
     # Debug log, comment if not required
     print(f"---> Function (calculate_price): Calculate price for '{items}'")
@@ -772,7 +782,20 @@ def calculate_price(items: list, order_size: str = "medium") -> dict:
     }
 
 def generate_quote(customer_request: str, items: list, order_size: str) -> dict:
-    """Generate a comprehensive quote for the customer."""
+    """Generate a comprehensive quote for the customer.
+    
+    Args: 
+        customer_request (str): Request from customer
+        list (list): item list
+        order_size (str): Size of all orders
+
+    Returns:
+        Dict: A dictionary with below keys
+            - 'total_amount': total cost,
+            - 'quote_explanation' : all explanation,
+            - 'items' : list of items,
+            - 'order_size': order size
+    """
 
     # Debug log, comment if not required
     print(f"---> Function (generate_quote): Generate quote for '{items}'")
@@ -918,7 +941,7 @@ generate_quote_tool = Tool(
         Generate a comprehensive quote for the customer
     """,
     function=generate_quote,
-    require_parameter_descriptions=False    
+    require_parameter_descriptions=True
 )
 
 calculate_discount_tool = Tool(
@@ -936,7 +959,7 @@ calculate_discount_tool = Tool(
                 - final_price = original_price - original_price * discount
     """,
     function=calculate_discount,
-    require_parameter_descriptions=False
+    require_parameter_descriptions=True 
 )
 
 # Set up your agents and create an orchestration agent that will manage them.
@@ -1000,7 +1023,7 @@ beaverOrchestrator = Agent(
 							classification: Literal["QUERY", "ORDER"]
 							""",
 							output_type=BeaverOrchetrator
-						)
+                        )
 
 # The Inventory Agent
 inventory_agent = Agent(
@@ -1103,18 +1126,9 @@ quoting_agent = Agent(
 
 						You are not responsible to check stock or create transactions. Focus only on creating an optimized offer. 
 						Always be empathetic and helpful to the customer.
-
-						- Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class AgentResponse(BaseModel):
-                        answer: str
-                        ok_to_proceed: bool
-
                         """,
-                        tools=quoting_tools,
-                        output_type=AgentResponse
+                        tools=quoting_tools
+                        #output_type=AgentResponse
 					)
 
 # Define Discount agent
@@ -1142,18 +1156,9 @@ discounting_agent = Agent(
                         
                         - Tools:
 						- `calculate_discount_tool`: Calculate discount
-
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class AgentResponse(BaseModel):
-                        answer: str
-                        ok_to_proceed: bool
-
                         """,
-                        tools=discounting_tools,
-                        output_type=AgentResponse
+                        tools=discounting_tools
+                        # output_type=AgentResponse
 					)
 
 # Define Sales agent
@@ -1192,18 +1197,9 @@ sales_agent = Agent(
 						- Tools:
 						- `get_supplier_delivery_date`: Estimated delivery date
 						- `create_transaction`: Store the sale record
-						
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class AgentResponse(BaseModel):
-                        answer: str
-                        ok_to_proceed: bool
-
                         """,
-                        tools=sales_tools,
-                        output_type=AgentResponse
+                        tools=sales_tools
+                        #output_type=AgentResponse
 					)
 
 # Define Receipt Agent
@@ -1267,17 +1263,7 @@ receipt_agent = Agent(
 						Thank you for your business with Beaver's !!!
 						
 						Always be empathetic and helpful to the customer.
-
-						- Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class AgentResponse(BaseModel):
-                        answer: str
-                        ok_to_proceed: bool
-
-						""",
-						output_type=AgentResponse
+                        """
 					)
 
 class WorkflowContext(BaseModel):
@@ -1299,8 +1285,8 @@ class MultiAgentWorkflow:
         self.agent_usage_count = {
             "inventory": 0,
             "quoting": 0,
-            "sales": 0,
             "discounting": 0,
+            "sales": 0,
             "receipt": 0,
         }
     
@@ -1328,15 +1314,13 @@ class MultiAgentWorkflow:
     
             User Request: {context.original_request}
         """
-        # Call inventory agent to check stock levels and handle order for stock items
+        # Call inventory agent to check stock levels and handle order for stock items        
         inventory_response = self.agents["inventory"].run_sync(
             inventory_prompt,
             deps=context
         )
         self.agent_usage_count["inventory"] += 1
-
-        print("CHECKPOINT-1 ---> ", inventory_response.output.ok_to_proceed)
-        print("CHECKPOINT-1 ---> ", inventory_response.output.answer)
+        
         if not inventory_response.output.ok_to_proceed:
             # If inventory agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
@@ -1352,7 +1336,7 @@ class MultiAgentWorkflow:
             deps=context
         )
         self.agent_usage_count["quoting"] += 1
-
+        
         print("CHECKPOINT-2 ---> ", quoting_response.output.ok_to_proceed)
         print("CHECKPOINT-2 ---> ", quoting_response.output.answer)
         if not quoting_response.output.ok_to_proceed:
@@ -1371,14 +1355,12 @@ class MultiAgentWorkflow:
             deps=context
         )
         self.agent_usage_count["discounting"] += 1
-
         print("CHECKPOINT-3 ---> ", discount_response.output.ok_to_proceed)
         print("CHECKPOINT-3 ---> ", discount_response.output.answer)
         if not discount_response.output.ok_to_proceed:
             # If discounting agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {discount_response.output.answer}")
             return discount_response.output.answer
-        
 
         # Call sales agent to finalize the order
         sales_prompt = f"""
@@ -1392,7 +1374,6 @@ class MultiAgentWorkflow:
             deps=context
         )
         self.agent_usage_count["sales"] += 1
-
         print("CHECKPOINT-4 ---> ", sales_response.output.ok_to_proceed)
         print("CHECKPOINT-4 ---> ", sales_response.output.answer)
         if not sales_response.output.ok_to_proceed:
@@ -1413,7 +1394,6 @@ class MultiAgentWorkflow:
             deps=context
         )
         self.agent_usage_count["receipt"] += 1
-
         print("CHECKPOINT-5 ---> ", receipt_response.output.ok_to_proceed)
         print("CHECKPOINT-5 ---> ", receipt_response.output.answer)
         if not receipt_response.output.ok_to_proceed:
@@ -1422,9 +1402,7 @@ class MultiAgentWorkflow:
             return receipt_response.output.answer
 
         # Return the final response from the sales agent
-        #return receipt_response.output
-        
-        return sales_response.output
+        return receipt_response.output
 
     def run(self, customer_request: str) -> str:
         """
@@ -1459,7 +1437,6 @@ class MultiAgentWorkflow:
         return response
 
 # Run your test scenarios by writing them here. Make sure to keep track of them.
-
 def run_test_scenarios():
     print("Initializing Database...")
     init_database(db_engine)
