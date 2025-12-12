@@ -684,7 +684,7 @@ def search_quote_history(search_terms: List[str], limit: int = 5) -> List[Dict]:
         result = conn.execute(text(query), params)
         return [dict(r) for r in result.mappings()]
 
-def calculate_discount(item_name: str, unit_price: float, quantity: float, current_date: str) -> Dict:
+def calculate_discount(item_name: str, unit_price: float, quantity: float, current_date: str) -> dict:
     """
     Calculate discount amount based on the quantity requested.
     Below is the calculation logic: 
@@ -704,7 +704,7 @@ def calculate_discount(item_name: str, unit_price: float, quantity: float, curre
         - current_date (str): Current Date in String format.
 
     Returns:
-        Dict: A dictionary with below keys
+        dict: A dictionary with below keys
             - item_name: str
             - unit_price: float
             - quantity: float
@@ -734,7 +734,7 @@ def calculate_discount(item_name: str, unit_price: float, quantity: float, curre
         "final_price": final_price,
         "current_date": current_date
     }
-
+'''
 def calculate_price(items: list, order_size: str = "medium") -> dict:
     """Calculate pricing for requested items with bulk discounts.
     Args: 
@@ -742,7 +742,7 @@ def calculate_price(items: list, order_size: str = "medium") -> dict:
         order_size (str): Size of all orders
 
     Returns:
-        Dict: A dictionary with below keys
+        dict: A dictionary with below keys
             - 'items' : list of items,
             - 'total_cost': total cost,
             - 'order_size': order size
@@ -821,7 +821,7 @@ def generate_quote(customer_request: str, items: list, order_size: str) -> dict:
         "items": pricing["items"],
         "order_size": order_size
     }    
-
+'''
 ########################
 ########################
 ########################
@@ -934,7 +934,7 @@ search_quote_history_tool = Tool(
     function=search_quote_history,
     require_parameter_descriptions=True
 )
-
+'''
 generate_quote_tool = Tool(
     name="generate_quote",
     description="""
@@ -961,12 +961,14 @@ calculate_discount_tool = Tool(
     function=calculate_discount,
     require_parameter_descriptions=True 
 )
+'''
 
 # Set up your agents and create an orchestration agent that will manage them.
 inventory_tools = [get_all_inventory_tool, get_stock_level_tool, get_supplier_delivery_date_tool,
                           create_transaction_tool]
-quoting_tools = [search_quote_history_tool, generate_quote_tool, generate_financial_report_tool]
-discounting_tools = [calculate_discount_tool]
+quoting_tools = [search_quote_history_tool, generate_financial_report_tool]
+# generate_quote_tool, 
+# discounting_tools = [calculate_discount_tool]
 sales_tools = [create_transaction_tool, get_supplier_delivery_date_tool]
 # reporting_tools = [generate_financial_report_tool, get_cash_balance_tool, search_quote_history_tool]
 
@@ -1049,7 +1051,9 @@ inventory_agent = Agent(
 							- If stock is insufficient, do the following steps:
 							1. Use `create_transaction` to initiate a re-stocking of the order
 							2. Use `get_supplier_delivery_date` to find when the item will be available
-							3. Response should inform the next agent that the material **has been reordered**
+							3. Response should inform the next agent that the material - has been reordered 
+                            4. Populate the field `answer`with the above response and `ok_to_proceed` with 
+                               yes of the return JSON object as mentioned below. 
 
 							- Expected Output:
 							- Check if the stock is sufficient
@@ -1121,7 +1125,6 @@ quoting_agent = Agent(
 
 						- Tools:
 						- `search_quote_history_tool`: Retrieve previous similar offers for reference.
-                        - `generate_quote_tool`: To generate quote
 						- `generate_financial_report_tool`: Analyze pricing and sales trends.
 
 						You are not responsible to check stock or create transactions. Focus only on creating an optimized offer. 
@@ -1130,7 +1133,8 @@ quoting_agent = Agent(
                         tools=quoting_tools
                         #output_type=AgentResponse
 					)
-
+                    #- `generate_quote_tool`: To generate quote
+'''
 # Define Discount agent
 discounting_agent = Agent(
 						model="openai:gpt-3.5-turbo",
@@ -1160,7 +1164,7 @@ discounting_agent = Agent(
                         tools=discounting_tools
                         # output_type=AgentResponse
 					)
-
+'''
 # Define Sales agent
 sales_agent = Agent(
 						model="openai:gpt-3.5-turbo",
@@ -1277,7 +1281,7 @@ class MultiAgentWorkflow:
             "orchestrator": beaverOrchestrator,
             "inventory": inventory_agent,
             "quoting": quoting_agent,
-            "discounting": discounting_agent,
+            #"discounting": discounting_agent,
             "sales": sales_agent,
             "receipt":  receipt_agent, 
         }
@@ -1285,7 +1289,7 @@ class MultiAgentWorkflow:
         self.agent_usage_count = {
             "inventory": 0,
             "quoting": 0,
-            "discounting": 0,
+            #"discounting": 0,
             "sales": 0,
             "receipt": 0,
         }
@@ -1321,6 +1325,9 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["inventory"] += 1
         
+        print(">>>>>>>>>> inventory_response = ", inventory_response.output.answer)
+        print(">>>>>>>>>> inventory_response = ", inventory_response.output.ok_to_proceed)
+
         if not inventory_response.output.ok_to_proceed:
             # If inventory agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
@@ -1337,13 +1344,15 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["quoting"] += 1
         
-        print("CHECKPOINT-2 ---> ", quoting_response.output.ok_to_proceed)
-        print("CHECKPOINT-2 ---> ", quoting_response.output.answer)
-        if not quoting_response.output.ok_to_proceed:
+        print("==========>>>>>> quote-> ", quoting_response, type(quoting_response))
+        #print("CHECKPOINT-2 ---> ", quoting_response.output.ok_to_proceed)
+        #print("CHECKPOINT-2 ---> ", quoting_response.output.answer)
+        if not quoting_response: #.output.ok_to_proceed:
             # If quoting agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {quoting_response.output.answer}")
             return quoting_response.output.answer
-
+        
+        '''
         # Call discounting agent to to calculate discount
         discount_prompt = f"""
             User Request: {context.original_request}
@@ -1361,44 +1370,46 @@ class MultiAgentWorkflow:
             # If discounting agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {discount_response.output.answer}")
             return discount_response.output.answer
+        '''
 
         # Call sales agent to finalize the order
         sales_prompt = f"""
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
-            Quoting Context: {quoting_response.output.answer}
-            Discount Context: {discount_response.output.answer}
+            Quoting Context: {quoting_response.output} 
         """
+        #.answer}
+
+        # Discount Context: {discount_response.output.answer}
         sales_response = self.agents["sales"].run_sync(
             sales_prompt,
             deps=context
         )
         self.agent_usage_count["sales"] += 1
-        print("CHECKPOINT-4 ---> ", sales_response.output.ok_to_proceed)
-        print("CHECKPOINT-4 ---> ", sales_response.output.answer)
-        if not sales_response.output.ok_to_proceed:
+        print("CHECKPOINT-4 ---> ", sales_response.output)
+        
+        if not sales_response.output:
             # If sales agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {sales_response.output.answer}")
-            return sales_response.output.answer
+            print(f"Order cannot be processed: {sales_response.output}")
+            return sales_response.output
 
         # Call receipt agent to generate an receipt for the order
         receipt_prompt = f"""
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
-            Quoting Context: {quoting_response.output.answer}
-            Discount Context: {discount_response.output.answer}
-            Sales Context: {sales_response.output.response}
+            Quoting Context: {quoting_response.output}
+            Sales Context: {sales_response.output}
         """
+        # Discount Context: {discount_response.output.answer}
         receipt_response = receipt_agent.run_sync(
             receipt_prompt,
             deps=context
         )
         self.agent_usage_count["receipt"] += 1
-        print("CHECKPOINT-5 ---> ", receipt_response.output.ok_to_proceed)
-        print("CHECKPOINT-5 ---> ", receipt_response.output.answer)
-        if not receipt_response.output.ok_to_proceed:
+        print("CHECKPOINT-5 ---> ", receipt_response.output)
+        if not receipt_response.output:
             # If receipt agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {receipt_response.output.answer}")
+            print(f"Order cannot be processed: {receipt_response.output}")
             return receipt_response.output.answer
 
         # Return the final response from the sales agent
