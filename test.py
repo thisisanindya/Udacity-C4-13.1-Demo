@@ -263,7 +263,6 @@ def init_database(db_engine: Engine, seed: int = 137) -> Engine:
         print(f"Error initializing database: {e}")
         raise
 
-
 def create_transaction(
         item_name: str,
         transaction_type: str,
@@ -302,7 +301,7 @@ def create_transaction(
             raise ValueError("Transaction type must be 'stock_orders' or 'sales'")
 
         ################
-        # Calculate discount based on the quantityof items 
+        # Calculate discount based on the quantity of items 
         print("---> Check for quantity = ", quantity)
         discount = 0
         if quantity < 100:
@@ -338,7 +337,6 @@ def create_transaction(
     except Exception as e:
         print(f"Error creating transaction: {e}")
         raise
-
 
 def get_all_inventory(as_of_date: str) -> Dict[str, int]:
     """
@@ -684,144 +682,6 @@ def search_quote_history(search_terms: List[str], limit: int = 5) -> List[Dict]:
         result = conn.execute(text(query), params)
         return [dict(r) for r in result.mappings()]
 
-def calculate_discount(item_name: str, unit_price: float, quantity: float, current_date: str) -> dict:
-    """
-    Calculate discount amount based on the quantity requested.
-    Below is the calculation logic: 
-        1. Item details - item_name unit_price, and quantity for the current date
-        2. Use below simple logic to calculate discount, based on the quantity: 
-            - if quantity < 100, discount = 5%
-            - if quantity < 500, discount = 10%
-            - if quantity < 1000, discount = 15%
-        3. formula for discounted price will be as follows: 
-            - original_price = quantity * unit_price
-            - final_price = original_price - original_price * discount
-
-    Args:
-        - item_name (str): Name of the item.
-        - unit_price (float): Unit price of the item.
-        - quantity (float): Quantity requested through the request.
-        - current_date (str): Current Date in String format.
-
-    Returns:
-        dict: A dictionary with below keys
-            - item_name: str
-            - unit_price: float
-            - quantity: float
-            - final_price: float
-            - current_date: str
-
-    """
-
-    # Debug log, comment if not required
-    print(f"---> Function (calculate_discount): Calculate discount for '{item_name}'")
-
-    discount = 0
-    if quantity < 100:
-        discount = 0.05
-    elif quantity < 500: 
-        discount = 0.10
-    elif quantity < 1000: 
-        discount = 0.15
-
-    original_price = quantity * unit_price
-    final_price = original_price - original_price * discount
-    
-    return{
-        "item_name": item_name, 
-        "unit_price": unit_price,
-        "quantity": quantity,
-        "final_price": final_price,
-        "current_date": current_date
-    }
-'''
-def calculate_price(items: list, order_size: str = "medium") -> dict:
-    """Calculate pricing for requested items with bulk discounts.
-    Args: 
-        items (list): item list
-        order_size (str): Size of all orders
-
-    Returns:
-        dict: A dictionary with below keys
-            - 'items' : list of items,
-            - 'total_cost': total cost,
-            - 'order_size': order size
-    """
-
-    # Debug log, comment if not required
-    print(f"---> Function (calculate_price): Calculate price for '{items}'")
-
-    total_cost = 0
-    item_details = []
-    
-    for item in items:
-        item_name = item["item_name"]
-        quantity = item["quantity"]
-        
-        # Get the item in paper_supplies
-        item_info = next((p for p in paper_supplies if p["item_name"] == item_name), None)
-        
-        if item_info:
-            unit_price = item_info["unit_price"]
-            subtotal = quantity * unit_price
-            item_details.append({
-                "item_name": item_name,
-                "quantity": quantity,
-                "unit_price": unit_price,
-                #"subtotal": subtotal,
-                #"discount_rate": discount_rate,
-                #"discount": discount,
-                "final_price": subtotal
-            })
-            total_cost += final_price
-    
-    return {
-        "items": item_details,
-        "total_cost": total_cost,
-        "order_size": order_size
-    }
-
-def generate_quote(customer_request: str, items: list, order_size: str) -> dict:
-    """Generate a comprehensive quote for the customer.
-    
-    Args: 
-        customer_request (str): Request from customer
-        list (list): item list
-        order_size (str): Size of all orders
-
-    Returns:
-        Dict: A dictionary with below keys
-            - 'total_amount': total cost,
-            - 'quote_explanation' : all explanation,
-            - 'items' : list of items,
-            - 'order_size': order size
-    """
-
-    # Debug log, comment if not required
-    print(f"---> Function (generate_quote): Generate quote for '{items}'")
-
-    pricing = calculate_price(items, order_size)
-    
-    # Create quote explanation
-    explanation = f"Thank for {order_size} ordering with Beaver's! "
-
-    explanation += "Your order includes: "
-    for item in pricing["items"]:
-        explanation += f"{item['quantity']} {item['item_name']} at ${item['unit_price']:.2f} each"
-        if item['discount_rate'] > 0:
-            explanation += f" (with {item['discount_rate']*100:.0f}% bulk discount)"
-        explanation += ", "
-    
-    explanation = explanation.rstrip(", ") + ". "
-    explanation += f"Total cost: ${pricing['total_cost']:.2f}"
-    
-    return {
-        "total_amount": pricing["total_cost"],
-        "quote_explanation": explanation,
-        "items": pricing["items"],
-        "order_size": order_size
-    }    
-'''
 ########################
 ########################
 ########################
@@ -934,34 +794,6 @@ search_quote_history_tool = Tool(
     function=search_quote_history,
     require_parameter_descriptions=True
 )
-'''
-generate_quote_tool = Tool(
-    name="generate_quote",
-    description="""
-        Generate a comprehensive quote for the customer
-    """,
-    function=generate_quote,
-    require_parameter_descriptions=True
-)
-
-calculate_discount_tool = Tool(
-    name="calculate_discount",
-    description="""
-        Calculate the discount amount based on the quantity requested.
-        Below is the calculation logic:
-            1. Item details - item_name unit_price, and quantity for the current date
-            2. Use below simple logic to calculate discount, based on the quantity:
-                - if quantity < 100, discount = 5%
-                - if quantity < 500, discount = 10%
-                - if quantity < 1000, discount = 15%
-            3. formula for discounted price will be as follows:
-                - original_price = quantity * unit_price
-                - final_price = original_price - original_price * discount
-    """,
-    function=calculate_discount,
-    require_parameter_descriptions=True 
-)
-'''
 
 # Set up your agents and create an orchestration agent that will manage them.
 inventory_tools = [get_all_inventory_tool, get_stock_level_tool, get_supplier_delivery_date_tool,
@@ -975,14 +807,22 @@ sales_tools = [create_transaction_tool, get_supplier_delivery_date_tool]
 # Define output model for the orchestration agent
 class BeaverOrchetrator(BaseModel):
     classification: Literal["QUERY", "ORDER"]
-'''
-class InventoryResponse(BaseModel):
+
+class InventoryAgentResponse(BaseModel):
     answer: str
     ok_to_proceed: bool
-'''
-class AgentResponse(BaseModel):
+
+class QuotingAgentResponse(BaseModel):
     answer: str
-    ok_to_proceed: bool
+    items: list
+    total_price: float
+    ok_to_proceed: bool   
+
+class SalesAgentResponse(BaseModel):
+    answer: str
+    items: list
+    total_price: float
+    ok_to_proceed: bool      
 
 # The Orchestrator
 beaverOrchestrator = Agent(
@@ -1067,8 +907,8 @@ inventory_agent = Agent(
 							- `get_supplier_delivery_date_tool`: Estimated delivery date
 							- `create_transaction_tool`: Place order for restocking
                                 - note 
-                                    - this will call apply discount tool of discount agent via the orchestrator
-                                    - and will call create transaction tool of sales agent via the orchestrator 
+                                    - this will call apply volume level discount
+                                    - and will call create_transaction_tool of sales agent via the orchestrator 
                                     - to finally store the data in database
 
 							Always be empathetic and helpful to the customer.
@@ -1083,7 +923,7 @@ inventory_agent = Agent(
 
 							""",
 							tools=inventory_tools,
-							output_type=AgentResponse
+							output_type=InventoryAgentResponse
 						)
 
 # The Quoting agent
@@ -1120,8 +960,14 @@ quoting_agent = Agent(
 
 						5. Prepare the output
 						- Provide a clear price per unit and total price.
-                        - Generate quote using `generate_quote_tool`
+                        - Generate quote and pass it to `create_transaction_tool` to persist in database
 						- Include any relevant remarks (e.g., “discount applied due to high volume”).
+                        - Populate the fields 
+                            - `answer` with expected time of the items
+                            - `items` with list of items
+                            - `total_price` with the total price of the item
+                            - `ok_to_proceed` with yes or no
+                          of the return JSON object as mentioned below
 
 						- Tools:
 						- `search_quote_history_tool`: Retrieve previous similar offers for reference.
@@ -1129,42 +975,22 @@ quoting_agent = Agent(
 
 						You are not responsible to check stock or create transactions. Focus only on creating an optimized offer. 
 						Always be empathetic and helpful to the customer.
-                        """,
-                        tools=quoting_tools
-                        #output_type=AgentResponse
-					)
-                    #- `generate_quote_tool`: To generate quote
-'''
-# Define Discount agent
-discounting_agent = Agent(
-						model="openai:gpt-3.5-turbo",
-						name="Discount Agent",
-						model_settings=ModelSettings(temperature=0.2),
-						system_prompt="""
-						You are the Sales Agent for the Beaver's Choice Paper supply company.
-						The main res[ponsibility is to complete the customer's order based 
-						on the quote provided by the Quote Agent and current inventory status.
-
-						- Always follow below instructions for discount calculation: 
-                            1. Carefully note item details, unit_price, and quantity requested
-                            2. Use a simple logic to calculate discount, based on the quantity: 
-                                - if quantity < 100, discount = 5%
-                                - if quantity < 500, discount = 10%
-                                - if quantity < 1000, discount = 15%
-                            3. formula for discounted price will be as follows: 
-                                - original_price = quantity * unit_price
-                                - final_price = original_price - original_price * discount
-                            4. Finally pass all these calclated values to sales agent via the orchestrator
-						
-						Always be empathetic and helpful to the customer.
                         
-                        - Tools:
-						- `calculate_discount_tool`: Calculate discount
+                        - Output Format:       
+                        Return a JSON object using the following Pydantic schema:
+
+                        ```python
+                        class QuotingResponse(BaseModel):
+                        answer: str
+                        items: list
+                        total_price: float
+                        ok_to_proceed: bool  
+                        
                         """,
-                        tools=discounting_tools
-                        # output_type=AgentResponse
+                        tools=quoting_tools,
+                        output_type=QuotingAgentResponse
 					)
-'''
+
 # Define Sales agent
 sales_agent = Agent(
 						model="openai:gpt-3.5-turbo",
@@ -1195,15 +1021,33 @@ sales_agent = Agent(
 						5. Please note
 							- No need generate new quote – this ia done Quote Agent.
 							- This role isto verify feasibility and execute the transaction.
-
-						Always be empathetic and helpful to the customer.
+                        
+                        6. Populate the fields 
+                            - `answer` with expected time of the items
+                            - `items` with list of items
+                            - `total_price` with the total price of the item
+                            - `ok_to_proceed` with yes or no
+                          of the return JSON object as mentioned below
+						
+                        Always be empathetic and helpful to the customer.
 
 						- Tools:
 						- `get_supplier_delivery_date`: Estimated delivery date
 						- `create_transaction`: Store the sale record
+
+                        - Output Format:       
+                        Return a JSON object using the following Pydantic schema:
+
+                        ```python
+                        class SalesResponse(BaseModel):
+                        answer: str
+                        items: list
+                        total_price: float
+                        ok_to_proceed: bool  
+                        
                         """,
-                        tools=sales_tools
-                        #output_type=AgentResponse
+                        tools=sales_tools,
+                        output_type=SalesAgentResponse
 					)
 
 # Define Receipt Agent
@@ -1281,7 +1125,6 @@ class MultiAgentWorkflow:
             "orchestrator": beaverOrchestrator,
             "inventory": inventory_agent,
             "quoting": quoting_agent,
-            #"discounting": discounting_agent,
             "sales": sales_agent,
             "receipt":  receipt_agent, 
         }
@@ -1289,7 +1132,6 @@ class MultiAgentWorkflow:
         self.agent_usage_count = {
             "inventory": 0,
             "quoting": 0,
-            #"discounting": 0,
             "sales": 0,
             "receipt": 0,
         }
@@ -1344,61 +1186,44 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["quoting"] += 1
         
-        print("==========>>>>>> quote-> ", quoting_response, type(quoting_response))
-        #print("CHECKPOINT-2 ---> ", quoting_response.output.ok_to_proceed)
-        #print("CHECKPOINT-2 ---> ", quoting_response.output.answer)
-        if not quoting_response: #.output.ok_to_proceed:
+        print("==========>>>>>> quote-> ", quoting_response.output.answer)
+        print("==========>>>>>> quote-> ", quoting_response.output.items)
+        print("==========>>>>>> quote-> ", quoting_response.output.total_cost)
+        print("==========>>>>>> quote-> ", quoting_response.output.ok_to_proceed)
+        if not quoting_response.output.ok_to_proceed:
             # If quoting agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {quoting_response.output.answer}")
+            print(f"Order cannot be processed: {inventory_response.output.answer}")
             return quoting_response.output.answer
-        
-        '''
-        # Call discounting agent to to calculate discount
-        discount_prompt = f"""
-            User Request: {context.original_request}
-            Inventory Context: {inventory_response.output.answer}
-            Quoting Context: {quoting_response.output.answer}
-        """
-        discount_response = self.agents["discounting"].run_sync(
-            discount_prompt,
-            deps=context
-        )
-        self.agent_usage_count["discounting"] += 1
-        print("CHECKPOINT-3 ---> ", discount_response.output.ok_to_proceed)
-        print("CHECKPOINT-3 ---> ", discount_response.output.answer)
-        if not discount_response.output.ok_to_proceed:
-            # If discounting agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {discount_response.output.answer}")
-            return discount_response.output.answer
-        '''
 
         # Call sales agent to finalize the order
         sales_prompt = f"""
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
-            Quoting Context: {quoting_response.output} 
+            Quoting Context: {quoting_response.output.answer} 
         """
-        #.answer}
 
-        # Discount Context: {discount_response.output.answer}
         sales_response = self.agents["sales"].run_sync(
             sales_prompt,
             deps=context
         )
         self.agent_usage_count["sales"] += 1
-        print("CHECKPOINT-4 ---> ", sales_response.output)
         
-        if not sales_response.output:
+        print("CHECKPOINT-4 ---> ", sales_response.output)
+        print("==========>>>>>> quote-> ", sales_response.output.answer)
+        print("==========>>>>>> quote-> ", sales_response.output.items)
+        print("==========>>>>>> quote-> ", sales_response.output.total_cost)
+        print("==========>>>>>> quote-> ", sales_response.output.ok_to_proceed)
+        if not sales_response.output.ok_to_proceed:
             # If sales agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {sales_response.output}")
+            print(f"Order cannot be processed: {inventory_response.output.answer}")
             return sales_response.output
 
         # Call receipt agent to generate an receipt for the order
         receipt_prompt = f"""
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
-            Quoting Context: {quoting_response.output}
-            Sales Context: {sales_response.output}
+            Quoting Context: {quoting_response.output.answer}
+            Sales Context: {sales_response.output.answer}
         """
         # Discount Context: {discount_response.output.answer}
         receipt_response = receipt_agent.run_sync(
@@ -1407,9 +1232,9 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["receipt"] += 1
         print("CHECKPOINT-5 ---> ", receipt_response.output)
-        if not receipt_response.output:
+        if not receipt_response.output.ok_to_proceed:
             # If receipt agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {receipt_response.output}")
+            print(f"Order cannot be processed: {inventory_response.output.answer}")
             return receipt_response.output.answer
 
         # Return the final response from the sales agent
