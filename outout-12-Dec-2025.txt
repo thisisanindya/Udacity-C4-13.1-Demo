@@ -34,106 +34,164 @@ CHECKPOINT-0.0 --->  I would like to request the following paper supplies for th
 - 100 sheets of colored paper (assorted colors)
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251212182524' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251213070149' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
+CHECKPOINT-0.2 ---> Orchestration Agent classified request as: QUERY
+---> Function (get_all_inventory): Get inventory data as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+---> Function (generate_financial_report): Get financial report as of '2025-04-01'
+---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-01'
+Response: answer='Current stock levels for your requested items are as follows:\n\n- A4 glossy paper: 587 sheets available. Delivery can be made by April 5, 2025.\n- Heavy cardstock (white): 595 sheets available. Delivery can be made by April 2, 2025.\n- Colored paper (assorted colors): 788 sheets available. Delivery can be made by April 2, 2025.\n\nAll requested items can be delivered before your required date of April 15, 2025.' ok_to_proceed=True
+Updated Cash: $45059.70
+Updated Inventory: $4940.30
+
+<--- Request 2 --->
+Context: hotel manager organizing parade
+Request Date: 2025-04-03
+Cash Balance: $45059.70
+Inventory Value: $4940.30
+CHECKPOINT-0.0 --->  I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251213070158' original_request='I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (get_stock_level): Get stock for 'A4 glossy paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'colorful poster paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'streamers' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'balloons' as of '2025-04-03'
 ---> Check for quantity =  200
 ---> medium quantity
+---> Check for quantity =  300
 ---> discounted price =  0.0
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
----> Function (get_stock_level): Get stock for 'heavy cardstock (white)' as of '2025-04-01'
----> Check for quantity =  100
 ---> medium quantity
+---> Check for quantity =  500
+---> large quantity
 ---> discounted price =  0.0
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
----> Function (get_stock_level): Get stock for 'colored paper (assorted colors)' as of '2025-04-01'
----> Check for quantity =  100
----> medium quantity
 ---> discounted price =  0.0
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
->>>>>>>>>> inventory_response =  The requested paper supplies have been reordered and are expected to be delivered on April 5, 2025. The heavy cardstock (white) and colored paper (assorted colors) will be available for delivery on April 2, 2025.
->>>>>>>>>> inventory_response =  True
-Traceback (most recent call last):
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 629, in _process_response
-    response = self._validate_completion(response)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 598, in _validate_completion
-    return chat.ChatCompletion.model_validate(response.model_dump())
-  File "/opt/venv/lib/python3.10/site-packages/pydantic/main.py", line 716, in model_validate
-    return cls.__pydantic_validator__.validate_python(
-pydantic_core._pydantic_core.ValidationError: 4 validation errors for ChatCompletion
-id
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/string_type
-choices
-  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/list_type
-model
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/string_type
-object
-  Input should be 'chat.completion' [type=literal_error, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-03'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-03'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-03'
+>>>>>>>>>> inventory_response.answer =  The materials have been reordered. The expected delivery date for the colorful poster paper, streamers, and balloons is April 7, 2025. However, since you requested delivery by April 15, 2025, your order will not be fulfilled immediately. Thank you for your understanding!
+>>>>>>>>>> inventory_response.ok_to_proceed =  False
+Order cannot be processed: The materials have been reordered. The expected delivery date for the colorful poster paper, streamers, and balloons is April 7, 2025. However, since you requested delivery by April 15, 2025, your order will not be fulfilled immediately. Thank you for your understanding!
+---> Function (generate_financial_report): Get financial report as of '2025-04-03'
+---> Function (get_cash_balance): Get cash balance as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-03'
+---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-03'
+Response: The materials have been reordered. The expected delivery date for the colorful poster paper, streamers, and balloons is April 7, 2025. However, since you requested delivery by April 15, 2025, your order will not be fulfilled immediately. Thank you for your understanding!
+Updated Cash: $45059.70
+Updated Inventory: $4940.30
 
-The above exception was the direct cause of the following exception:
+<--- Request 3 --->
+Context: school board resouorce manager organizing conference
+Request Date: 2025-04-04
+Cash Balance: $45059.70
+Inventory Value: $4940.30
+CHECKPOINT-0.0 --->  I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251213070213' original_request='I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)'
+CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'printer paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'A3 paper' as of '2025-04-04'
+---> Check for quantity =  500
+---> large quantity
+---> discounted price =  0.0
+---> Check for quantity =  10000
+---> discounted price =  0.0
+---> Check for quantity =  5000
+---> discounted price =  0.0
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-04'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-04'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-04'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-04'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-04'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-04'
+>>>>>>>>>> inventory_response.answer =  The order for 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper has been placed. The expected delivery dates are as follows: A4 paper and A3 paper will be delivered by April 11, 2025, and printer paper will be delivered by April 8, 2025. Please note that while the printer paper will arrive before your conference, the A4 and A3 paper will arrive just a few days before. Thank you for your understanding!
+>>>>>>>>>> inventory_response.ok_to_proceed =  False
+Order cannot be processed: The order for 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper has been placed. The expected delivery dates are as follows: A4 paper and A3 paper will be delivered by April 11, 2025, and printer paper will be delivered by April 8, 2025. Please note that while the printer paper will arrive before your conference, the A4 and A3 paper will arrive just a few days before. Thank you for your understanding!
+---> Function (generate_financial_report): Get financial report as of '2025-04-04'
+---> Function (get_cash_balance): Get cash balance as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-04'
+Response: The order for 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper has been placed. The expected delivery dates are as follows: A4 paper and A3 paper will be delivered by April 11, 2025, and printer paper will be delivered by April 8, 2025. Please note that while the printer paper will arrive before your conference, the A4 and A3 paper will arrive just a few days before. Thank you for your understanding!
+Updated Cash: $45059.70
+Updated Inventory: $5440.30
+---> Function (generate_financial_report): Get financial report as of '2025-04-04'
+---> Function (get_cash_balance): Get cash balance as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-04'
+---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-04'
 
-Traceback (most recent call last):
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1376, in <module>
-    results = run_test_scenarios()
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1336, in run_test_scenarios
-    response = multi_agent_workflow.run(request_with_date)
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1269, in run
-    response = self.process_order(context)
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1183, in process_order
-    quoting_response = self.agents["quoting"].run_sync(
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/agent/abstract.py", line 372, in run_sync
-    return _utils.get_event_loop().run_until_complete(
-  File "/usr/local/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
-    return future.result()
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/agent/abstract.py", line 251, in run
-    async with self.iter(
-  File "/usr/local/lib/python3.10/contextlib.py", line 217, in __aexit__
-    await self.gen.athrow(typ, value, traceback)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/agent/__init__.py", line 658, in iter
-    async with graph.iter(
-  File "/usr/local/lib/python3.10/contextlib.py", line 217, in __aexit__
-    await self.gen.athrow(typ, value, traceback)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_graph/beta/graph.py", line 270, in iter
-    async with GraphRun[StateT, DepsT, OutputT](
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_graph/beta/graph.py", line 423, in __aexit__
-    await self._async_exit_stack.__aexit__(exc_type, exc_val, exc_tb)
-  File "/usr/local/lib/python3.10/contextlib.py", line 714, in __aexit__
-    raise exc_details[1]
-  File "/usr/local/lib/python3.10/contextlib.py", line 695, in __aexit__
-    cb_suppress = cb(*exc_details)
-  File "/usr/local/lib/python3.10/contextlib.py", line 153, in __exit__
-    self.gen.throw(typ, value, traceback)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_graph/beta/graph.py", line 981, in _unwrap_exception_groups
-    raise exception
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_graph/beta/graph.py", line 750, in _run_tracked_task
-    result = await self._run_task(t_)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_graph/beta/graph.py", line 782, in _run_task
-    output = await node.call(step_context)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_graph/beta/step.py", line 253, in _call_node
-    return await node.run(GraphRunContext(state=ctx.state, deps=ctx.deps))
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/_agent_graph.py", line 445, in run
-    return await self._make_request(ctx)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/_agent_graph.py", line 487, in _make_request
-    model_response = await ctx.deps.model.request(message_history, model_settings, model_request_parameters)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 477, in request
-    model_response = self._process_response(response)
-  File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 631, in _process_response
-    raise UnexpectedModelBehavior(f'Invalid response from {self.system} chat completions endpoint: {e}') from e
-pydantic_ai.exceptions.UnexpectedModelBehavior: Invalid response from openai chat completions endpoint: 4 validation errors for ChatCompletion
-id
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/string_type
-choices
-  Input should be a valid list [type=list_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/list_type
-model
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/string_type
-object
-  Input should be 'chat.completion' [type=literal_error, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.12/v/literal_error
+<--- FINAL FINANCIAL REPORT --->
+Final Cash: $45059.70
+Final Inventory: $5440.30
+
+<--- Agent Usage Summary --->
+Inventory Agent: 3 times
+Quoting Agent: 0 times
+Sales Agent: 0 times
+Receipt Agent: 0 times
 project student$ 
