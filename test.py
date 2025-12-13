@@ -822,13 +822,17 @@ class SalesAgentResponse(BaseModel):
     answer: str
     items: list
     total_price: float
-    ok_to_proceed: bool      
+    ok_to_proceed: bool    
+
+class ReceiptAgentResponse(BaseModel):
+    answer: str
+    ok_to_proceed: bool  
 
 # The Orchestrator
 beaverOrchestrator = Agent(
-							model="openai:gpt-4o",
-							# config={"final_llm_call_on_limit": True},
-							name="Beaver Orchestrator Agent",
+							#model="openai:gpt-4o",
+                            model="openai:gpt-4o-mini",
+							name="BeaverOrchestratorAgent",
 							model_settings=ModelSettings(temperature=0.0),
 							system_prompt="""
 							You are the Orcheatrstor for the Beaver's Choice Paper supply company.
@@ -854,23 +858,23 @@ beaverOrchestrator = Agent(
                                and pass all the output to quote agent - item name, quantity, price, date.
                             2. Call {quote_agent} - check quote history and generate quote for item, quantity 
                                and price and pass all the update data to discount agent. 
-                            3. Call {discount_agent} - apply discount on the item based on quantitya 
-                               and pass item, quantity, discounted price to the sales agent
-                            4. Call {sales_agent} - create transaction based on the transaction type
+                            3. Call {sales_agent} - create transaction based on the transaction type
                                for the item, quantity, price, discounted price for that date. 
+                            4. Call {receipt_agent} - to generate a summary receipt. 
 
 							- Return Format: A JSON object using the following Pydantic schema:
 							```python
 							class BeaverOrchetrator(BaseModel):
-							classification: Literal["QUERY", "ORDER"]
+							    classification: Literal["QUERY", "ORDER"]
 							""",
 							output_type=BeaverOrchetrator
                         )
 
 # The Inventory Agent
 inventory_agent = Agent(
-							model="openai:gpt-3.5-turbo",
-							name="Inventory Agent",
+							#model="openai:gpt-3.5-turbo",
+                            model="openai:gpt-4o-mini",
+							name="InventoryAgent",
 							model_settings=ModelSettings(temperature=0.1),
 							system_prompt="""
 							You are the Inventory Agent for the Beaver's Choice Paper supply company.
@@ -918,8 +922,8 @@ inventory_agent = Agent(
 
 							```python
 							class AgentResponse(BaseModel):
-							answer: str
-							ok_to_proceed: bool
+                                answer: str
+                                ok_to_proceed: bool
 
 							""",
 							tools=inventory_tools,
@@ -928,8 +932,9 @@ inventory_agent = Agent(
 
 # The Quoting agent
 quoting_agent = Agent(
-						model="openai:gpt-4o",
-						name="Quoting Agent",
+						#model="openai:gpt-4o",
+                        model="openai:gpt-4o-mini",
+						name="QuotingAgent",
 						model_settings=ModelSettings(temperature=0.3),
 						system_prompt="""
 						You are the Quote for the Beaver's Choice Paper supply company. 
@@ -963,7 +968,7 @@ quoting_agent = Agent(
                         - Generate quote and pass it to `create_transaction_tool` to persist in database
 						- Include any relevant remarks (e.g., “discount applied due to high volume”).
                         - Populate the fields 
-                            - `answer` with expected time of the items
+                            - `answer` with expected time of delivery the items
                             - `items` with list of items
                             - `total_price` with the total price of the item
                             - `ok_to_proceed` with yes or no
@@ -981,10 +986,10 @@ quoting_agent = Agent(
 
                         ```python
                         class QuotingResponse(BaseModel):
-                        answer: str
-                        items: list
-                        total_price: float
-                        ok_to_proceed: bool  
+                            answer: str
+                            items: list
+                            total_price: float
+                            ok_to_proceed: bool  
                         
                         """,
                         tools=quoting_tools,
@@ -993,8 +998,9 @@ quoting_agent = Agent(
 
 # Define Sales agent
 sales_agent = Agent(
-						model="openai:gpt-3.5-turbo",
-						name="Sales Agent",
+						# model="openai:gpt-3.5-turbo",
+                        model="openai:gpt-4o-mini",
+						name="SalesAgent",
 						model_settings=ModelSettings(temperature=0.2),
 						system_prompt="""
 						You are the Sales Agent for the Beaver's Choice Paper supply company.
@@ -1023,7 +1029,7 @@ sales_agent = Agent(
 							- This role isto verify feasibility and execute the transaction.
                         
                         6. Populate the fields 
-                            - `answer` with expected time of the items
+                            - `answer` with expected time of delivery the items
                             - `items` with list of items
                             - `total_price` with the total price of the item
                             - `ok_to_proceed` with yes or no
@@ -1040,10 +1046,10 @@ sales_agent = Agent(
 
                         ```python
                         class SalesResponse(BaseModel):
-                        answer: str
-                        items: list
-                        total_price: float
-                        ok_to_proceed: bool  
+                            answer: str
+                            items: list
+                            total_price: float
+                            ok_to_proceed: bool  
                         
                         """,
                         tools=sales_tools,
@@ -1054,8 +1060,9 @@ sales_agent = Agent(
 # Note: Main idea is to Generate a short summary of **customer Receipt** for finalized order
 # This can be enhanced later with proper customer details like name, address, email etc. 
 receipt_agent = Agent(
-						model="openai:gpt-4o",
-						name="Receipt Agent",
+						# model="openai:gpt-4o",
+                        model="openai:gpt-4o-mini",
+						name="ReceiptAgent",
 						model_settings=ModelSettings(
 						temperature=0.3),
 						system_prompt="""    
@@ -1074,12 +1081,12 @@ receipt_agent = Agent(
 						- The receipt contains the following:
 						- Follow a simple ASCII format. 
 							- Receipt No: format it as RCPT-2025-MM-DD 
-							- Receipt date- use present date
+							- Receipt Date- use present date
 							- Customer name, address and email — use `<placeholder>` if missing
 							- List of items (name, quantity, unit price, line total)
-							- Total amount (net)
+							- Total Amount (net)
 							- Discount, if applicable
-							- Grand total (after discount)
+							- Grand Total (after discount)
 							- Delivery date
 							- Thank-you note at the bottom
 
@@ -1088,6 +1095,11 @@ receipt_agent = Agent(
 						- Align columns using spaces (not tabs).
 						- Keep the width readable (max ~80 characters).
 						- Separate sections with dashed lines or whitespace.
+
+                        - Populate the fields 
+                            - `answer` should contain - `Receipt No`, `Total Amount`, `Discount` and `Grand Total` 
+                            - `ok_to_proceed` with yes if `answer` is valid else no
+                            of the return JSON object as mentioned below
 
 						- Example of the receipt format (shortened):
 						Receipt No: RCPT-2025-MM-DD
@@ -1111,6 +1123,14 @@ receipt_agent = Agent(
 						Thank you for your business with Beaver's !!!
 						
 						Always be empathetic and helpful to the customer.
+
+                        - Output Format:       
+                        Return a JSON object using the following Pydantic schema:
+
+                        ```python
+                        class ReceiptResponse(BaseModel):
+                            answer: str
+                            ok_to_proceed: bool 
                         """
 					)
 
@@ -1157,7 +1177,6 @@ class MultiAgentWorkflow:
     def process_order(self, context: WorkflowContext) -> str:
         inventory_prompt = f"""
             Classification: ORDER
-    
             User Request: {context.original_request}
         """
         # Call inventory agent to check stock levels and handle order for stock items        
@@ -1167,8 +1186,8 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["inventory"] += 1
         
-        print(">>>>>>>>>> inventory_response = ", inventory_response.output.answer)
-        print(">>>>>>>>>> inventory_response = ", inventory_response.output.ok_to_proceed)
+        print(">>>>>>>>>> inventory_response.answer = ", inventory_response.output.answer)
+        print(">>>>>>>>>> inventory_response.ok_to_proceed = ", inventory_response.output.ok_to_proceed)
 
         if not inventory_response.output.ok_to_proceed:
             # If inventory agent indicates order cannot proceed, return a message
@@ -1177,9 +1196,13 @@ class MultiAgentWorkflow:
 
         # Call quoting agent to generate a quote based on the order
         quote_prompt = f"""
+            Classification: ORDER
             User Request: {context.original_request}
-            Inventory Context: {inventory_response.output.answer}
+            Inventory Context: {inventory_response.output.answer} 
         """
+        #.answer}
+        print("CHECKING Quote Agent ===> ", self.agents["quoting"])
+        print("CHECKING Quote Agent - prompt ===> ",quote_prompt)
         quoting_response = self.agents["quoting"].run_sync(
             quote_prompt,
             deps=context
@@ -1197,11 +1220,12 @@ class MultiAgentWorkflow:
 
         # Call sales agent to finalize the order
         sales_prompt = f"""
+            Classification: ORDER
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
             Quoting Context: {quoting_response.output.answer} 
         """
-
+        # .answer}
         sales_response = self.agents["sales"].run_sync(
             sales_prompt,
             deps=context
@@ -1220,11 +1244,13 @@ class MultiAgentWorkflow:
 
         # Call receipt agent to generate an receipt for the order
         receipt_prompt = f"""
+            Classification: ORDER
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
             Quoting Context: {quoting_response.output.answer}
             Sales Context: {sales_response.output.answer}
         """
+
         # Discount Context: {discount_response.output.answer}
         receipt_response = receipt_agent.run_sync(
             receipt_prompt,
