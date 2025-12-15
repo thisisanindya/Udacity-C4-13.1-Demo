@@ -300,8 +300,9 @@ def create_transaction(
         if transaction_type not in {"stock_orders", "sales"}:
             raise ValueError("Transaction type must be 'stock_orders' or 'sales'")
 
-        ################
+        ################ Commenting for time being miving this to QuotingAgent
         # Calculate discount based on the quantity of items 
+        '''
         print("---> Check for quantity = ", quantity)
         discount = 0
         if quantity < 100:
@@ -316,6 +317,7 @@ def create_transaction(
         price -= price*discount
         print("---> discounted price = ", price)
         # call a simple discount function apply_discount(item_name, transaction_type, quantity, price, date)        
+        '''
         ################
 
         # Prepare transaction record as a single-row DataFrame
@@ -836,336 +838,56 @@ class ReceiptAgentResponse(BaseModel):
 #    request_limit=500,   # or higher
 #    total_tokens_limit=500_000
 #)
-# The Orchestrator
+''' Remove later
+from pydantic_ai.settings import ModelSettings
+from pydantic_ai.usage import UsageLimits
+
+##model_settings = ModelSettings(
+#    usage_limits=UsageLimits(
+#        request_limit=500   # or None to disable
+#    )
+
+shared_model_settings = ModelSettings(
+    usage_limits=UsageLimits(request_limit=None)
+)
+
+UNLIMITED_USAGE = UsageLimits(
+    request_limit=None,
+    total_tokens_limit=None
+)
 '''
-beaverOrchestrator = Agent(
-							#model="openai:gpt-4o",
-                            model="openai:gpt-4o-mini",
-							name="BeaverOrchestratorAgent",
-							model_settings=ModelSettings(temperature=0.0),
-                            #usage_limits=limits,
-							system_prompt="""
-							You are the Orcheatrstor for the Beaver's Choice Paper supply company.
+from pydantic_ai.settings import ModelSettings
+from pydantic_ai.usage import UsageLimits
 
-							Your main responsibility is to analyze incoming customer requests and 
-                            classify them into one of two categories:
+# shared_model_settings = ModelSettings(temperature=0.0)
 
-							- QUERY: The customer is requesting information only for example 
-                            inventory srock levels, availability of item, expected delivery dates, 
-                            financial performance via reporting).
-							- ORDER: The customer is requesting to place an order or buy a product.
+shared_model_settings = ModelSettings(
+    temperature=0.0,
+    max_retries=3,
+)
 
-							- Please follow below guidelines: 
-							If the customer request contains 
-							1. *whether some item is available*, *whether item is in stock*, or *whether can be delivered by a specific date*, this is an **QUERY**.
-							2. contains *purchase*, *order*, or *buy* some item — even if no quantities are mentioned — this is an **ORDER**.
-							3. price comparisons or historical quotes **without** saying they want to buy, it's an **QUERY**.
-							4. *finalize* an order or *proceed with* a purchase, this is an **ORDER**.
-							And if request is still not clear treat this request as **QUERY**.                               
+UNLIMITED_USAGE = UsageLimits(
+    request_limit=None,
+    total_tokens_limit=None
+)
 
-                            - Please follow below workflow: 
-                            1. Classify the request as ORDER if:
-                                - The user mentions a quantity AND an item
-                                - The user implies intent (need, want, require, looking for, planning to get)
-                                - A date or deadline is mentioned
+class AgentDeps(BaseModel):
+    usage_limits: UsageLimits
 
-                                Only classify as QUERY if the user is explicitly asking for information
-                                without intent to buy.
-
-                                Call {inventory_agent}
-                                Finally pass all the output to quote agent - item name, quantity, price, date.
-
-                            2. Call {quote_agent} - check quote history and generate quote for item, quantity 
-                               and price and pass all the update data to discount agent. 
-                            3. Call {sales_agent} - create transaction based on the transaction type
-                               for the item, quantity, price, discounted price for that date. 
-                            4. Call {receipt_agent} - to generate a summary receipt. 
-
-							- Return Format: A JSON object using the following Pydantic schema:
-							```python
-							class BeaverOrchetrator(BaseModel):
-							    classification: Literal["QUERY", "ORDER"]
-							""",
-							output_type=BeaverOrchetrator
-                        )
-
-# The Inventory Agent
-inventory_agent = Agent(
-							#model="openai:gpt-3.5-turbo",
-                            model="openai:gpt-4o-mini",
-							name="InventoryAgent",
-							model_settings=ModelSettings(temperature=0.1),
-                            #usage_limits=limits,
-							system_prompt="""
-							You are the Inventory Agent for the Beaver's Choice Paper supply company.
-
-							You will receive the request which are identified as "QUERY" or "ORDER" 
-							Always follow below instructions for decision making: 
-
-							1. IF classification is "QUERY":
-							- For current stock levels for the requested item(s) use `get_all_inventory`
-							- For delivery feasibility, use `get_supplier_delivery_date` 
-							- Provide clear and meaningful response
-							- Do not change inventory dataabase
-							- Response should include available quantity and probable delivery date
-
-							2. IF classification is "ORDER":
-							- Check current stock levels - use `get_stock_level` 
-							- If there is enough stock, reply that the order can be fulfilled now
-							- If stock is insufficient, do the following steps:
-							1. Use `create_transaction` to initiate a re-stocking of the order
-							2. Use `get_supplier_delivery_date` to find when the item will be available
-							3. Response should inform the next agent that the material - has been reordered 
-                            4. Populate the field `answer` with the above response and `ok_to_proceed` with 
-                               True and False otherwise of the return JSON object as mentioned below. 
-
-							- Expected Output:
-							- Check if the stock is sufficient
-							- If a restocking order was triggered, explicitly check the expected delivery date and the answer from `get_supplier_delivery_date`
-							1. If the `get_supplier_delivery_date` is after the expected delivery date, response with ok_to_proceed = False.
-							2. Explain the situation to a customer and inform them that the order will be not fulfilled immediately.
-
-							- Tools:
-							- `get_all_inventory_tool`: Inventory of all items
-							- `get_stock_level_tool`: Provide available quantity of a specific item
-							- `get_supplier_delivery_date_tool`: Estimated delivery date
-							- `create_transaction_tool`: Place order for restocking
-                                - note 
-                                    - this will call apply volume level discount
-                                    - and will call create_transaction_tool of sales agent via the orchestrator 
-                                    - to finally store the data in database
-
-							Always be empathetic and helpful to the customer.
-
-							- Output Format:       
-							Return a JSON object using the following Pydantic schema:
-
-							```python
-							class AgentResponse(BaseModel):
-                                answer: str
-                                ok_to_proceed: bool
-
-							""",
-							tools=inventory_tools,
-							output_type=InventoryAgentResponse
-						)
-
-# The Quoting agent
-quoting_agent = Agent(
-						#model="openai:gpt-4o",
-                        model="openai:gpt-4o-mini",
-						name="QuotingAgent",
-						model_settings=ModelSettings(temperature=0.3),
-                        #usage_limits=limits,
-						system_prompt="""
-						You are the Quote for the Beaver's Choice Paper supply company. 
-
-						Your task is to generate competitive and strategic sales quote based on:
-						- customer order request
-						- the current stock and estimated delivery date provided by the Inventory Agent
-						- historical quote and sales data
-
-
-						- Always follow below instructions for decision making: 
-
-						1. Analyze the customer's request 
-						- Identify the required item(s), quantity and delivery dates
-
-						2. Use inventory context
-						- Determine whether the items are available or when they will be deliverable (this information is provided to you as input).
-						- This shouid be provided to you as input. No need to check from database.
-
-						3. Analyze pricing history
-						- Use `search_quote_history` to find related past quotes.
-						- Use `generate_financial_report` if needed to fine sales and pricing trends.
-
-						4. Calculate a competitive quote
-						- Apply volume discounts if required
-						- Consider priority and availability
-						- Ensure profitability while being attractive to the customer.
-
-						5. Prepare the output
-						- Provide a clear price per unit and total price.
-                        - Generate quote and pass it to `create_transaction_tool` to persist in database
-						- Include any relevant remarks (e.g., “discount applied due to high volume”).
-                        - Populate the fields 
-                            - `answer` with expected time of delivery the items
-                            - `items` with list of items
-                            - `total_price` with the total price of the item
-                            - `ok_to_proceed` with True if answer id valid or False otherwise
-                          of the return JSON object as mentioned below
-
-						- Tools:
-						- `search_quote_history_tool`: Retrieve previous similar offers for reference.
-						- `generate_financial_report_tool`: Analyze pricing and sales trends.
-
-						You are not responsible to check stock or create transactions. Focus only on creating an optimized offer. 
-						Always be empathetic and helpful to the customer.
-                        
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class QuotingResponse(BaseModel):
-                            answer: str
-                            items: list
-                            total_price: float
-                            ok_to_proceed: bool  
-                        
-                        """,
-                        tools=quoting_tools,
-                        output_type=QuotingAgentResponse
-					)
-
-# Define Sales agent
-sales_agent = Agent(
-						# model="openai:gpt-3.5-turbo",
-                        model="openai:gpt-4o-mini",
-						name="SalesAgent",
-						model_settings=ModelSettings(temperature=0.2),
-                        #usage_limits=limits,
-						system_prompt="""
-						You are the Sales Agent for the Beaver's Choice Paper supply company.
-						The main res[ponsibility is to complete the customer's order based 
-						on the quote provided by the Quote Agent and current inventory status.
-
-						- Follow below instructions for decision making: 
-
-						1. Assume the customer wants to proceed with the quoted order - no confirmation is needed.
-
-						2. Estimate the delivery date based on:
-							- Quantity of Order
-							- Present date
-							- Use `get_supplier_delivery_date` if required
-
-						3. Store the sale
-							- Use `create_transaction` to store the order in the database, use `create_transaction`
-							- Include: item name(s), quantity, price per unit, total price and date of transaction
-
-						4. Reply to customer
-							- Confirm if order is successful
-							- Include estimated delivery date.
-							
-						5. Please note
-							- No need generate new quote – this ia done Quote Agent.
-							- This role isto verify feasibility and execute the transaction.
-                        
-                        6. Populate the fields 
-                            - `answer` with expected time of delivery the items
-                            - `items` with list of items
-                            - `total_price` with the total price of the item
-                            - - `ok_to_proceed` with True if answer id valid or False otherwise
-                          of the return JSON object as mentioned below
-						
-                        Always be empathetic and helpful to the customer.
-
-						- Tools:
-						- `get_supplier_delivery_date`: Estimated delivery date
-						- `create_transaction`: Store the sale record
-
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class SalesResponse(BaseModel):
-                            answer: str
-                            items: list
-                            total_price: float
-                            ok_to_proceed: bool  
-                        
-                        """,
-                        tools=sales_tools,
-                        output_type=SalesAgentResponse
-					)
-
-# Define Receipt Agent
-# Note: Main idea is to Generate a short summary of **customer Receipt** for finalized order
-# This can be enhanced later with proper customer details like name, address, email etc. 
-receipt_agent = Agent(
-						# model="openai:gpt-4o",
-                        model="openai:gpt-4o-mini",
-						name="ReceiptAgent",
-						model_settings=ModelSettings(temperature=0.3),
-                        #usage_limits=limits,
-						system_prompt="""    
-						You are the Receipt Agent for the Beaver's Choice Paper supply company.
-
-						Main idea is to Generate a short summary of **customer Receipt** for finalized order 
-						as a token of acknowledgement. 
-						
-						Your job is to generate a complete and professional **customer receipt** based on the finalized order.
-						You receive data input that includes:
-						- Customer name and optional address
-						- item(s) purchased, quantities, unit prices and total price
-						- Discounts applied, if any
-						- Delivery date, if any
-
-						- The receipt contains the following:
-						- Follow a simple ASCII format. 
-							- Receipt No: format it as RCPT-2025-MM-DD 
-							- Receipt Date- use present date
-							- Customer name, address and email — use `<placeholder>` if missing
-							- List of items (name, quantity, unit price, line total)
-							- Total Amount (net)
-							- Discount, if applicable
-							- Grand Total (after discount)
-							- Delivery date
-							- Thank-you note at the bottom
-
-						- Formatting Notes:
-						- Use a monospaced layout for the receipt block.
-						- Align columns using spaces (not tabs).
-						- Keep the width readable (max ~80 characters).
-						- Separate sections with dashed lines or whitespace.
-
-                        - Populate the fields 
-                            - `answer` should contain - `Receipt No`, `Total Amount`, `Discount` and `Grand Total` 
-                            - `ok_to_proceed` with True if answer id valid or False otherwise
-                            of the return JSON object as mentioned below
-
-						- Example of the receipt format (shortened):
-						Receipt No: RCPT-2025-MM-DD
-						Date: 2025-12-06
-
-						Name: Jay Kumar
-						Address: <placeholder>
-						Email: jay@example.com
-
-						Items:
-						Qty Description Unit Price Line Total
-
-						500 A4 Paper	 0.50 		50.00
-
-						Subtotal: 50.00
-						Discount (10%): -5.00
-						Total Amount Due: 45.00
-
-						Expected Delivery Date: 2025-12-07
-
-						Thank you for your business with Beaver's !!!
-						
-						Always be empathetic and helpful to the customer.
-
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class ReceiptResponse(BaseModel):
-                            answer: str
-                            ok_to_proceed: bool 
-                        """
-					)
-'''                    
 ORCHESTRATOR_PROMPT = """
-							You are the Orcheatrstor for the Beaver's Choice Paper supply company.
+							You are the Orcheatrator for the Beaver's Choice Paper supply company.
 
 							Your main responsibility is to analyze incoming customer requests and 
                             classify them into one of two categories:
 
-							- QUERY: The customer is requesting information only for example 
-                            inventory srock levels, availability of item, expected delivery dates, 
-                            financial performance via reporting).
+							- QUERY: 
+                                - The customer is requesting information only for example 
+                                inventory srock levels, availability of item, expected delivery dates, 
+                                financial performance via reporting).
+                                - Do NOT call Quote, Sales, or Receipt Agents.
+
 							- ORDER: The customer is requesting to place an order or buy a product.
+                                - Call Agents in the order: Inventory → Sales (does quote + approval) → Receipt
 
 							- Please follow below guidelines: 
 							If the customer request contains 
@@ -1198,6 +920,7 @@ ORCHESTRATOR_PROMPT = """
 							class BeaverOrchetrator(BaseModel):
 							    classification: Literal["QUERY", "ORDER"]
 							"""
+#  # Inventory → Quote → Sales → Receipt 
 
 INVENTORY_PROMPT = """
 							You are the Inventory Agent for the Beaver's Choice Paper supply company.
@@ -1289,7 +1012,7 @@ QUOTING_PROMPT = """
 
 						5. Prepare the output
 						- Provide a clear price per unit and total price.
-                        - Generate quote and pass it to `create_transaction_tool` to persist in database
+                        - Generate quote and pass pricing details to Sales Agent
 						- Include any relevant remarks (e.g., “discount applied due to high volume”).
                         - Populate the fields 
                             - `answer` with expected time of delivery the items
@@ -1319,7 +1042,7 @@ QUOTING_PROMPT = """
 
 SALES_PROMPT = """
 						You are the Sales Agent for the Beaver's Choice Paper supply company.
-						The main res[ponsibility is to complete the customer's order based 
+						The main responsibility is to complete the customer's order based 
 						on the quote provided by the Quote Agent and current inventory status.
 
 						- Follow below instructions for decision making: 
@@ -1340,7 +1063,7 @@ SALES_PROMPT = """
 							- Include estimated delivery date.
 							
 						5. Please note
-							- No need generate new quote – this ia done Quote Agent.
+							- No need generate new quote – this is done by Quoting Agent.
 							- This role isto verify feasibility and execute the transaction.
                         
                         6. Populate the fields 
@@ -1443,57 +1166,63 @@ class WorkflowContext(BaseModel):
     original_request: str
 
 class MultiAgentWorkflow:
-    '''
-    def __init__(self):
-        self.agents = {
-            "orchestrator": beaverOrchestrator,
-            "inventory": inventory_agent,
-            "quoting": quoting_agent,
-            "sales": sales_agent,
-            "receipt":  receipt_agent, 
-        }
-    '''
     def __init__(self):
         self.agents = {
             "orchestrator": Agent(
-                model="openai:gpt-4o-mini",
+                # model="openai:gpt-4o-mini",
+                model="openai:gpt-4.1-mini",
                 name="BeaverOrchestratorAgent",
-                model_settings=ModelSettings(temperature=0.0),
+                #model_settings=ModelSettings(temperature=0.0),
+                model_settings=shared_model_settings,
+                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=ORCHESTRATOR_PROMPT,
                 output_type=BeaverOrchetrator,
             ),
 
             "inventory": Agent(
+                # model="openai:gpt-4o-mini",
+                # model="openai:gpt-4.1-mini",
                 model="openai:gpt-4o-mini",
                 name="InventoryAgent",
-                model_settings=ModelSettings(temperature=0.0),
+                #model_settings=ModelSettings(temperature=0.0),
+                model_settings=shared_model_settings,
+                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=INVENTORY_PROMPT,
                 output_type=InventoryAgentResponse,
-                tools=quoting_tools,
-            ),
-
-            "quoting": Agent(
-                model="openai:gpt-4o-mini",
-                name="QuotingAgent",
-                model_settings=ModelSettings(temperature=0.0),
-                system_prompt=QUOTING_PROMPT,
-                output_type=QuotingAgentResponse,
                 tools=inventory_tools,
             ),
 
+            "quoting": Agent(
+                # model="openai:gpt-4o-mini",
+                model="openai:gpt-4.1-mini",
+                name="QuotingAgent",
+                #model_settings=ModelSettings(temperature=0.0),
+                model_settings=shared_model_settings,
+                #usage_limits=UNLIMITED_USAGE,
+                system_prompt=QUOTING_PROMPT,
+                output_type=QuotingAgentResponse,
+                tools=quoting_tools,
+            ),
+
             "sales": Agent(
-                model="openai:gpt-4o-mini",
+                # model="openai:gpt-4o-mini",
+                model="openai:gpt-4.1-mini",
                 name="SalesAgent",
-                model_settings=ModelSettings(temperature=0.0),
+                #model_settings=ModelSettings(temperature=0.0),
+                model_settings=shared_model_settings,
+                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=SALES_PROMPT,
                 output_type=SalesAgentResponse,
                 tools=sales_tools
             ),
 
             "receipt": Agent(
-                model="openai:gpt-4o-mini",
+                # model="openai:gpt-4o-mini",
+                model="openai:gpt-4.1-mini",
                 name="ReceiptAgent",
-                model_settings=ModelSettings(temperature=0.0),
+                #model_settings=ModelSettings(temperature=0.0),
+                model_settings=shared_model_settings,
+                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=RECEIPT_PROMPT,
                 output_type=ReceiptAgentResponse,
             ),
@@ -1506,33 +1235,57 @@ class MultiAgentWorkflow:
             "receipt": 0,
         }
     
+    
+    def extract_items(self, text: str) -> list[str]:
+        """ 
+        Utility method to extract item name from the 
+        list of paper suplies
+
+        Agrs: 
+            text (str): customer request in string
+
+        Returns: 
+            list[str]: list of related requests
+        """    
+        return [
+            item["item_name"]
+            for item in paper_supplies
+            if item["item_name"].lower() in text.lower()
+        ]
+
     def process_query(self, context: WorkflowContext) -> str:
         """
-        Handle customer inquiries by using the quoting agent to generate a financial report
-        and the evaluation agent to assess the response.
+        Handle customer inquiries by using the inventory agent to check 
+        the stock of the item.
         """
+        items = self.extract_items(context.original_request)
         # Call quoting agent to generate financial report
         prompt = f"""
-        Classification: QUERY
-
-        User Request: {context.original_request}
+            Classification: QUERY
+            Items: {items}
+            User Request: {context.original_request}
         """
         inventory_response = self.agents["inventory"].run_sync(
             prompt,
-            deps=context
+            deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
+            #deps=context
         )
         self.agent_usage_count["inventory"] += 1
-        return inventory_response.output
+        return inventory_response.output.answer
 
     def process_order(self, context: WorkflowContext) -> str:
+        
+        items = self.extract_items(context.original_request)
         inventory_prompt = f"""
             Classification: ORDER
+            Items: {items}
             User Request: {context.original_request}
         """
         # Call inventory agent to check stock levels and handle order for stock items        
         inventory_response = self.agents["inventory"].run_sync(
             inventory_prompt,
-            deps=context
+            deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
+            # deps=context
         )
         self.agent_usage_count["inventory"] += 1
         
@@ -1542,8 +1295,8 @@ class MultiAgentWorkflow:
         if not inventory_response.output.ok_to_proceed:
             # If inventory agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
-            # return inventory_response.output.answer
-            print("Inventory warning, but proceeding to quote... ")
+            return inventory_response.output.answer
+            # print("Inventory warning, but proceeding to quote... ")
 
         # Call quoting agent to generate a quote based on the order
         quote_prompt = f"""
@@ -1556,10 +1309,19 @@ class MultiAgentWorkflow:
         print()
         print("CHECKING Quote Agent - prompt ===> ",quote_prompt)
         print()
-        quoting_response = self.agents["quoting"].run_sync(
-            quote_prompt,
-            deps=context
-        )
+        try: 
+            quoting_response = self.agents["quoting"].run_sync(
+                quote_prompt,
+                deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
+                # deps=context
+            )
+        except Exception as e:
+            print("⚠️ Quoting agent failed, retrying once...")
+            quoting_response = self.agents["quoting"].run_sync(
+                quote_prompt,
+                deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
+            )
+
         self.agent_usage_count["quoting"] += 1
         
         print("==========>>>>>> quote-> ", quoting_response.output.answer)
@@ -1569,8 +1331,8 @@ class MultiAgentWorkflow:
         if not quoting_response.output.ok_to_proceed:
             # If quoting agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
-            # return quoting_response.output.answer
-            print("Inventory / Quote level warning, but proceeding to sale... ")
+            return quoting_response.output.answer
+            # print("Inventory / Quote level warning, but proceeding to sale... ")
 
         # Call sales agent to finalize the order
         sales_prompt = f"""
@@ -1582,7 +1344,8 @@ class MultiAgentWorkflow:
         # .answer}
         sales_response = self.agents["sales"].run_sync(
             sales_prompt,
-            deps=context
+            deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
+            # deps=context
         )
         self.agent_usage_count["sales"] += 1
         
@@ -1594,8 +1357,8 @@ class MultiAgentWorkflow:
         if not sales_response.output.ok_to_proceed:
             # If sales agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
-            # return sales_response.output
-            print("Inventory / Quote / Sale level warning, but proceeding to next level... ")
+            return sales_response.output
+            # print("Inventory / Quote / Sale level warning, but proceeding to next level... ")
 
         # Call receipt agent to generate an receipt for the order
         receipt_prompt = f"""
@@ -1607,9 +1370,10 @@ class MultiAgentWorkflow:
         """
 
         # Discount Context: {discount_response.output.answer}
-        receipt_response = receipt_agent.run_sync(
+        receipt_response = self.agents["receipt"].run_sync(
             receipt_prompt,
-            deps=context
+            deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
+            # deps=context
         )
         self.agent_usage_count["receipt"] += 1
         print("CHECKPOINT-5 ---> ", receipt_response.output)
@@ -1619,7 +1383,7 @@ class MultiAgentWorkflow:
             return receipt_response.output.answer
 
         # Return the final response from the receipt agent
-        return receipt_response.output
+        return receipt_response.output.answer
 
     def run(self, customer_request: str) -> str:
         """
@@ -1636,7 +1400,8 @@ class MultiAgentWorkflow:
         # Step 1: Call the orchestration agent to classify the request
         orchestration_response = self.agents["orchestrator"].run_sync(
             customer_request,
-            deps=context
+            deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
+            # deps=context
         )
         print(f"CHECKPOINT-0.1 ---> context - ", context)
         print(f"CHECKPOINT-0.2 ---> Orchestration Agent classified request as: {orchestration_response.output.classification}")
@@ -1675,7 +1440,7 @@ def run_test_scenarios():
     except Exception as e:
         print(f"FATAL: Error loading test data: {e}")
         return
-    '''
+    ''' Duplicate Code Hence commented
     # quote_requests_sample = pd.read_csv("quote_requests_sample.csv")
     quote_requests_sample = pd.read_csv("quote_requests_sample1.csv")
 
@@ -1699,15 +1464,12 @@ def run_test_scenarios():
     ############
     ############
     ############
-    # multi_agent_workflow = MultiAgentWorkflow()
+    
+    multi_agent_workflow = MultiAgentWorkflow()
 
     results = []
     for idx, row in quote_requests_sample.iterrows():
-        ###############
-        ### This will reset usage by creating a new workflow per request
-        multi_agent_workflow = MultiAgentWorkflow()
         request_date = row["request_date"].strftime("%Y-%m-%d")
-
         print(f"\n<--- Request {idx + 1} --->")
         print(f"Context: {row['job']} organizing {row['event']}")
         print(f"Request Date: {request_date}")
@@ -1746,7 +1508,13 @@ def run_test_scenarios():
             }
         )
 
-        time.sleep(1)
+        time.sleep(0.3)
+
+    print("Orchestrator usage:", multi_agent_workflow.agents["orchestrator"].usage())
+    print("Inventory usage:", multi_agent_workflow.agents["inventory"].usage())
+    print("Quoting usage:", multi_agent_workflow.agents["quoting"].usage())
+    print("Sales usage:", multi_agent_workflow.agents["sales"].usage())
+    print("Receipt usage:", multi_agent_workflow.agents["receipt"].usage())
 
     # Final report
     final_date = quote_requests_sample["request_date"].max().strftime("%Y-%m-%d")
