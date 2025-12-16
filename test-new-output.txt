@@ -1,6 +1,7 @@
 project student$ python test-new.py
 Loading openai_api_key... 
 Checking OPENAI_API_KEY =  voc-822346846168865391158168c5c2a6e896b0.00021708
+Model ===>  OpenAIChatModel()
 Initializing Database...
 ---> Function (generate_financial_report): Get financial report as of '2025-04-01'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
@@ -35,7 +36,7 @@ CHECKPOINT-0.0 --->  I would like to request the following paper supplies for th
 - 100 sheets of colored paper (assorted colors)
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251216064346' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251216181329' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
 ---> Function (extract_items): Extracting request: 'I would like to request the following paper supplies for the ceremony: 
 
@@ -44,6 +45,7 @@ CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
 - 100 sheets of colored paper (assorted colors)
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
+Matched items --->  ['Cardstock', 'Colored paper', 'Glossy paper']
 
 CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_retries': 3}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
 
@@ -65,10 +67,7 @@ I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
->>>>>>>>>> inventory_response.answer =  The materials have been reordered. Expected delivery dates are as follows: 
-- 200 sheets of A4 glossy paper: April 5, 2025
-- 100 sheets of heavy cardstock (white): April 2, 2025
-- 100 sheets of colored paper (assorted colors): April 2, 2025
+>>>>>>>>>> inventory_response.answer =  Your order for 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock (white), and 100 sheets of colored paper (assorted colors) has been processed. The current stock levels are sufficient for all items. The glossy paper will be delivered by April 5, 2025, while the cardstock and colored paper will arrive by April 2, 2025. Since all items can be delivered before your requested date of April 15, 2025, your order can be fulfilled immediately.
 >>>>>>>>>> inventory_response.ok_to_proceed =  True
 
 CHECKING Quote Agent ===>  Agent(model=OpenAIChatModel(), name='QuotingAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_retries': 3}, output_type=<class '__main__.QuotingAgentResponse'>, instrument=None)
@@ -82,13 +81,9 @@ CHECKING Quote Agent - prompt ===>
 - 100 sheets of colored paper (assorted colors)
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-            Inventory Context: The materials have been reordered. Expected delivery dates are as follows: 
-- 200 sheets of A4 glossy paper: April 5, 2025
-- 100 sheets of heavy cardstock (white): April 2, 2025
-- 100 sheets of colored paper (assorted colors): April 2, 2025 
+            Inventory Context: Your order for 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock (white), and 100 sheets of colored paper (assorted colors) has been processed. The current stock levels are sufficient for all items. The glossy paper will be delivered by April 5, 2025, while the cardstock and colored paper will arrive by April 2, 2025. Since all items can be delivered before your requested date of April 15, 2025, your order can be fulfilled immediately. 
         
 
-⚠️ Quoting agent failed, retrying once...
 Traceback (most recent call last):
   File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/models/openai.py", line 629, in _process_response
     response = self._validate_completion(response)
@@ -113,13 +108,13 @@ object
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1552, in <module>
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1592, in <module>
     results = run_test_scenarios()
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1506, in run_test_scenarios
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1546, in run_test_scenarios
     response = multi_agent_workflow.run(request_with_date)
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1431, in run
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1471, in run
     response = self.process_order(context)
-  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1325, in process_order
+  File "/workspace/agentic-ai-c4-exercises-demos/project/test-new.py", line 1361, in process_order
     quoting_response = self.agents["quoting"].run_sync(
   File "/opt/venv/lib/python3.10/site-packages/pydantic_ai/agent/abstract.py", line 372, in run_sync
     return _utils.get_event_loop().run_until_complete(
