@@ -35,8 +35,15 @@ CHECKPOINT-0.0 --->  I would like to request the following paper supplies for th
 - 100 sheets of colored paper (assorted colors)
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251215193951' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251216064346' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
+---> Function (extract_items): Extracting request: 'I would like to request the following paper supplies for the ceremony: 
+
+- 200 sheets of A4 glossy paper
+- 100 sheets of heavy cardstock (white)
+- 100 sheets of colored paper (assorted colors)
+
+I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
 
 CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_retries': 3}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
 
@@ -55,7 +62,13 @@ I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 
 ---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-01'
->>>>>>>>>> inventory_response.answer =  Your order for 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock (white), and 100 sheets of colored paper (assorted colors) can be fulfilled now as we have sufficient stock for all items. Thank you for your request!
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+>>>>>>>>>> inventory_response.answer =  The materials have been reordered. Expected delivery dates are as follows: 
+- 200 sheets of A4 glossy paper: April 5, 2025
+- 100 sheets of heavy cardstock (white): April 2, 2025
+- 100 sheets of colored paper (assorted colors): April 2, 2025
 >>>>>>>>>> inventory_response.ok_to_proceed =  True
 
 CHECKING Quote Agent ===>  Agent(model=OpenAIChatModel(), name='QuotingAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_retries': 3}, output_type=<class '__main__.QuotingAgentResponse'>, instrument=None)
@@ -69,7 +82,10 @@ CHECKING Quote Agent - prompt ===>
 - 100 sheets of colored paper (assorted colors)
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-            Inventory Context: Your order for 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock (white), and 100 sheets of colored paper (assorted colors) can be fulfilled now as we have sufficient stock for all items. Thank you for your request! 
+            Inventory Context: The materials have been reordered. Expected delivery dates are as follows: 
+- 200 sheets of A4 glossy paper: April 5, 2025
+- 100 sheets of heavy cardstock (white): April 2, 2025
+- 100 sheets of colored paper (assorted colors): April 2, 2025 
         
 
 ⚠️ Quoting agent failed, retrying once...
@@ -156,6 +172,4 @@ model
 object
   Input should be 'chat.completion' [type=literal_error, input_value=None, input_type=NoneType]
     For further information visit https://errors.pydantic.dev/2.12/v/literal_error
-project student$ ^C
-project student$ ^C
 project student$ 
