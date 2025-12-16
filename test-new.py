@@ -977,7 +977,7 @@ INVENTORY_PROMPT = """
 							Return a JSON object using the following Pydantic schema:
 
 							```python
-							class AgentResponse(BaseModel):
+							class InventoryAgentResponse(BaseModel):
                                 answer: str
                                 ok_to_proceed: bool
 
@@ -1169,8 +1169,9 @@ class MultiAgentWorkflow:
     def __init__(self):
         self.agents = {
             "orchestrator": Agent(
-                # model="openai:gpt-4o-mini",
-                model="openai:gpt-4.1-mini",
+                model="openai:gpt-3.5-turbo",
+                # model= "openai:gpt-4o-mini",
+                # model= "openai:gpt-4.1-mini",
                 name="BeaverOrchestratorAgent",
                 #model_settings=ModelSettings(temperature=0.0),
                 model_settings=shared_model_settings,
@@ -1180,49 +1181,48 @@ class MultiAgentWorkflow:
             ),
 
             "inventory": Agent(
-                # model="openai:gpt-4o-mini",
-                # model="openai:gpt-4.1-mini",
-                model="openai:gpt-4o-mini",
+                model="openai:gpt-3.5-turbo",
+                # model= "openai:gpt-4o-mini",
+                # model= "openai:gpt-4.1-mini",
                 name="InventoryAgent",
                 #model_settings=ModelSettings(temperature=0.0),
                 model_settings=shared_model_settings,
-                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=INVENTORY_PROMPT,
                 output_type=InventoryAgentResponse,
                 tools=inventory_tools,
             ),
 
             "quoting": Agent(
-                # model="openai:gpt-4o-mini",
-                model="openai:gpt-4.1-mini",
+                model="openai:gpt-3.5-turbo",
+                # model= "openai:gpt-4o-mini",
+                # model= "openai:gpt-4.1-mini",
                 name="QuotingAgent",
                 #model_settings=ModelSettings(temperature=0.0),
                 model_settings=shared_model_settings,
-                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=QUOTING_PROMPT,
                 output_type=QuotingAgentResponse,
                 tools=quoting_tools,
             ),
 
             "sales": Agent(
-                # model="openai:gpt-4o-mini",
-                model="openai:gpt-4.1-mini",
+                model="openai:gpt-3.5-turbo",
+                # model= "openai:gpt-4o-mini",
+                # model= "openai:gpt-4.1-mini",
                 name="SalesAgent",
                 #model_settings=ModelSettings(temperature=0.0),
                 model_settings=shared_model_settings,
-                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=SALES_PROMPT,
                 output_type=SalesAgentResponse,
                 tools=sales_tools
             ),
 
             "receipt": Agent(
-                # model="openai:gpt-4o-mini",
-                model="openai:gpt-4.1-mini",
+                model="openai:gpt-3.5-turbo",
+                # model= "openai:gpt-4o-mini",
+                # model= "openai:gpt-4.1-mini",
                 name="ReceiptAgent",
                 #model_settings=ModelSettings(temperature=0.0),
                 model_settings=shared_model_settings,
-                #usage_limits=UNLIMITED_USAGE,
                 system_prompt=RECEIPT_PROMPT,
                 output_type=ReceiptAgentResponse,
             ),
@@ -1235,7 +1235,6 @@ class MultiAgentWorkflow:
             "receipt": 0,
         }
     
-    
     def extract_items(self, text: str) -> list[str]:
         """ 
         Utility method to extract item name from the 
@@ -1246,7 +1245,8 @@ class MultiAgentWorkflow:
 
         Returns: 
             list[str]: list of related requests
-        """    
+        """
+        print(f"---> Function (extract_items): Extracting request: '{text}'") 
         return [
             item["item_name"]
             for item in paper_supplies
@@ -1281,6 +1281,11 @@ class MultiAgentWorkflow:
             Items: {items}
             User Request: {context.original_request}
         """
+        print()
+        print("CHECKING Inventory Agent ===> ", self.agents["inventory"])
+        print()
+        print("CHECKING Iventory Agent - prompt ===> ", inventory_prompt)
+        print()
         # Call inventory agent to check stock levels and handle order for stock items        
         inventory_response = self.agents["inventory"].run_sync(
             inventory_prompt,
@@ -1347,6 +1352,12 @@ class MultiAgentWorkflow:
             deps=AgentDeps(usage_limits=UNLIMITED_USAGE)
             # deps=context
         )
+        print()
+        print("CHECKING Sales Agent ===> ", self.agents["sales"])
+        print()
+        print("CHECKING Sales Agent - prompt ===> ",sales_prompt)
+        print()
+
         self.agent_usage_count["sales"] += 1
         
         print("CHECKPOINT-4 ---> ", sales_response.output)
@@ -1368,6 +1379,11 @@ class MultiAgentWorkflow:
             Quoting Context: {quoting_response.output.answer}
             Sales Context: {sales_response.output.answer}
         """
+        print()
+        print("CHECKING Receipt Agent ===> ", self.agents["receipt"])
+        print()
+        print("CHECKING Receipt Agent - prompt ===> ",receipt_prompt)
+        print()
 
         # Discount Context: {discount_response.output.answer}
         receipt_response = self.agents["receipt"].run_sync(
