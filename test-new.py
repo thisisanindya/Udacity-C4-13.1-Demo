@@ -22,14 +22,13 @@ from typing import Dict, Literal
 from pydantic_ai import Agent, RunContext
 # from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.models.openai import OpenAIChatModel
+
+#from pydantic_ai.models.openai import OpenAIResponsesModel
 ################################
 
-
 # put a note install - numpy, pandas and pydantic-ai 
-# packages using below commands
-# pip install numpy
-# pip install pandas
-# pip install pydantic-ai
+# packages using below commandspi 
+################# RUN BELOW COMMANDS 
 
 # Create an SQLite database
 db_engine = create_engine("sqlite:///munder_difflin.db")
@@ -710,12 +709,8 @@ print("Checking OPENAI_API_KEY = ", openai_api_key)
 #######################
 # Initialize the OpenAI model (ensure your OPENAI_API_KEY is set in your environment)
 
-#openai_model = OpenAIChatModel(
-#   "gpt-4o-mini",
-#    system="openai-chat-completions", 
-#)
-
 openai_model = OpenAIChatModel("gpt-4o-mini")
+
 #######################
 print("Model ===> ", openai_model)
 
@@ -818,7 +813,7 @@ search_quote_history_tool = Tool(
 
 # Set up your agents and create an orchestration agent that will manage them.
 inventory_tools = [get_all_inventory_tool, get_stock_level_tool, get_supplier_delivery_date_tool,
-                          create_transaction_tool]
+                          create_transaction_tool, get_cash_balance_tool]
 quoting_tools = [search_quote_history_tool, generate_financial_report_tool]
 # generate_quote_tool, 
 # discounting_tools = [calculate_discount_tool]
@@ -849,49 +844,18 @@ class ReceiptAgentResponse(BaseModel):
     answer: str
     ok_to_proceed: bool  
 
-
-###############################
-### Critical to control usage limits - request and token
-#from pydantic_ai.usage import UsageLimits
-#limits = UsageLimits(
-#    request_limit=500,   # or higher
-#    total_tokens_limit=500_000
-#)
-''' Remove later
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.usage import UsageLimits
-
-##model_settings = ModelSettings(
-#    usage_limits=UsageLimits(
-#        request_limit=500   # or None to disable
-#    )
-
-shared_model_settings = ModelSettings(
-    usage_limits=UsageLimits(request_limit=None)
-)
-
-UNLIMITED_USAGE = UsageLimits(
-    request_limit=None,
-    total_tokens_limit=None
-)
-'''
-from pydantic_ai.settings import ModelSettings
-from pydantic_ai.usage import UsageLimits
-
-# shared_model_settings = ModelSettings(temperature=0.0)
 
 shared_model_settings = ModelSettings(
     temperature=0.0,
-    max_retries=3,
+    max_tokens=1024,
 )
 
 UNLIMITED_USAGE = UsageLimits(
     request_limit=None,
     total_tokens_limit=None
 )
-
-#class AgentDeps(BaseModel):
-#    usage_limits: UsageLimits
 
 ORCHESTRATOR_PROMPT = """
                         You are a request classifier for Beaver's Choice Paper Supply.
@@ -916,6 +880,8 @@ INVENTORY_PROMPT = """
                         You are the Inventory Agent for the Beaver's Choice Paper supply company.
 
                         You will receive the request which are identified as "QUERY" or "ORDER" 
+                        Items and quantities are already extracted for you.
+                        Do NOT re-parse quantities from the raw text.
                         Always follow below instructions for decision making: 
 
                         If classification is QUERY:
@@ -923,8 +889,13 @@ INVENTORY_PROMPT = """
                         - Do not modify inventory
 
                         If classification is ORDER:
-                        - Check stock
-                        - If insufficient, reorder and report delivery date
+                        - Use get_cash_balance
+                        - If insufficient cash → ok_to_proceed = False
+                        - Else follow the below steps
+                            - If quantity is not explicitly provided, assume quantity = 1.
+                            = If quantity is mentioned in text, extract it.
+                            - Check stock
+                            - If insufficient, reorder and report delivery date
 
                         - Expected Output:
                         - Check if the stock is sufficient
@@ -1026,6 +997,14 @@ SALES_PROMPT = """
 						3. Store the sale
 							- Use `create_transaction` to store the order in the database, use `create_transaction`
 							- Include: item name(s), quantity, price per unit, total price and date of transaction
+                            - When calling create_transaction:
+                                - quantity must be the number of units ordered
+                                - price must be the TOTAL price (quantity × unit price − discounts)
+                                - date must be today's date in ISO format
+                            - Use create_transaction with:
+                                - quantity = number of units
+                                - price = TOTAL price only
+                                - Do NOT store unit price in database
 
 						4. Reply to customer
 							- Confirm if order is successful
@@ -1075,7 +1054,7 @@ RECEIPT_PROMPT = """
 
 						- The receipt contains the following:
 						- Follow a simple ASCII format. 
-							- Receipt No: format it as RCPT-2025-MM-DD 
+							- Receipt No: format it as RCPT-YYYY-MM-DD 
 							- Receipt Date- use present date
 							- Customer name, address and email — use `<placeholder>` if missing
 							- List of items (name, quantity, unit price, line total)
@@ -1143,7 +1122,6 @@ class MultiAgentWorkflow:
                 model_settings=shared_model_settings,
                 system_prompt=ORCHESTRATOR_PROMPT,
                 output_type=BeaverOrchestrator,
-                #usage_limits=UNLIMITED_USAGE,
             ),
 
             "inventory": Agent(
@@ -1153,17 +1131,16 @@ class MultiAgentWorkflow:
                 system_prompt=INVENTORY_PROMPT,
                 output_type=InventoryAgentResponse,
                 tools=inventory_tools,
-                #usage_limits=UNLIMITED_USAGE,
             ),
 
             "quoting": Agent(
-                model=openai_model, 
+                model=openai_model,
                 name="QuotingAgent",
                 model_settings=shared_model_settings,
                 system_prompt=QUOTING_PROMPT,
                 output_type=QuotingAgentResponse,
                 tools=quoting_tools,
-                #usage_limits=UNLIMITED_USAGE,
+                retries=2
             ),
 
             "sales": Agent(
@@ -1173,16 +1150,14 @@ class MultiAgentWorkflow:
                 system_prompt=SALES_PROMPT,
                 output_type=SalesAgentResponse,
                 tools=sales_tools,
-                #usage_limits=UNLIMITED_USAGE,
             ),
-
+            
             "receipt": Agent(
-                model=openai_model, 
+                model=openai_model,
                 name="ReceiptAgent",
                 model_settings=shared_model_settings,
                 system_prompt=RECEIPT_PROMPT,
                 output_type=ReceiptAgentResponse,
-                #usage_limits=UNLIMITED_USAGE,
             ),
         }
 
@@ -1193,7 +1168,7 @@ class MultiAgentWorkflow:
             "receipt": 0,
         }
     
-    def extract_items(self, text: str) -> list[str]:
+    def extract_items_and_quantities(self, text: str) -> list[str]:
         """ 
         Utility method to extract item name from the 
         list of paper suplies
@@ -1205,19 +1180,27 @@ class MultiAgentWorkflow:
             list[str]: list of related requests
         """
         print(f"---> Function (extract_items): Extracting request: '{text}'") 
-        text = text.lower()
-        return [
-            item["item_name"]
-            for item in paper_supplies
-            if item["item_name"].lower() in text
-        ]
+        results = []
+        text_lower = text.lower()
+
+        for item in paper_supplies:
+            name = item["item_name"].lower()
+            if name in text_lower:
+                qty = 1
+                for token in text_lower.split():
+                    if token.isdigit():
+                        qty = int(token)
+                        break
+                results.append({"item_name": item["item_name"], "quantity": qty})
+
+        return results
     
     def process_query(self, context: WorkflowContext) -> str:
         """
         Handle customer inquiries by using the inventory agent to check 
         the stock of the item.
         """
-        items = self.extract_items(context.original_request)
+        items = self.extract_items_and_quantities(context.original_request)
         print("Matched items ---> ", items)
         # Call quoting agent to generate financial report
         prompt = f"""
@@ -1234,7 +1217,7 @@ class MultiAgentWorkflow:
 
     def process_order(self, context: WorkflowContext) -> str:
         
-        items = self.extract_items(context.original_request)
+        items = self.extract_items_and_quantities(context.original_request)
         print("Matched items ---> ", items)
         
         inventory_prompt = f"""
@@ -1254,7 +1237,7 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["inventory"] += 1
         
-        print(">>>>>>>>>> inventory_response.answer = ", inventory_response.output.answer)
+        print(">>>>>>>>>> inventory_response.output.answer = ", inventory_response.output.answer)
         print(">>>>>>>>>> inventory_response.ok_to_proceed = ", inventory_response.output.ok_to_proceed)
 
         if not inventory_response.output.ok_to_proceed:
@@ -1327,7 +1310,7 @@ class MultiAgentWorkflow:
         if not sales_response.output.ok_to_proceed:
             # If sales agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
-            return sales_response.output
+            return sales_response.output.answer
             # print("Inventory / Quote / Sale level warning, but proceeding to next level... ")
 
         # Call receipt agent to generate an receipt for the order
