@@ -707,10 +707,8 @@ print("Checking OPENAI_API_KEY = ", openai_api_key)
 #######################
 # Initialize the OpenAI model (ensure your OPENAI_API_KEY is set in your environment)
 
-# openai_model = OpenAIChatModel("gpt-4o-mini")
-
-#######################
-# print("Model ===> ", openai_model)
+openai_model = OpenAIChatModel(model_name="gpt-4o-mini")
+print("Model ===> ", openai_model)
 
 # Define tools for the agents
 create_transaction_tool = Tool(
@@ -966,18 +964,23 @@ QUOTING_PROMPT = """
 						You are not responsible to check stock or create transactions. Focus only on creating an optimized offer. 
 						Always be empathetic and helpful to the customer.
                         
-                        - Output Format: 
-                        - Add items: [{item, qty, unit_price}] to QuotingAgentResponse
-                        - Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class QuotingAgentResponse(BaseModel):
-                            answer: str
-                            items: list
-                            total_price: float
-                            ok_to_proceed: bool  
-                        
+                        - Output Format:
+                            - For a string with details of- amswer, items, total_price, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
                         """
+                        
+'''
+- Output Format: 
+    - Add items: [{item, qty, unit_price}] to QuotingAgentResponse
+    - Return a JSON object using the following Pydantic schema:
+
+```python
+class QuotingAgentResponse(BaseModel):
+    answer: str
+    items: list
+    total_price: float
+    ok_to_proceed: bool 
+'''
 
 SALES_PROMPT = """
 						You are the Sales Agent for the Beaver's Choice Paper supply company.
@@ -1021,17 +1024,22 @@ SALES_PROMPT = """
 						- `get_supplier_delivery_date`: Estimated delivery date
 						- `create_transaction`: Store the sale record
 
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class SalesAgentResponse(BaseModel):
-                            answer: str
-                            items: list
-                            total_price: float
-                            ok_to_proceed: bool  
-                        
+                        - Output Format:
+                            - For a string with details of- amswer, items, total_price, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
                         """
+                        
+'''
+- Output Format:       
+    - Return a JSON object using the following Pydantic schema:
+
+```python
+class SalesAgentResponse(BaseModel):
+    answer: str
+    items: list
+    total_price: float
+    ok_to_proceed: bool  
+'''
 
 RECEIPT_PROMPT = """    
 						You are the Receipt Agent for the Beaver's Choice Paper supply company.
@@ -1111,8 +1119,8 @@ class MultiAgentWorkflow:
     def __init__(self):
         self.agents = {
             "orchestrator": Agent(
-                model=OpenAIChatModel(model_name="gpt-4o-mini"),
-                #model=openai_model,
+                #model=OpenAIChatModel(model_name="gpt-4o-mini"),
+                model=openai_model,
                 name="BeaverOrchestratorAgent",
                 model_settings=shared_model_settings,
                 system_prompt=ORCHESTRATOR_PROMPT,
@@ -1120,8 +1128,8 @@ class MultiAgentWorkflow:
             ),
 
             "inventory": Agent(
-                model=OpenAIChatModel(model_name="gpt-4o-mini"),
-                #model=openai_model, 
+                #model=OpenAIChatModel(model_name="gpt-4o-mini"),
+                model=openai_model, 
                 name="InventoryAgent",
                 model_settings=shared_model_settings,
                 system_prompt=INVENTORY_PROMPT,
@@ -1130,29 +1138,31 @@ class MultiAgentWorkflow:
             ),
 
             "quoting": Agent(
-                model=OpenAIChatModel(model_name="gpt-4o-mini"),
-                #model=openai_model,
+                #model=OpenAIChatModel(model_name="gpt-4o-mini"),
+                model=openai_model,
                 name="QuotingAgent",
                 model_settings=shared_model_settings,
                 system_prompt=QUOTING_PROMPT,
-                output_type=QuotingAgentResponse,
+                # output_type=QuotingAgentResponse,
+                output_type=str,
                 tools=quoting_tools,
                 retries=2
             ),
 
             "sales": Agent(
-                model=OpenAIChatModel(model_name="gpt-4o-mini"),
-                #model=openai_model, 
+                #model=OpenAIChatModel(model_name="gpt-4o-mini"),
+                model=openai_model, 
                 name="SalesAgent",
                 model_settings=shared_model_settings,
                 system_prompt=SALES_PROMPT,
-                output_type=SalesAgentResponse,
+                # output_type=SalesAgentResponse,
+                output_type=str,
                 tools=sales_tools,
             ),
             
             "receipt": Agent(
-                model=OpenAIChatModel(model_name="gpt-4o-mini"),
-                #model=openai_model,
+                #model=OpenAIChatModel(model_name="gpt-4o-mini"),
+                model=openai_model,
                 name="ReceiptAgent",
                 model_settings=shared_model_settings,
                 system_prompt=RECEIPT_PROMPT,
@@ -1267,14 +1277,15 @@ class MultiAgentWorkflow:
 
         self.agent_usage_count["quoting"] += 1
         
-        print("==========>>>>>> quote-> ", quoting_response.output.answer)
-        print("==========>>>>>> quote-> ", quoting_response.output.items)
-        print("==========>>>>>> quote-> ", quoting_response.output.total_price)
-        print("==========>>>>>> quote-> ", quoting_response.output.ok_to_proceed)
-        if not quoting_response.output.ok_to_proceed:
+        print("==========>>>>>> quote-> ", quoting_response)
+        #print("==========>>>>>> quote-> ", quoting_response.output.answer)
+        #print("==========>>>>>> quote-> ", quoting_response.output.items)
+        #print("==========>>>>>> quote-> ", quoting_response.output.total_price)
+        #print("==========>>>>>> quote-> ", quoting_response.output.ok_to_proceed)
+        if not quoting_response: #.output.ok_to_proceed:
             # If quoting agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {inventory_response.output.answer}")
-            return quoting_response.output.answer
+            print(f"Order cannot be processed: {inventory_response}") #.output.answer}")
+            return quoting_response #.output.answer
             # print("Inventory / Quote level warning, but proceeding to sale... ")
 
         # Call sales agent to finalize the order
@@ -1282,7 +1293,7 @@ class MultiAgentWorkflow:
             Classification: ORDER
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
-            Quoting Context: {quoting_response.output.answer} 
+            Quoting Context: {quoting_response}
         """
         # .answer}
         sales_response = self.agents["sales"].run_sync(
@@ -1296,15 +1307,16 @@ class MultiAgentWorkflow:
 
         self.agent_usage_count["sales"] += 1
         
-        print("CHECKPOINT-4 ---> ", sales_response.output)
-        print("==========>>>>>> quote-> ", sales_response.output.answer)
-        print("==========>>>>>> quote-> ", sales_response.output.items)
-        print("==========>>>>>> quote-> ", sales_response.output.total_price)
-        print("==========>>>>>> quote-> ", sales_response.output.ok_to_proceed)
-        if not sales_response.output.ok_to_proceed:
+        print("==========>>>>>> quote-> ", sales_response)
+        #print("CHECKPOINT-4 ---> ", sales_response.output)
+        #print("==========>>>>>> quote-> ", sales_response.output.answer)
+        #print("==========>>>>>> quote-> ", sales_response.output.items)
+        #print("==========>>>>>> quote-> ", sales_response.output.total_price)
+        #print("==========>>>>>> quote-> ", sales_response.output.ok_to_proceed)
+        if not sales_response: #.output.ok_to_proceed:
             # If sales agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {inventory_response.output.answer}")
-            return sales_response.output.answer
+            print(f"Order cannot be processed: {inventory_response}") #.output.answer}")
+            return sales_response #.output.answer
             # print("Inventory / Quote / Sale level warning, but proceeding to next level... ")
 
         # Call receipt agent to generate an receipt for the order
@@ -1312,8 +1324,8 @@ class MultiAgentWorkflow:
             Classification: ORDER
             User Request: {context.original_request}
             Inventory Context: {inventory_response.output.answer}
-            Quoting Context: {quoting_response.output.answer}
-            Sales Context: {sales_response.output.answer}
+            Quoting Context: {quoting_response} 
+            Sales Context: {sales_response} 
         """
         print()
         print("CHECKING Receipt Agent ===> ", self.agents["receipt"])
@@ -1458,12 +1470,13 @@ def run_test_scenarios():
         )
 
         time.sleep(0.3)
-
+    '''
     print("Orchestrator usage:", multi_agent_workflow.agents["orchestrator"].usage())
     print("Inventory usage:", multi_agent_workflow.agents["inventory"].usage())
     print("Quoting usage:", multi_agent_workflow.agents["quoting"].usage())
     print("Sales usage:", multi_agent_workflow.agents["sales"].usage())
     print("Receipt usage:", multi_agent_workflow.agents["receipt"].usage())
+    '''
 
     # Final report
     final_date = quote_requests_sample["request_date"].max().strftime("%Y-%m-%d")
