@@ -1,58 +1,9 @@
-
-<--- Request 12 --->
-Context: city hall clerk organizing party
-Request Date: 2025-04-08
-Cash Balance: $-2165.30
-Inventory Value: $5215.30
-CHECKPOINT-0.0 --->  I would like to order 200 sheets of colorful cardstock, 500 sheets of standard printer paper, and 100 paper napkins for our upcoming party. Please deliver these supplies by April 15, 2025. (Date of request: 2025-04-08)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160335' original_request='I would like to order 200 sheets of colorful cardstock, 500 sheets of standard printer paper, and 100 paper napkins for our upcoming party. Please deliver these supplies by April 15, 2025. (Date of request: 2025-04-08)'
-CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to order 200 sheets of colorful cardstock, 500 sheets of standard printer paper, and 100 paper napkins for our upcoming party. Please deliver these supplies by April 15, 2025. (Date of request: 2025-04-08)'
-Matched items --->  [{'item_name': 'Cardstock', 'quantity': 200}, {'item_name': 'Paper napkins', 'quantity': 200}]
-
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
-
-CHECKING Inventory Agent - prompt ===>  
-            Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Cardstock",
-    "quantity": 200
-  },
-  {
-    "item_name": "Paper napkins",
-    "quantity": 200
-  }
-]
-            User Request: I would like to order 200 sheets of colorful cardstock, 500 sheets of standard printer paper, and 100 paper napkins for our upcoming party. Please deliver these supplies by April 15, 2025. (Date of request: 2025-04-08)
+            Inventory Context: Your order for 500 sheets of high-quality glossy paper and 300 sheets of sturdy cardstock has been successfully placed. The expected delivery date for both items is April 12, 2025, which is before your required date of April 15, 2025. Thank you for your order!
+            Quoting Context: AgentRunResult(output='Based on your order request for 500 sheets of high-quality glossy paper and 300 sheets of sturdy cardstock, I have prepared a competitive quote for you.\n\n### Quote Details:\n- **Items Ordered**:\n  - 500 sheets of high-quality glossy paper\n  - 300 sheets of sturdy cardstock\n\n### Pricing:\n- **High-Quality Glossy Paper**: \n  - Unit Price: $0.20\n  - Total for 500 sheets: $100.00\n- **Sturdy Cardstock**: \n  - Unit Price: $0.15\n  - Total for 300 sheets: $45.00\n\n### Total Price Calculation:\n- Total Price: $100.00 (glossy paper) + $45.00 (cardstock) = **$145.00**\n\n### Delivery Information:\n- **Expected Delivery Date**: April 12, 2025 (which is before your required date of April 15, 2025).\n\n### Remarks:\n- "Thank you for your order! A discount is not applied as the order quantity does not meet the threshold for volume discounts."\n\nHere is the final quote in the required format:\n"answer: Expected delivery date is April 12, 2025, items: [{\'item\': \'high-quality glossy paper\', \'quantity\': 500}, {\'item\': \'sturdy cardstock\', \'quantity\': 300}], total_price: 145.00, ok_to_proceed: True"') 
+            Sales Context: AgentRunResult(output="Your order has been successfully placed! \n\nThe expected delivery date for your items is April 12, 2025, which is before your required date of April 15, 2025. \n\nThank you for choosing Beaver's Choice Paper supply company! If you have any further questions or need assistance, feel free to ask.\n\nHere are the details of your order:\n- **Items Ordered**: \n  - 500 sheets of high-quality glossy paper\n  - 300 sheets of sturdy cardstock\n- **Total Price**: $145.00\n\nIf you need anything else, just let me know!") 
         
 
----> Function (get_cash_balance): Get cash balance as of '2025-04-08'
----> Function (get_cash_balance): Get cash balance as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Paper napkins' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'standard printer paper' as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
->>>>>>>>>> inventory_response.output.answer =  Thank you for your order! We have successfully placed orders for the following items:
-- 200 sheets of colorful cardstock, expected delivery by April 12, 2025.
-- 500 sheets of standard printer paper, expected delivery by April 12, 2025.
-- 100 paper napkins, expected delivery by April 09, 2025.
-
-Please note that while the cardstock and printer paper will arrive on April 12, the paper napkins will arrive earlier on April 09. Therefore, your order will not be fulfilled immediately as some items will arrive later than your requested delivery date of April 15, 2025.
->>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Thank you for your order! We have successfully placed orders for the following items:
-- 200 sheets of colorful cardstock, expected delivery by April 12, 2025.
-- 500 sheets of standard printer paper, expected delivery by April 12, 2025.
-- 100 paper napkins, expected delivery by April 09, 2025.
-
-Please note that while the cardstock and printer paper will arrive on April 12, the paper napkins will arrive earlier on April 09. Therefore, your order will not be fulfilled immediately as some items will arrive later than your requested delivery date of April 15, 2025.
+CHECKPOINT-5 --->  answer="Receipt No: RCPT-2025-04-08\nDate: 2025-04-08\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty Description                Unit Price   Line Total\n\n500 High-Quality Glossy Paper   0.20        100.00\n300 Sturdy Cardstock            0.15         45.00\n\nSubtotal: 145.00\nTotal Amount Due: 145.00\n\nExpected Delivery Date: 2025-04-12\n\nThank you for your business with Beaver's !!!" ok_to_proceed=True
 ---> Function (generate_financial_report): Get financial report as of '2025-04-08'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-08'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-08'
@@ -73,113 +24,71 @@ Please note that while the cardstock and printer paper will arrive on April 12, 
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-08'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-08'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-08'
-Response: Thank you for your order! We have successfully placed orders for the following items:
-- 200 sheets of colorful cardstock, expected delivery by April 12, 2025.
-- 500 sheets of standard printer paper, expected delivery by April 12, 2025.
-- 100 paper napkins, expected delivery by April 09, 2025.
+Response: Receipt No: RCPT-2025-04-08
+Date: 2025-04-08
 
-Please note that while the cardstock and printer paper will arrive on April 12, the paper napkins will arrive earlier on April 09. Therefore, your order will not be fulfilled immediately as some items will arrive later than your requested delivery date of April 15, 2025.
-Updated Cash: $-2165.30
-Updated Inventory: $5245.30
+Name: <placeholder>
+Address: <placeholder>
+Email: <placeholder>
 
-<--- Request 10 --->
-Context: business owner organizing show
-Request Date: 2025-04-08
-Cash Balance: $-2165.30
-Inventory Value: $5245.30
-CHECKPOINT-0.0 --->  I would like to place an order for 500 sheets of high-quality glossy paper and 300 sheets of sturdy cardstock for our upcoming show. We need the supplies delivered by April 15, 2025. (Date of request: 2025-04-08)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160404' original_request='I would like to place an order for 500 sheets of high-quality glossy paper and 300 sheets of sturdy cardstock for our upcoming show. We need the supplies delivered by April 15, 2025. (Date of request: 2025-04-08)'
-CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to place an order for 500 sheets of high-quality glossy paper and 300 sheets of sturdy cardstock for our upcoming show. We need the supplies delivered by April 15, 2025. (Date of request: 2025-04-08)'
-Matched items --->  [{'item_name': 'Cardstock', 'quantity': 500}, {'item_name': 'Glossy paper', 'quantity': 500}]
+Items:
+Qty Description                Unit Price   Line Total
 
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
+500 High-Quality Glossy Paper   0.20        100.00
+300 Sturdy Cardstock            0.15         45.00
 
-CHECKING Inventory Agent - prompt ===>  
-            Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Cardstock",
-    "quantity": 500
-  },
-  {
-    "item_name": "Glossy paper",
-    "quantity": 500
-  }
-]
-            User Request: I would like to place an order for 500 sheets of high-quality glossy paper and 300 sheets of sturdy cardstock for our upcoming show. We need the supplies delivered by April 15, 2025. (Date of request: 2025-04-08)
-        
+Subtotal: 145.00
+Total Amount Due: 145.00
 
----> Function (get_cash_balance): Get cash balance as of '2025-04-08'
----> Function (get_cash_balance): Get cash balance as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
->>>>>>>>>> inventory_response.output.answer =  Unfortunately, we cannot proceed with your order at this time due to insufficient cash balance. Your current cash balance is -$2165.30, which means you do not have enough funds to cover the order. Please consider replenishing your cash balance before placing the order.
->>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Unfortunately, we cannot proceed with your order at this time due to insufficient cash balance. Your current cash balance is -$2165.30, which means you do not have enough funds to cover the order. Please consider replenishing your cash balance before placing the order.
----> Function (generate_financial_report): Get financial report as of '2025-04-08'
----> Function (get_cash_balance): Get cash balance as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-08'
----> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-08'
-Response: Unfortunately, we cannot proceed with your order at this time due to insufficient cash balance. Your current cash balance is -$2165.30, which means you do not have enough funds to cover the order. Please consider replenishing your cash balance before placing the order.
-Updated Cash: $-2165.30
-Updated Inventory: $5245.30
+Expected Delivery Date: 2025-04-12
+
+Thank you for your business with Beaver's !!!
+Updated Cash: $1307.20
+Updated Inventory: $4940.30
 
 <--- Request 11 --->
 Context: event manager organizing exhibition
 Request Date: 2025-04-08
-Cash Balance: $-2165.30
-Inventory Value: $5245.30
+Cash Balance: $1307.20
+Inventory Value: $4940.30
 CHECKPOINT-0.0 --->  I would like to order 500 sheets of A3 glossy paper and 300 sheets of A4 matte paper for our exhibition. The supplies are needed by April 15, 2025. Thank you. (Date of request: 2025-04-08)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160414' original_request='I would like to order 500 sheets of A3 glossy paper and 300 sheets of A4 matte paper for our exhibition. The supplies are needed by April 15, 2025. Thank you. (Date of request: 2025-04-08)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194147' original_request='I would like to order 500 sheets of A3 glossy paper and 300 sheets of A4 matte paper for our exhibition. The supplies are needed by April 15, 2025. Thank you. (Date of request: 2025-04-08)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to order 500 sheets of A3 glossy paper and 300 sheets of A4 matte paper for our exhibition. The supplies are needed by April 15, 2025. Thank you. (Date of request: 2025-04-08)'
-Matched items --->  [{'item_name': 'Glossy paper', 'quantity': 500}, {'item_name': 'Matte paper', 'quantity': 500}]
+---> Function (get_all_inventory): Get inventory data as of '2025-04-08'
+
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
+
+CHECKING Extraction Prompt ===>  
+            Customer Request: I would like to order 500 sheets of A3 glossy paper and 300 sheets of A4 matte paper for our exhibition. The supplies are needed by April 15, 2025. Thank you. (Date of request: 2025-04-08)
+        
+
+CHECKING Extraction response ===>  AgentRunResult(output='Based on the customer request and the available inventory, here is the analysis:\n\n1. **Requested Items**:\n   - 500 sheets of A3 glossy paper\n   - 300 sheets of A4 matte paper\n\n2. **Available Stock**:\n   - A3 glossy paper: 100 sheets available\n   - A4 matte paper: 1000 sheets available\n\n3. **Stock Check**:\n   - For A3 glossy paper, the requested quantity (500 sheets) exceeds the available stock (100 sheets).\n   - For A4 matte paper, the requested quantity (300 sheets) is within the available stock (1000 sheets).\n\nSince the stock for A3 glossy paper is insufficient, we cannot fulfill the entire order.\n\n### Final Output\n- **ok_to_proceed**: False\n- **answer**: "A3 glossy paper of 500 sheets is not available. Delivery can\'t be met."\n\nNow, I will format the output accordingly.\n\n```json\n{\n  "answer": "A3 glossy paper of 500 sheets is not available. Delivery can\'t be met.",\n  "items": [\n    {\n      "item_name": "A3 glossy paper",\n      "quantity": 500,\n      "unit": "sheets"\n    },\n    {\n      "item_name": "A4 matte paper",\n      "quantity": 300,\n      "unit": "sheets"\n    }\n  ],\n  "ok_to_proceed": false\n}\n```')
+
 
 CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
 
 CHECKING Inventory Agent - prompt ===>  
             Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Glossy paper",
-    "quantity": 500
-  },
-  {
-    "item_name": "Matte paper",
-    "quantity": 500
-  }
-]
             User Request: I would like to order 500 sheets of A3 glossy paper and 300 sheets of A4 matte paper for our exhibition. The supplies are needed by April 15, 2025. Thank you. (Date of request: 2025-04-08)
+            Extraction Context: extraction_response
         
 
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-08'
----> Function (get_cash_balance): Get cash balance as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-08'
----> Function (get_stock_level): Get stock for 'Matte paper' as of '2025-04-08'
+---> Function (get_stock_level): Get stock for 'A3 glossy paper' as of '2025-04-08'
+---> Function (get_stock_level): Get stock for 'A4 matte paper' as of '2025-04-08'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-08'
->>>>>>>>>> inventory_response.output.answer =  Unfortunately, your order cannot be fulfilled immediately due to insufficient cash balance. The current cash balance is -2165.30, which means we cannot proceed with the order at this time. Additionally, while we have sufficient stock of glossy paper, we are currently out of matte paper. A restocking order has been placed for 300 sheets of matte paper, which is expected to arrive by April 12, 2025. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+>>>>>>>>>> inventory_response.output.answer =  We currently have 100 sheets of A3 glossy paper in stock, which is insufficient for your order of 500 sheets. I have placed a restocking order for the A3 glossy paper, and it is expected to be delivered by April 12, 2025. 
+
+On the other hand, we have sufficient stock of A4 matte paper, with 1000 sheets available, and it will also be delivered by April 12, 2025. 
+
+Please note that your order for A3 glossy paper will not be fulfilled immediately due to the stock shortage, but the A4 matte paper will be available as requested. Thank you for your understanding!
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Unfortunately, your order cannot be fulfilled immediately due to insufficient cash balance. The current cash balance is -2165.30, which means we cannot proceed with the order at this time. Additionally, while we have sufficient stock of glossy paper, we are currently out of matte paper. A restocking order has been placed for 300 sheets of matte paper, which is expected to arrive by April 12, 2025. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+Order cannot be processed: We currently have 100 sheets of A3 glossy paper in stock, which is insufficient for your order of 500 sheets. I have placed a restocking order for the A3 glossy paper, and it is expected to be delivered by April 12, 2025. 
+
+On the other hand, we have sufficient stock of A4 matte paper, with 1000 sheets available, and it will also be delivered by April 12, 2025. 
+
+Please note that your order for A3 glossy paper will not be fulfilled immediately due to the stock shortage, but the A4 matte paper will be available as requested. Thank you for your understanding!
 ---> Function (generate_financial_report): Get financial report as of '2025-04-08'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-08'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-08'
@@ -200,63 +109,51 @@ Order cannot be processed: Unfortunately, your order cannot be fulfilled immedia
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-08'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-08'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-08'
-Response: Unfortunately, your order cannot be fulfilled immediately due to insufficient cash balance. The current cash balance is -2165.30, which means we cannot proceed with the order at this time. Additionally, while we have sufficient stock of glossy paper, we are currently out of matte paper. A restocking order has been placed for 300 sheets of matte paper, which is expected to arrive by April 12, 2025. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
-Updated Cash: $-2165.30
-Updated Inventory: $5345.30
+Response: We currently have 100 sheets of A3 glossy paper in stock, which is insufficient for your order of 500 sheets. I have placed a restocking order for the A3 glossy paper, and it is expected to be delivered by April 12, 2025. 
+
+On the other hand, we have sufficient stock of A4 matte paper, with 1000 sheets available, and it will also be delivered by April 12, 2025. 
+
+Please note that your order for A3 glossy paper will not be fulfilled immediately due to the stock shortage, but the A4 matte paper will be available as requested. Thank you for your understanding!
+Updated Cash: $1307.20
+Updated Inventory: $4940.30
 
 <--- Request 14 --->
 Context: city hall clerk organizing performance
 Request Date: 2025-04-09
-Cash Balance: $-2165.30
-Inventory Value: $5345.30
+Cash Balance: $1307.20
+Inventory Value: $4940.30
 CHECKPOINT-0.0 --->  I would like to place a large order for high-quality paper supplies for our upcoming performance. We need 5,000 sheets of A4 paper, 2,000 sheets of poster paper in various colors, and 500 sheets of cardstock. Please deliver these supplies by April 15, 2025. Thank you. (Date of request: 2025-04-09)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160433' original_request='I would like to place a large order for high-quality paper supplies for our upcoming performance. We need 5,000 sheets of A4 paper, 2,000 sheets of poster paper in various colors, and 500 sheets of cardstock. Please deliver these supplies by April 15, 2025. Thank you. (Date of request: 2025-04-09)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194208' original_request='I would like to place a large order for high-quality paper supplies for our upcoming performance. We need 5,000 sheets of A4 paper, 2,000 sheets of poster paper in various colors, and 500 sheets of cardstock. Please deliver these supplies by April 15, 2025. Thank you. (Date of request: 2025-04-09)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to place a large order for high-quality paper supplies for our upcoming performance. We need 5,000 sheets of A4 paper, 2,000 sheets of poster paper in various colors, and 500 sheets of cardstock. Please deliver these supplies by April 15, 2025. Thank you. (Date of request: 2025-04-09)'
-Matched items --->  [{'item_name': 'A4 paper', 'quantity': 500}, {'item_name': 'Cardstock', 'quantity': 500}, {'item_name': 'Poster paper', 'quantity': 500}]
+---> Function (get_all_inventory): Get inventory data as of '2025-04-09'
+
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
+
+CHECKING Extraction Prompt ===>  
+            Customer Request: I would like to place a large order for high-quality paper supplies for our upcoming performance. We need 5,000 sheets of A4 paper, 2,000 sheets of poster paper in various colors, and 500 sheets of cardstock. Please deliver these supplies by April 15, 2025. Thank you. (Date of request: 2025-04-09)
+        
+
+CHECKING Extraction response ===>  AgentRunResult(output="Based on the customer request and the available inventory, here is the analysis:\n\n1. **A4 Paper**: \n   - Requested: 5,000 sheets\n   - Available: 272 sheets (A4 paper) + 3,000 sheets (A4 recycled paper) = 3,272 sheets\n   - Stock is less than requested quantity.\n\n2. **Poster Paper**: \n   - Requested: 2,000 sheets (various colors)\n   - Available: 500 sheets (colorful poster paper)\n   - Stock is less than requested quantity.\n\n3. **Cardstock**: \n   - Requested: 500 sheets\n   - Available: 595 sheets (Cardstock)\n   - Stock is sufficient.\n\nSince the stock for A4 paper and poster paper is less than the requested quantities, we cannot fulfill the entire order.\n\n### Summary:\n- A4 paper of 5,000 sheets is not available. Delivery can't be met.\n- Colorful poster paper of 2,000 sheets is not available. Delivery can't be met.\n- Cardstock of 500 sheets is available.\n\n### Final Output:\n```plaintext\nanswer: A4 paper of 5,000 sheets is not available. Delivery can't be met. Colorful poster paper of 2,000 sheets is not available. Delivery can't be met., items: A4 paper, colorful poster paper, cardstock, quantity: 500, ok_to_proceed: False\n```")
+
 
 CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
 
 CHECKING Inventory Agent - prompt ===>  
             Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "A4 paper",
-    "quantity": 500
-  },
-  {
-    "item_name": "Cardstock",
-    "quantity": 500
-  },
-  {
-    "item_name": "Poster paper",
-    "quantity": 500
-  }
-]
             User Request: I would like to place a large order for high-quality paper supplies for our upcoming performance. We need 5,000 sheets of A4 paper, 2,000 sheets of poster paper in various colors, and 500 sheets of cardstock. Please deliver these supplies by April 15, 2025. Thank you. (Date of request: 2025-04-09)
+            Extraction Context: extraction_response
         
 
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-09'
----> Function (get_cash_balance): Get cash balance as of '2025-04-09'
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-09'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-09'
----> Function (get_stock_level): Get stock for 'Poster paper' as of '2025-04-09'
+---> Function (get_stock_level): Get stock for 'poster paper' as of '2025-04-09'
+---> Function (get_stock_level): Get stock for 'cardstock' as of '2025-04-09'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-09'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-09'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-09'
->>>>>>>>>> inventory_response.output.answer =  Thank you for your order request. Unfortunately, we currently have insufficient cash balance to fulfill your order. Additionally, the delivery dates for the items you requested are as follows:
-- A4 paper: Expected delivery on April 16, 2025
-- Poster paper: Expected delivery on April 16, 2025
-- Cardstock: Expected delivery on April 13, 2025
-
-Since the A4 paper and poster paper will not arrive by your requested date of April 15, 2025, we cannot proceed with your order at this time. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+>>>>>>>>>> inventory_response.output.answer =  Thank you for your order! However, I regret to inform you that we currently have insufficient stock for the A4 paper and poster paper. The expected delivery dates for these items are April 16, 2025, which is after your requested delivery date of April 15, 2025. Therefore, we will not be able to fulfill your order immediately. We can proceed with the order for cardstock, which will be delivered by April 13, 2025. Please let us know how you would like to proceed with the other items.
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Thank you for your order request. Unfortunately, we currently have insufficient cash balance to fulfill your order. Additionally, the delivery dates for the items you requested are as follows:
-- A4 paper: Expected delivery on April 16, 2025
-- Poster paper: Expected delivery on April 16, 2025
-- Cardstock: Expected delivery on April 13, 2025
-
-Since the A4 paper and poster paper will not arrive by your requested date of April 15, 2025, we cannot proceed with your order at this time. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+Order cannot be processed: Thank you for your order! However, I regret to inform you that we currently have insufficient stock for the A4 paper and poster paper. The expected delivery dates for these items are April 16, 2025, which is after your requested delivery date of April 15, 2025. Therefore, we will not be able to fulfill your order immediately. We can proceed with the order for cardstock, which will be delivered by April 13, 2025. Please let us know how you would like to proceed with the other items.
 ---> Function (generate_financial_report): Get financial report as of '2025-04-09'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-09'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-09'
@@ -277,20 +174,15 @@ Since the A4 paper and poster paper will not arrive by your requested date of Ap
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-09'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-09'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-09'
-Response: Thank you for your order request. Unfortunately, we currently have insufficient cash balance to fulfill your order. Additionally, the delivery dates for the items you requested are as follows:
-- A4 paper: Expected delivery on April 16, 2025
-- Poster paper: Expected delivery on April 16, 2025
-- Cardstock: Expected delivery on April 13, 2025
-
-Since the A4 paper and poster paper will not arrive by your requested date of April 15, 2025, we cannot proceed with your order at this time. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
-Updated Cash: $-2165.30
-Updated Inventory: $5345.30
+Response: Thank you for your order! However, I regret to inform you that we currently have insufficient stock for the A4 paper and poster paper. The expected delivery dates for these items are April 16, 2025, which is after your requested delivery date of April 15, 2025. Therefore, we will not be able to fulfill your order immediately. We can proceed with the order for cardstock, which will be delivered by April 13, 2025. Please let us know how you would like to proceed with the other items.
+Updated Cash: $0.20
+Updated Inventory: $5190.30
 
 <--- Request 15 --->
 Context: event manager organizing demonstration
 Request Date: 2025-04-12
-Cash Balance: $-2165.30
-Inventory Value: $5345.30
+Cash Balance: $0.20
+Inventory Value: $5190.30
 CHECKPOINT-0.0 --->  I would like to place a large order for high-quality paper supplies for our upcoming demonstration. Please provide the following:
 
 - 10,000 sheets of A4 white paper
@@ -298,28 +190,14 @@ CHECKPOINT-0.0 --->  I would like to place a large order for high-quality paper 
 - 500 reams of cardboard for signage
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-12)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160448' original_request='I would like to place a large order for high-quality paper supplies for our upcoming demonstration. Please provide the following:\n\n- 10,000 sheets of A4 white paper\n- 5,000 sheets of A3 colored paper (assorted colors)\n- 500 reams of cardboard for signage\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-12)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194231' original_request='I would like to place a large order for high-quality paper supplies for our upcoming demonstration. Please provide the following:\n\n- 10,000 sheets of A4 white paper\n- 5,000 sheets of A3 colored paper (assorted colors)\n- 500 reams of cardboard for signage\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-12)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to place a large order for high-quality paper supplies for our upcoming demonstration. Please provide the following:
+---> Function (get_all_inventory): Get inventory data as of '2025-04-12'
 
-- 10,000 sheets of A4 white paper
-- 5,000 sheets of A3 colored paper (assorted colors)
-- 500 reams of cardboard for signage
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
 
-I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-12)'
-Matched items --->  [{'item_name': 'Colored paper', 'quantity': 500}]
-
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
-
-CHECKING Inventory Agent - prompt ===>  
-            Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Colored paper",
-    "quantity": 500
-  }
-]
-            User Request: I would like to place a large order for high-quality paper supplies for our upcoming demonstration. Please provide the following:
+CHECKING Extraction Prompt ===>  
+            Customer Request: I would like to place a large order for high-quality paper supplies for our upcoming demonstration. Please provide the following:
 
 - 10,000 sheets of A4 white paper
 - 5,000 sheets of A3 colored paper (assorted colors)
@@ -328,15 +206,47 @@ CHECKING Inventory Agent - prompt ===>
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-12)
         
 
----> Function (get_cash_balance): Get cash balance as of '2025-04-12'
----> Function (get_cash_balance): Get cash balance as of '2025-04-12'
+CHECKING Extraction response ===>  AgentRunResult(output='Based on the customer request and the available inventory, here is the analysis:\n\n1. **A4 white paper**: \n   - Requested: 10,000 sheets\n   - Available: 5,272 sheets\n   - Status: Not enough stock.\n\n2. **A3 colored paper (assorted colors)**: \n   - Requested: 5,000 sheets\n   - Available: 1,000 sheets (from "matte A3 paper")\n   - Status: Not enough stock.\n\n3. **Cardboard for signage**: \n   - Requested: 500 reams\n   - Available: 595 sheets (from "Cardstock")\n   - Status: Not enough stock (assuming 1 ream = 500 sheets).\n\nSince all requested items are not available in the required quantities, the order cannot be fulfilled.\n\n### Final Output:\n- **Answer**: "A4 white paper of 10,000 sheets is not available. Delivery can\'t be met. A3 colored paper of 5,000 sheets is not available. Delivery can\'t be met. Cardboard for signage of 500 reams is not available. Delivery can\'t be met."\n- **Items**: "A4 white paper, A3 colored paper, Cardboard for signage"\n- **Quantity**: "10,000 sheets, 5,000 sheets, 500 reams"\n- **Ok to proceed**: False\n\n### Formatted Response:\n"answer: A4 white paper of 10,000 sheets is not available. Delivery can\'t be met. A3 colored paper of 5,000 sheets is not available. Delivery can\'t be met. Cardboard for signage of 500 reams is not available. Delivery can\'t be met., items: A4 white paper, A3 colored paper, Cardboard for signage, quantity: 10,000 sheets, 5,000 sheets, 500 reams, ok_to_proceed: False"')
+
+
+CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
+
+CHECKING Inventory Agent - prompt ===>  
+            Classification: ORDER
+            User Request: I would like to place a large order for high-quality paper supplies for our upcoming demonstration. Please provide the following:
+
+- 10,000 sheets of A4 white paper
+- 5,000 sheets of A3 colored paper (assorted colors)
+- 500 reams of cardboard for signage
+
+I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-12)
+            Extraction Context: extraction_response
+        
+
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-12'
 ---> Function (get_stock_level): Get stock for 'A4 white paper' as of '2025-04-12'
----> Function (get_stock_level): Get stock for 'cardboard' as of '2025-04-12'
 ---> Function (get_stock_level): Get stock for 'A3 colored paper' as of '2025-04-12'
->>>>>>>>>> inventory_response.output.answer =  I'm sorry, but we cannot fulfill your order at this time. Our current cash balance is insufficient to cover the cost of the order, which is -$2165.30. Additionally, we currently have no stock available for the requested items: A4 white paper, A3 colored paper, and cardboard. Therefore, we cannot proceed with the order. Please let us know if there's anything else we can assist you with.
+---> Function (get_stock_level): Get stock for 'cardboard' as of '2025-04-12'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-12'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-12'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-12'
+>>>>>>>>>> inventory_response.output.answer =  Unfortunately, we currently do not have any stock available for the items you requested: A4 white paper, A3 colored paper, and cardboard. The expected delivery dates for these items are as follows:
+- A4 white paper: April 19, 2025
+- A3 colored paper: April 19, 2025
+- Cardboard: April 16, 2025
+
+Since the delivery dates for the A4 and A3 papers are after your requested delivery date of April 15, 2025, we will not be able to fulfill your order immediately. 
+
+Please let us know if you would like to proceed with a smaller order or if there is anything else we can assist you with.
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: I'm sorry, but we cannot fulfill your order at this time. Our current cash balance is insufficient to cover the cost of the order, which is -$2165.30. Additionally, we currently have no stock available for the requested items: A4 white paper, A3 colored paper, and cardboard. Therefore, we cannot proceed with the order. Please let us know if there's anything else we can assist you with.
+Order cannot be processed: Unfortunately, we currently do not have any stock available for the items you requested: A4 white paper, A3 colored paper, and cardboard. The expected delivery dates for these items are as follows:
+- A4 white paper: April 19, 2025
+- A3 colored paper: April 19, 2025
+- Cardboard: April 16, 2025
+
+Since the delivery dates for the A4 and A3 papers are after your requested delivery date of April 15, 2025, we will not be able to fulfill your order immediately. 
+
+Please let us know if you would like to proceed with a smaller order or if there is anything else we can assist you with.
 ---> Function (generate_financial_report): Get financial report as of '2025-04-12'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-12'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-12'
@@ -357,32 +267,42 @@ Order cannot be processed: I'm sorry, but we cannot fulfill your order at this t
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-12'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-12'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-12'
-Response: I'm sorry, but we cannot fulfill your order at this time. Our current cash balance is insufficient to cover the cost of the order, which is -$2165.30. Additionally, we currently have no stock available for the requested items: A4 white paper, A3 colored paper, and cardboard. Therefore, we cannot proceed with the order. Please let us know if there's anything else we can assist you with.
-Updated Cash: $-2165.30
-Updated Inventory: $5345.30
+Response: Unfortunately, we currently do not have any stock available for the items you requested: A4 white paper, A3 colored paper, and cardboard. The expected delivery dates for these items are as follows:
+- A4 white paper: April 19, 2025
+- A3 colored paper: April 19, 2025
+- Cardboard: April 16, 2025
+
+Since the delivery dates for the A4 and A3 papers are after your requested delivery date of April 15, 2025, we will not be able to fulfill your order immediately. 
+
+Please let us know if you would like to proceed with a smaller order or if there is anything else we can assist you with.
+Updated Cash: $0.20
+Updated Inventory: $5190.30
 
 <--- Request 16 --->
 Context: school teacher organizing assembly
 Request Date: 2025-04-13
-Cash Balance: $-2165.30
-Inventory Value: $5345.30
+Cash Balance: $0.20
+Inventory Value: $5190.30
 CHECKPOINT-0.0 --->  I would like to place an order for 500 sheets of A4 printer paper, 200 sheets of colorful construction paper, and 100 sheets of poster board. I need these supplies delivered by April 15, 2025, in time for our assembly event. (Date of request: 2025-04-13)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160459' original_request='I would like to place an order for 500 sheets of A4 printer paper, 200 sheets of colorful construction paper, and 100 sheets of poster board. I need these supplies delivered by April 15, 2025, in time for our assembly event. (Date of request: 2025-04-13)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194257' original_request='I would like to place an order for 500 sheets of A4 printer paper, 200 sheets of colorful construction paper, and 100 sheets of poster board. I need these supplies delivered by April 15, 2025, in time for our assembly event. (Date of request: 2025-04-13)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to place an order for 500 sheets of A4 printer paper, 200 sheets of colorful construction paper, and 100 sheets of poster board. I need these supplies delivered by April 15, 2025, in time for our assembly event. (Date of request: 2025-04-13)'
-Matched items --->  [{'item_name': 'Construction paper', 'quantity': 500}]
+---> Function (get_all_inventory): Get inventory data as of '2025-04-13'
+
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
+
+CHECKING Extraction Prompt ===>  
+            Customer Request: I would like to place an order for 500 sheets of A4 printer paper, 200 sheets of colorful construction paper, and 100 sheets of poster board. I need these supplies delivered by April 15, 2025, in time for our assembly event. (Date of request: 2025-04-13)
+        
+
+CHECKING Extraction response ===>  AgentRunResult(output='Based on the customer request and the available inventory, here is the analysis:\n\n1. **Requested Items**:\n   - 500 sheets of A4 printer paper\n   - 200 sheets of colorful construction paper\n   - 100 sheets of poster board\n\n2. **Available Inventory**:\n   - A4 printer paper: 500 sheets available\n   - Colorful construction paper: 788 sheets available (best match is "colored paper")\n   - Poster board: 300 sheets available (best match is "poster boards (24\\" x 36\\")")\n\n3. **Stock Check**:\n   - A4 printer paper: Requested 500 sheets, available 500 sheets (OK)\n   - Colorful construction paper: Requested 200 sheets, available 788 sheets (OK)\n   - Poster board: Requested 100 sheets, available 300 sheets (OK)\n\nSince all requested items are available in sufficient quantity, we can proceed with the order.\n\n### Final Output:\n- **Answer**: All requested items are available for delivery.\n- **Items**: \n  - A4 printer paper\n  - Colored paper (as colorful construction paper)\n  - Poster boards (as poster board)\n- **Quantity**: \n  - 500 sheets\n  - 200 sheets\n  - 100 sheets\n- **OK to proceed**: True\n\nOutput format:\n"answer: All requested items are available for delivery, items: A4 printer paper, colored paper, poster boards, quantity: 500 sheets, 200 sheets, 100 sheets, ok_to_proceed: True"')
+
 
 CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
 
 CHECKING Inventory Agent - prompt ===>  
             Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Construction paper",
-    "quantity": 500
-  }
-]
             User Request: I would like to place an order for 500 sheets of A4 printer paper, 200 sheets of colorful construction paper, and 100 sheets of poster board. I need these supplies delivered by April 15, 2025, in time for our assembly event. (Date of request: 2025-04-13)
+            Extraction Context: extraction_response
         
 
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-13'
@@ -393,9 +313,9 @@ CHECKING Inventory Agent - prompt ===>
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-13'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-13'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-13'
->>>>>>>>>> inventory_response.output.answer =  Unfortunately, we cannot fulfill your order at this time due to insufficient cash balance. Additionally, the delivery dates for the items you requested are as follows: A4 printer paper and colorful construction paper are expected to arrive on April 17, 2025, while the poster board is expected to arrive on April 14, 2025. Since the delivery dates for the first two items are after your requested delivery date of April 15, 2025, we cannot proceed with your order. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+>>>>>>>>>> inventory_response.output.answer =  Unfortunately, we cannot fulfill your order for 500 sheets of A4 printer paper and 100 sheets of poster board as we currently have no stock available for these items. The expected delivery dates for these items are April 17, 2025, which is after your requested delivery date of April 15, 2025. However, we can fulfill your order for 200 sheets of colorful construction paper, which will be delivered by April 17, 2025. Please let us know how you would like to proceed!
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Unfortunately, we cannot fulfill your order at this time due to insufficient cash balance. Additionally, the delivery dates for the items you requested are as follows: A4 printer paper and colorful construction paper are expected to arrive on April 17, 2025, while the poster board is expected to arrive on April 14, 2025. Since the delivery dates for the first two items are after your requested delivery date of April 15, 2025, we cannot proceed with your order. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+Order cannot be processed: Unfortunately, we cannot fulfill your order for 500 sheets of A4 printer paper and 100 sheets of poster board as we currently have no stock available for these items. The expected delivery dates for these items are April 17, 2025, which is after your requested delivery date of April 15, 2025. However, we can fulfill your order for 200 sheets of colorful construction paper, which will be delivered by April 17, 2025. Please let us know how you would like to proceed!
 ---> Function (generate_financial_report): Get financial report as of '2025-04-13'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-13'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-13'
@@ -416,15 +336,15 @@ Order cannot be processed: Unfortunately, we cannot fulfill your order at this t
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-13'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-13'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-13'
-Response: Unfortunately, we cannot fulfill your order at this time due to insufficient cash balance. Additionally, the delivery dates for the items you requested are as follows: A4 printer paper and colorful construction paper are expected to arrive on April 17, 2025, while the poster board is expected to arrive on April 14, 2025. Since the delivery dates for the first two items are after your requested delivery date of April 15, 2025, we cannot proceed with your order. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
-Updated Cash: $-2165.30
-Updated Inventory: $5345.30
+Response: Unfortunately, we cannot fulfill your order for 500 sheets of A4 printer paper and 100 sheets of poster board as we currently have no stock available for these items. The expected delivery dates for these items are April 17, 2025, which is after your requested delivery date of April 15, 2025. However, we can fulfill your order for 200 sheets of colorful construction paper, which will be delivered by April 17, 2025. Please let us know how you would like to proceed!
+Updated Cash: $0.20
+Updated Inventory: $5190.30
 
 <--- Request 17 --->
 Context: restaurant manager organizing reception
 Request Date: 2025-04-14
-Cash Balance: $-2165.30
-Inventory Value: $5345.30
+Cash Balance: $0.20
+Inventory Value: $5190.30
 CHECKPOINT-0.0 --->  I would like to place a medium order for the following paper supplies for our upcoming reception:
 
 - 1000 sheets of A4 white printer paper
@@ -434,38 +354,14 @@ CHECKPOINT-0.0 --->  I would like to place a medium order for the following pape
 - 500 paper plates (biodegradable)
 
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-14)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160516' original_request='I would like to place a medium order for the following paper supplies for our upcoming reception:\n\n- 1000 sheets of A4 white printer paper\n- 500 sheets of A3 colored paper (assorted colors)\n- 2000 table napkins (white)\n- 1000 paper cups (biodegradable)\n- 500 paper plates (biodegradable)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-14)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194321' original_request='I would like to place a medium order for the following paper supplies for our upcoming reception:\n\n- 1000 sheets of A4 white printer paper\n- 500 sheets of A3 colored paper (assorted colors)\n- 2000 table napkins (white)\n- 1000 paper cups (biodegradable)\n- 500 paper plates (biodegradable)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-14)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to place a medium order for the following paper supplies for our upcoming reception:
+---> Function (get_all_inventory): Get inventory data as of '2025-04-14'
 
-- 1000 sheets of A4 white printer paper
-- 500 sheets of A3 colored paper (assorted colors)
-- 2000 table napkins (white)
-- 1000 paper cups (biodegradable)
-- 500 paper plates (biodegradable)
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
 
-I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-14)'
-Matched items --->  [{'item_name': 'Colored paper', 'quantity': 1000}, {'item_name': 'Paper plates', 'quantity': 1000}, {'item_name': 'Paper cups', 'quantity': 1000}]
-
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
-
-CHECKING Inventory Agent - prompt ===>  
-            Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Colored paper",
-    "quantity": 1000
-  },
-  {
-    "item_name": "Paper plates",
-    "quantity": 1000
-  },
-  {
-    "item_name": "Paper cups",
-    "quantity": 1000
-  }
-]
-            User Request: I would like to place a medium order for the following paper supplies for our upcoming reception:
+CHECKING Extraction Prompt ===>  
+            Customer Request: I would like to place a medium order for the following paper supplies for our upcoming reception:
 
 - 1000 sheets of A4 white printer paper
 - 500 sheets of A3 colored paper (assorted colors)
@@ -476,11 +372,29 @@ CHECKING Inventory Agent - prompt ===>
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-14)
         
 
----> Function (get_cash_balance): Get cash balance as of '2025-04-14'
+CHECKING Extraction response ===>  AgentRunResult(output="Based on the inventory data, here are the details for the customer request:\n\n1. **A4 white printer paper**: Requested 1000 sheets, but only 200 sheets are available.\n2. **A3 colored paper (assorted colors)**: Not available in the inventory.\n3. **Table napkins (white)**: Requested 2000 napkins, but only 100 napkins are available.\n4. **Paper cups (biodegradable)**: Not available in the inventory.\n5. **Paper plates (biodegradable)**: Requested 500 plates, and there are 748 plates available.\n\nNow, let's summarize the findings:\n\n- **A4 white printer paper**: 200 sheets available, but 1000 sheets requested. Delivery can't be met.\n- **A3 colored paper**: Not available. Delivery can't be met.\n- **Table napkins**: 100 available, but 2000 requested. Delivery can't be met.\n- **Paper cups**: Not available. Delivery can't be met.\n- **Paper plates**: 748 available, and 500 requested. Delivery can be met.\n\nSince the stock is insufficient for the majority of the requested items, the overall order cannot be fulfilled.\n\n### Final Output:\n```plaintext\nanswer: A4 white printer paper of 1000 is not available. Delivery can't be met. A3 colored paper is not available. Delivery can't be met. Table napkins of 2000 is not available. Delivery can't be met. Paper cups are not available. Delivery can't be met. Paper plates of 500 is available. Delivery can be met., items: A4 white printer paper, A3 colored paper, table napkins, paper cups, paper plates, quantity: 1000, 0, 2000, 0, 500, ok_to_proceed: False\n```")
+
+
+CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
+
+CHECKING Inventory Agent - prompt ===>  
+            Classification: ORDER
+            User Request: I would like to place a medium order for the following paper supplies for our upcoming reception:
+
+- 1000 sheets of A4 white printer paper
+- 500 sheets of A3 colored paper (assorted colors)
+- 2000 table napkins (white)
+- 1000 paper cups (biodegradable)
+- 500 paper plates (biodegradable)
+
+I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-14)
+            Extraction Context: extraction_response
+        
+
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'A4 white printer paper' as of '2025-04-14'
----> Function (get_stock_level): Get stock for 'A3 colored paper' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'table napkins' as of '2025-04-14'
+---> Function (get_stock_level): Get stock for 'A3 colored paper' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'paper cups' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'paper plates' as of '2025-04-14'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-14'
@@ -488,23 +402,25 @@ I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-14'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-14'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-14'
->>>>>>>>>> inventory_response.output.answer =  Unfortunately, we cannot fulfill your order at this time due to insufficient cash balance. Additionally, all requested items are currently out of stock. The expected delivery dates for the items are as follows:
-- A4 white printer paper: April 18, 2025
-- A3 colored paper: April 18, 2025
-- Table napkins: April 21, 2025
-- Paper cups: April 18, 2025
-- Paper plates: April 18, 2025
+>>>>>>>>>> inventory_response.output.answer =  Unfortunately, we do not have sufficient stock for your order. Here are the details:
 
-Since the delivery date for table napkins is after your requested delivery date of April 15, 2025, we will not be able to fulfill your order immediately. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+- **A4 white printer paper**: Current stock is 200 sheets, you requested 1000 sheets. Expected delivery date is April 18, 2025.
+- **A3 colored paper**: Out of stock, expected delivery date is April 18, 2025.
+- **Table napkins**: Out of stock, expected delivery date is April 21, 2025.
+- **Paper cups**: Out of stock, expected delivery date is April 18, 2025.
+- **Paper plates**: Out of stock, expected delivery date is April 18, 2025.
+
+Since the delivery dates for the items you requested are after your required delivery date of April 15, 2025, we will not be able to fulfill your order immediately. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Unfortunately, we cannot fulfill your order at this time due to insufficient cash balance. Additionally, all requested items are currently out of stock. The expected delivery dates for the items are as follows:
-- A4 white printer paper: April 18, 2025
-- A3 colored paper: April 18, 2025
-- Table napkins: April 21, 2025
-- Paper cups: April 18, 2025
-- Paper plates: April 18, 2025
+Order cannot be processed: Unfortunately, we do not have sufficient stock for your order. Here are the details:
 
-Since the delivery date for table napkins is after your requested delivery date of April 15, 2025, we will not be able to fulfill your order immediately. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+- **A4 white printer paper**: Current stock is 200 sheets, you requested 1000 sheets. Expected delivery date is April 18, 2025.
+- **A3 colored paper**: Out of stock, expected delivery date is April 18, 2025.
+- **Table napkins**: Out of stock, expected delivery date is April 21, 2025.
+- **Paper cups**: Out of stock, expected delivery date is April 18, 2025.
+- **Paper plates**: Out of stock, expected delivery date is April 18, 2025.
+
+Since the delivery dates for the items you requested are after your required delivery date of April 15, 2025, we will not be able to fulfill your order immediately. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
 ---> Function (generate_financial_report): Get financial report as of '2025-04-14'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-14'
@@ -525,56 +441,56 @@ Since the delivery date for table napkins is after your requested delivery date 
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-14'
-Response: Unfortunately, we cannot fulfill your order at this time due to insufficient cash balance. Additionally, all requested items are currently out of stock. The expected delivery dates for the items are as follows:
-- A4 white printer paper: April 18, 2025
-- A3 colored paper: April 18, 2025
-- Table napkins: April 21, 2025
-- Paper cups: April 18, 2025
-- Paper plates: April 18, 2025
+Response: Unfortunately, we do not have sufficient stock for your order. Here are the details:
 
-Since the delivery date for table napkins is after your requested delivery date of April 15, 2025, we will not be able to fulfill your order immediately. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
-Updated Cash: $-2165.30
-Updated Inventory: $5345.30
+- **A4 white printer paper**: Current stock is 200 sheets, you requested 1000 sheets. Expected delivery date is April 18, 2025.
+- **A3 colored paper**: Out of stock, expected delivery date is April 18, 2025.
+- **Table napkins**: Out of stock, expected delivery date is April 21, 2025.
+- **Paper cups**: Out of stock, expected delivery date is April 18, 2025.
+- **Paper plates**: Out of stock, expected delivery date is April 18, 2025.
+
+Since the delivery dates for the items you requested are after your required delivery date of April 15, 2025, we will not be able to fulfill your order immediately. Please let us know if you would like to adjust your order or if there's anything else we can assist you with.
+Updated Cash: $0.20
+Updated Inventory: $5190.30
 
 <--- Request 18 --->
 Context: office manager organizing ceremony
 Request Date: 2025-04-14
-Cash Balance: $-2165.30
-Inventory Value: $5345.30
+Cash Balance: $0.20
+Inventory Value: $5190.30
 CHECKPOINT-0.0 --->  I would like to place a medium order for the following paper supplies for our upcoming ceremony: 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors. I need these supplies delivered by April 15, 2025. (Date of request: 2025-04-14)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160533' original_request='I would like to place a medium order for the following paper supplies for our upcoming ceremony: 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors. I need these supplies delivered by April 15, 2025. (Date of request: 2025-04-14)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194355' original_request='I would like to place a medium order for the following paper supplies for our upcoming ceremony: 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors. I need these supplies delivered by April 15, 2025. (Date of request: 2025-04-14)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to place a medium order for the following paper supplies for our upcoming ceremony: 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors. I need these supplies delivered by April 15, 2025. (Date of request: 2025-04-14)'
-Matched items --->  [{'item_name': 'Cardstock', 'quantity': 500}, {'item_name': 'Colored paper', 'quantity': 500}]
+---> Function (get_all_inventory): Get inventory data as of '2025-04-14'
+
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
+
+CHECKING Extraction Prompt ===>  
+            Customer Request: I would like to place a medium order for the following paper supplies for our upcoming ceremony: 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors. I need these supplies delivered by April 15, 2025. (Date of request: 2025-04-14)
+        
+
+CHECKING Extraction response ===>  AgentRunResult(output='Let\'s analyze the customer request and the available inventory.\n\n### Customer Request:\n1. **500 sheets of high-quality white cardstock**\n2. **1000 sheets of standard printing paper**\n3. **200 sheets of colored paper in assorted colors**\n\n### Available Inventory:\n- **Cardstock**: 595 sheets\n- **Standard printer paper**: 500 sheets\n- **Colored paper**: 788 sheets\n\n### Evaluation:\n1. **High-quality white cardstock**: \n   - Requested: 500 sheets\n   - Available: 595 sheets\n   - Status: Available\n\n2. **Standard printing paper**: \n   - Requested: 1000 sheets\n   - Available: 500 sheets\n   - Status: Not available (insufficient stock)\n\n3. **Colored paper**: \n   - Requested: 200 sheets\n   - Available: 788 sheets\n   - Status: Available\n\n### Conclusion:\nSince the stock for standard printing paper is less than the requested quantity, we cannot fulfill the entire order.\n\n### Final Output:\n- **ok_to_proceed**: False\n- **answer**: "Standard printing paper of 1000 is not available. Delivery can\'t be met."\n\nNow, let\'s format the output accordingly.\n\n```json\n{\n  "answer": "Standard printing paper of 1000 is not available. Delivery can\'t be met.",\n  "items": [\n    {\n      "item_name": "high-quality white cardstock",\n      "quantity": 500\n    },\n    {\n      "item_name": "standard printing paper",\n      "quantity": 1000\n    },\n    {\n      "item_name": "colored paper",\n      "quantity": 200\n    }\n  ],\n  "ok_to_proceed": false\n}\n```')
+
 
 CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
 
 CHECKING Inventory Agent - prompt ===>  
             Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Cardstock",
-    "quantity": 500
-  },
-  {
-    "item_name": "Colored paper",
-    "quantity": 500
-  }
-]
             User Request: I would like to place a medium order for the following paper supplies for our upcoming ceremony: 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors. I need these supplies delivered by April 15, 2025. (Date of request: 2025-04-14)
+            Extraction Context: extraction_response
         
 
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-14'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-14'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-14'
----> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-14'
+---> Function (get_stock_level): Get stock for 'high-quality white cardstock' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'standard printing paper' as of '2025-04-14'
+---> Function (get_stock_level): Get stock for 'colored paper' as of '2025-04-14'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-14'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-14'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-14'
->>>>>>>>>> inventory_response.output.answer =  Your order for 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors has been placed. However, please note that the expected delivery date for all items is April 18, 2025, which is after your requested delivery date of April 15, 2025. Therefore, the order will not be fulfilled immediately. We apologize for any inconvenience this may cause.
+>>>>>>>>>> inventory_response.output.answer =  Unfortunately, we cannot fulfill your order for the paper supplies as we currently have no stock available for any of the requested items: high-quality white cardstock, standard printing paper, and colored paper. Additionally, the expected delivery date for these items is April 18, 2025, which is after your requested delivery date of April 15, 2025. Therefore, we cannot proceed with your order at this time.
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Your order for 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors has been placed. However, please note that the expected delivery date for all items is April 18, 2025, which is after your requested delivery date of April 15, 2025. Therefore, the order will not be fulfilled immediately. We apologize for any inconvenience this may cause.
+Order cannot be processed: Unfortunately, we cannot fulfill your order for the paper supplies as we currently have no stock available for any of the requested items: high-quality white cardstock, standard printing paper, and colored paper. Additionally, the expected delivery date for these items is April 18, 2025, which is after your requested delivery date of April 15, 2025. Therefore, we cannot proceed with your order at this time.
 ---> Function (generate_financial_report): Get financial report as of '2025-04-14'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-14'
@@ -595,15 +511,15 @@ Order cannot be processed: Your order for 500 sheets of high-quality white cards
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-14'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-14'
-Response: Your order for 500 sheets of high-quality white cardstock, 1000 sheets of standard printing paper, and 200 sheets of colored paper in assorted colors has been placed. However, please note that the expected delivery date for all items is April 18, 2025, which is after your requested delivery date of April 15, 2025. Therefore, the order will not be fulfilled immediately. We apologize for any inconvenience this may cause.
-Updated Cash: $-2165.30
-Updated Inventory: $5440.30
+Response: Unfortunately, we cannot fulfill your order for the paper supplies as we currently have no stock available for any of the requested items: high-quality white cardstock, standard printing paper, and colored paper. Additionally, the expected delivery date for these items is April 18, 2025, which is after your requested delivery date of April 15, 2025. Therefore, we cannot proceed with your order at this time.
+Updated Cash: $0.20
+Updated Inventory: $5190.30
 
 <--- Request 19 --->
 Context: city hall clerk organizing exhibition
 Request Date: 2025-04-15
-Cash Balance: $-2165.30
-Inventory Value: $5440.30
+Cash Balance: $0.20
+Inventory Value: $5190.30
 CHECKPOINT-0.0 --->  Dear [Manufacturer's Name],
 
 I would like to place an order for the following paper supplies for our upcoming exhibition:
@@ -615,40 +531,14 @@ I would like to place an order for the following paper supplies for our upcoming
 We need the supplies delivered by April 20, 2025.
 
 Thank you! (Date of request: 2025-04-15)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160553' original_request="Dear [Manufacturer's Name],\n\nI would like to place an order for the following paper supplies for our upcoming exhibition:\n\n- 2000 sheets of A4 glossy paper\n- 1500 sheets of A3 matte paper\n- 1000 sheets of cardstock in assorted colors\n\nWe need the supplies delivered by April 20, 2025.\n\nThank you! (Date of request: 2025-04-15)"
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194417' original_request="Dear [Manufacturer's Name],\n\nI would like to place an order for the following paper supplies for our upcoming exhibition:\n\n- 2000 sheets of A4 glossy paper\n- 1500 sheets of A3 matte paper\n- 1000 sheets of cardstock in assorted colors\n\nWe need the supplies delivered by April 20, 2025.\n\nThank you! (Date of request: 2025-04-15)"
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'Dear [Manufacturer's Name],
+---> Function (get_all_inventory): Get inventory data as of '2025-04-15'
 
-I would like to place an order for the following paper supplies for our upcoming exhibition:
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
 
-- 2000 sheets of A4 glossy paper
-- 1500 sheets of A3 matte paper
-- 1000 sheets of cardstock in assorted colors
-
-We need the supplies delivered by April 20, 2025.
-
-Thank you! (Date of request: 2025-04-15)'
-Matched items --->  [{'item_name': 'Cardstock', 'quantity': 2000}, {'item_name': 'Glossy paper', 'quantity': 2000}, {'item_name': 'Matte paper', 'quantity': 2000}]
-
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
-
-CHECKING Inventory Agent - prompt ===>  
-            Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Cardstock",
-    "quantity": 2000
-  },
-  {
-    "item_name": "Glossy paper",
-    "quantity": 2000
-  },
-  {
-    "item_name": "Matte paper",
-    "quantity": 2000
-  }
-]
-            User Request: Dear [Manufacturer's Name],
+CHECKING Extraction Prompt ===>  
+            Customer Request: Dear [Manufacturer's Name],
 
 I would like to place an order for the following paper supplies for our upcoming exhibition:
 
@@ -661,27 +551,48 @@ We need the supplies delivered by April 20, 2025.
 Thank you! (Date of request: 2025-04-15)
         
 
----> Function (get_cash_balance): Get cash balance as of '2025-04-15'
----> Function (get_cash_balance): Get cash balance as of '2025-04-15'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-15'
----> Function (get_stock_level): Get stock for 'Matte paper' as of '2025-04-15'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-15'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
->>>>>>>>>> inventory_response.output.answer =  Thank you for your order request. Unfortunately, we currently have insufficient cash balance to fulfill your order. Additionally, the delivery dates for the items are as follows:
-- Glossy paper: Expected delivery on April 22, 2025
-- Matte paper: Expected delivery on April 22, 2025
-- Cardstock: Expected delivery on April 19, 2025
+CHECKING Extraction response ===>  AgentRunResult(output='Based on the customer request and the available inventory, here is the analysis:\n\n1. **A4 glossy paper**: \n   - Requested: 2000 sheets\n   - Available: 500 sheets\n   - Status: Not available\n\n2. **A3 matte paper**: \n   - Requested: 1500 sheets\n   - Available: 1000 sheets\n   - Status: Not available\n\n3. **Cardstock in assorted colors**: \n   - Requested: 1000 sheets\n   - Available: 500 sheets (considering "cardstock" and "cardstock in various colors")\n   - Status: Not available\n\nSince all requested items are not available in the required quantities, the order cannot be fulfilled.\n\n### Final Output:\n- **Answer**: "A4 glossy paper of 2000 is not available. Delivery can\'t be met. A3 matte paper of 1500 is not available. Delivery can\'t be met. Cardstock in assorted colors of 1000 is not available. Delivery can\'t be met."\n- **Items**: \n  - A4 glossy paper\n  - A3 matte paper\n  - Cardstock in assorted colors\n- **Quantity**: \n  - 2000 sheets\n  - 1500 sheets\n  - 1000 sheets\n- **Ok to proceed**: False\n\n### Formatted Response:\n"answer: A4 glossy paper of 2000 is not available. Delivery can\'t be met. A3 matte paper of 1500 is not available. Delivery can\'t be met. Cardstock in assorted colors of 1000 is not available. Delivery can\'t be met., items: A4 glossy paper, A3 matte paper, cardstock in assorted colors, quantity: 2000, 1500, 1000, ok_to_proceed: False"')
 
-Since the glossy and matte papers will not arrive by your requested date of April 20, 2025, we cannot proceed with your order at this time. Please let us know if you would like to adjust your order or if you have any other questions.
+
+CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
+
+CHECKING Inventory Agent - prompt ===>  
+            Classification: ORDER
+            User Request: Dear [Manufacturer's Name],
+
+I would like to place an order for the following paper supplies for our upcoming exhibition:
+
+- 2000 sheets of A4 glossy paper
+- 1500 sheets of A3 matte paper
+- 1000 sheets of cardstock in assorted colors
+
+We need the supplies delivered by April 20, 2025.
+
+Thank you! (Date of request: 2025-04-15)
+            Extraction Context: extraction_response
+        
+
+---> Function (get_cash_balance): Get cash balance as of '2025-04-15'
+---> Function (get_stock_level): Get stock for 'A4 glossy paper' as of '2025-04-15'
+---> Function (get_stock_level): Get stock for 'A3 matte paper' as of '2025-04-15'
+---> Function (get_stock_level): Get stock for 'cardstock in assorted colors' as of '2025-04-15'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
+>>>>>>>>>> inventory_response.output.answer =  Thank you for your order! We have successfully placed a restocking order for the following items:
+
+- **A4 glossy paper**: We currently have 500 sheets in stock, which is insufficient for your request of 2000 sheets. Unfortunately, we cannot fulfill this part of your order immediately as we need to reorder.
+- **A3 matte paper**: We currently have 0 sheets in stock. A restocking order has been placed, and the expected delivery date is **April 22, 2025**.
+- **Cardstock in assorted colors**: We currently have 0 sheets in stock. A restocking order has been placed, and the expected delivery date is **April 19, 2025**.
+
+Please note that the delivery date for the A3 matte paper is after your requested delivery date of April 20, 2025. Therefore, we will not be able to fulfill your entire order immediately. We appreciate your understanding and patience as we work to get these supplies to you as soon as possible.
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Thank you for your order request. Unfortunately, we currently have insufficient cash balance to fulfill your order. Additionally, the delivery dates for the items are as follows:
-- Glossy paper: Expected delivery on April 22, 2025
-- Matte paper: Expected delivery on April 22, 2025
-- Cardstock: Expected delivery on April 19, 2025
+Order cannot be processed: Thank you for your order! We have successfully placed a restocking order for the following items:
 
-Since the glossy and matte papers will not arrive by your requested date of April 20, 2025, we cannot proceed with your order at this time. Please let us know if you would like to adjust your order or if you have any other questions.
+- **A4 glossy paper**: We currently have 500 sheets in stock, which is insufficient for your request of 2000 sheets. Unfortunately, we cannot fulfill this part of your order immediately as we need to reorder.
+- **A3 matte paper**: We currently have 0 sheets in stock. A restocking order has been placed, and the expected delivery date is **April 22, 2025**.
+- **Cardstock in assorted colors**: We currently have 0 sheets in stock. A restocking order has been placed, and the expected delivery date is **April 19, 2025**.
+
+Please note that the delivery date for the A3 matte paper is after your requested delivery date of April 20, 2025. Therefore, we will not be able to fulfill your entire order immediately. We appreciate your understanding and patience as we work to get these supplies to you as soon as possible.
 ---> Function (generate_financial_report): Get financial report as of '2025-04-15'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-15'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-15'
@@ -702,49 +613,54 @@ Since the glossy and matte papers will not arrive by your requested date of Apri
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-15'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-15'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-15'
-Response: Thank you for your order request. Unfortunately, we currently have insufficient cash balance to fulfill your order. Additionally, the delivery dates for the items are as follows:
-- Glossy paper: Expected delivery on April 22, 2025
-- Matte paper: Expected delivery on April 22, 2025
-- Cardstock: Expected delivery on April 19, 2025
+Response: Thank you for your order! We have successfully placed a restocking order for the following items:
 
-Since the glossy and matte papers will not arrive by your requested date of April 20, 2025, we cannot proceed with your order at this time. Please let us know if you would like to adjust your order or if you have any other questions.
-Updated Cash: $-2165.30
-Updated Inventory: $5440.30
+- **A4 glossy paper**: We currently have 500 sheets in stock, which is insufficient for your request of 2000 sheets. Unfortunately, we cannot fulfill this part of your order immediately as we need to reorder.
+- **A3 matte paper**: We currently have 0 sheets in stock. A restocking order has been placed, and the expected delivery date is **April 22, 2025**.
+- **Cardstock in assorted colors**: We currently have 0 sheets in stock. A restocking order has been placed, and the expected delivery date is **April 19, 2025**.
+
+Please note that the delivery date for the A3 matte paper is after your requested delivery date of April 20, 2025. Therefore, we will not be able to fulfill your entire order immediately. We appreciate your understanding and patience as we work to get these supplies to you as soon as possible.
+Updated Cash: $0.20
+Updated Inventory: $5190.30
 
 <--- Request 20 --->
 Context: restaurant manager organizing concert
 Request Date: 2025-04-17
-Cash Balance: $-2165.30
-Inventory Value: $5440.30
+Cash Balance: $0.20
+Inventory Value: $5190.30
 CHECKPOINT-0.0 --->  I would like to place a large order for the following paper supplies for our upcoming concert: 5,000 flyers, 2,000 posters, and 10,000 tickets. We need these items delivered by May 15, 2025, to ensure adequate time for distribution and promotion. Thank you! (Date of request: 2025-04-17)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251222160610' original_request='I would like to place a large order for the following paper supplies for our upcoming concert: 5,000 flyers, 2,000 posters, and 10,000 tickets. We need these items delivered by May 15, 2025, to ensure adequate time for distribution and promotion. Thank you! (Date of request: 2025-04-17)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20251224194451' original_request='I would like to place a large order for the following paper supplies for our upcoming concert: 5,000 flyers, 2,000 posters, and 10,000 tickets. We need these items delivered by May 15, 2025, to ensure adequate time for distribution and promotion. Thank you! (Date of request: 2025-04-17)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (extract_items): Extracting request: 'I would like to place a large order for the following paper supplies for our upcoming concert: 5,000 flyers, 2,000 posters, and 10,000 tickets. We need these items delivered by May 15, 2025, to ensure adequate time for distribution and promotion. Thank you! (Date of request: 2025-04-17)'
-Matched items --->  [{'item_name': 'Flyers', 'quantity': 1}]
+---> Function (get_all_inventory): Get inventory data as of '2025-04-17'
+
+CHECKING Extraction Agent ===>  Agent(model=OpenAIChatModel(), name='ExtractionAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
+
+CHECKING Extraction Prompt ===>  
+            Customer Request: I would like to place a large order for the following paper supplies for our upcoming concert: 5,000 flyers, 2,000 posters, and 10,000 tickets. We need these items delivered by May 15, 2025, to ensure adequate time for distribution and promotion. Thank you! (Date of request: 2025-04-17)
+        
+
+CHECKING Extraction response ===>  AgentRunResult(output='Based on the customer request for 5,000 flyers, 2,000 posters, and 10,000 tickets, I have checked the inventory. Here are the findings:\n\n1. **Flyers**: The inventory does not specifically list "flyers," but we can use "A4 paper" or "A4 printing paper" as substitutes. The available stock for "A4 paper" is 5,272 sheets, which is sufficient for the order.\n   \n2. **Posters**: The inventory includes "poster paper" with 2,000 sheets available, which matches the request for 2,000 posters.\n\n3. **Tickets**: There is no specific item listed as "tickets" in the inventory. Therefore, we cannot fulfill the request for 10,000 tickets.\n\nSince the stock for tickets is not available, we cannot proceed with the order as requested.\n\nHere is the response formatted as requested:\n\n"answer: Tickets of 10,000 is not available. Delivery can\'t be met., items: A4 paper, quantity: 5,000, ok_to_proceed: False"')
+
 
 CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class '__main__.InventoryAgentResponse'>, instrument=None)
 
 CHECKING Inventory Agent - prompt ===>  
             Classification: ORDER
-            ITEMS_JSON: [
-  {
-    "item_name": "Flyers",
-    "quantity": 1
-  }
-]
             User Request: I would like to place a large order for the following paper supplies for our upcoming concert: 5,000 flyers, 2,000 posters, and 10,000 tickets. We need these items delivered by May 15, 2025, to ensure adequate time for distribution and promotion. Thank you! (Date of request: 2025-04-17)
+            Extraction Context: extraction_response
         
 
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-17'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-17'
----> Function (get_stock_level): Get stock for 'Flyers' as of '2025-04-17'
----> Function (get_cash_balance): Get cash balance as of '2025-04-17'
+---> Function (get_stock_level): Get stock for 'flyers' as of '2025-04-17'
+---> Function (get_stock_level): Get stock for 'posters' as of '2025-04-17'
+---> Function (get_stock_level): Get stock for 'tickets' as of '2025-04-17'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-17'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-17'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-17'
->>>>>>>>>> inventory_response.output.answer =  Unfortunately, we cannot fulfill your order for 5,000 flyers, 2,000 posters, and 10,000 tickets at this time. Our current cash balance is insufficient to cover the order, and we also have no stock available for these items. Additionally, the expected delivery date for these items is April 24, 2025, which is after your requested delivery date of May 15, 2025. Therefore, we cannot proceed with your order immediately.
+>>>>>>>>>> inventory_response.output.answer =  Thank you for your order! Unfortunately, we currently have no stock available for flyers, posters, and tickets. We have placed a restocking order for all three items, and they are expected to be delivered by April 24, 2025. However, this delivery date is after your requested delivery date of May 15, 2025. Therefore, we will not be able to fulfill your order immediately. We apologize for the inconvenience and appreciate your understanding.
 >>>>>>>>>> inventory_response.ok_to_proceed =  False
-Order cannot be processed: Unfortunately, we cannot fulfill your order for 5,000 flyers, 2,000 posters, and 10,000 tickets at this time. Our current cash balance is insufficient to cover the order, and we also have no stock available for these items. Additionally, the expected delivery date for these items is April 24, 2025, which is after your requested delivery date of May 15, 2025. Therefore, we cannot proceed with your order immediately.
+Order cannot be processed: Thank you for your order! Unfortunately, we currently have no stock available for flyers, posters, and tickets. We have placed a restocking order for all three items, and they are expected to be delivered by April 24, 2025. However, this delivery date is after your requested delivery date of May 15, 2025. Therefore, we will not be able to fulfill your order immediately. We apologize for the inconvenience and appreciate your understanding.
 ---> Function (generate_financial_report): Get financial report as of '2025-04-17'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-17'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-17'
@@ -765,9 +681,9 @@ Order cannot be processed: Unfortunately, we cannot fulfill your order for 5,000
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-17'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-17'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-17'
-Response: Unfortunately, we cannot fulfill your order for 5,000 flyers, 2,000 posters, and 10,000 tickets at this time. Our current cash balance is insufficient to cover the order, and we also have no stock available for these items. Additionally, the expected delivery date for these items is April 24, 2025, which is after your requested delivery date of May 15, 2025. Therefore, we cannot proceed with your order immediately.
-Updated Cash: $-2165.30
-Updated Inventory: $5440.30
+Response: Thank you for your order! Unfortunately, we currently have no stock available for flyers, posters, and tickets. We have placed a restocking order for all three items, and they are expected to be delivered by April 24, 2025. However, this delivery date is after your requested delivery date of May 15, 2025. Therefore, we will not be able to fulfill your order immediately. We apologize for the inconvenience and appreciate your understanding.
+Updated Cash: $0.20
+Updated Inventory: $5190.30
 ---> Function (generate_financial_report): Get financial report as of '2025-04-17'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-17'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-17'
@@ -790,12 +706,14 @@ Updated Inventory: $5440.30
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-17'
 
 <--- FINAL FINANCIAL REPORT --->
-Final Cash: $-2165.30
-Final Inventory: $5440.30
+Final Cash: $0.20
+Final Inventory: $5190.30
 
 <--- Agent Usage Summary --->
+Extractor Agent: 20 times
 Inventory Agent: 20 times
-Quoting Agent: 2 times
-Sales Agent: 2 times
-Receipt Agent: 2 times
+Quoting Agent: 6 times
+Sales Agent: 6 times
+Receipt Agent: 6 times
+project student$ ^C
 project student$ 
