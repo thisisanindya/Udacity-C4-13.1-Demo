@@ -1,3 +1,9 @@
+
+### GitHub Repo
+### https://github.com/thisisanindya/Udacity-C4-13.1-Demo/blob/main/test-new.py
+###  https://github.com/thisisanindya/Udacity-C4-13.1-Demo/blob/main/test-new-output.txt
+
+import re
 import os
 import dotenv
 import ast
@@ -808,6 +814,8 @@ search_quote_history_tool = Tool(
 )
 
 # Set up your agents and create an orchestration agent that will manage them.
+extraction_tools = [get_all_inventory_tool]
+
 inventory_tools = [get_all_inventory_tool, get_stock_level_tool, get_supplier_delivery_date_tool,
                           create_transaction_tool, get_cash_balance_tool]
 quoting_tools = [search_quote_history_tool, generate_financial_report_tool]
@@ -819,6 +827,10 @@ sales_tools = [create_transaction_tool, get_supplier_delivery_date_tool]
 # Define output model for the orchestration agent
 class BeaverOrchestrator(BaseModel):
     classification: Literal["QUERY", "ORDER"]
+
+class ExtractionAgentResponse(BaseModel):
+    answer: str
+    ok_to_proceed: bool
 
 class InventoryAgentResponse(BaseModel):
     answer: str
@@ -854,10 +866,30 @@ UNLIMITED_USAGE = UsageLimits(
     total_tokens_limit=None
 )
 
+INEVNTORY_DATA = [
+					"Paper plates",
+					"100 lb cover stock",
+					"Glossy paper",
+					"Rolls of banner paper (36-inch width)",
+					"Photo paper",
+					"Cardstock",
+					"Colored paper",
+					"80 lb text paper",
+					"Large poster paper (24x36 inches)",
+					"Table covers",
+					"Butcher paper",
+					"Kraft paper",
+					"Banner paper",
+					"Presentation folders",
+					"Patterned paper",
+					"A4 paper",
+					"Invitation cards",
+				]
+
 ORCHESTRATOR_PROMPT = """
                         You are a request classifier for Beaver's Choice Paper Supply.
 
-                        Classify the user request into exactly one of:
+                        Classify the customer request into exactly one of:
 
                         - QUERY: asking for information only (availability, stock, delivery dates, reports, pricing history)
                         - ORDER: intent to buy, order, purchase, need items, quantities, or deadlines
@@ -871,6 +903,72 @@ ORCHESTRATOR_PROMPT = """
                         {
                             "classification": "QUERY" | "ORDER"
                         }
+                    """
+
+EXTRACTION_PROMPT = """
+                        This is a technical work for Beaver's Choice Paper Supply. 
+                        You are expert in extracting information like 
+                        - item_name
+                        - quantity
+                        - unit
+                        from a set of customer request. Example customer request 
+                        is given below: 
+
+                        Example -  
+                            [
+                                {
+                                    'item_name': 'a4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\n i need these supplies delivered by april 15', 
+                                    'quantity': 200, 
+                                    'unit': 'sheets'
+                                }, 
+                                {
+                                    'item_name': 'Photo paper\n- 200 sheets \n i need these supplies delivered by april 12', 
+                                    'quantity': 202, 
+                                    'unit': 'units'
+                                }, 
+                                {
+                                    'item_name': 'colorful poster paper', 
+                                    'quantity': 500, 
+                                    'unit': 'sheets'
+                                },
+                                {
+                                    'item_name': 'balloons for the parade', 
+                                    'quantity': 200, 
+                                    'unit': 'units'
+                                }
+                            ]
+
+                        The customer request data is stored in dictionary with keys: 
+                        - item_name, quantity and unit
+                        There can be multiple customer requests. These are stored in
+                        a list element as logical grouping. 
+
+                        Please follow below steps for extraction: 
+                        - use the tool get_all_inventory to get distinct list of
+                        item_name and their stock from the inventory
+                        - Checkpoint: Please note that the item_name should be available 
+                        in the data structure {INEVNTORY_DATA}
+                        - read the custoner request and scan the above inventory data to find the best fit 
+                        item name from the inventory and find available stock. Use features like cosine similarity
+                        to find the best match. 
+                        - identify the quantity and unit requested from the customer request
+                        - if stock is less than quantity 
+                            - update 
+                                - {ok_to proceed} as False
+                                - {answer} as - {item_name} of {quantity} is not available. Delivery can't be met. 
+                        - Else 
+                            - update 
+                                - {ok_to proceed} as True
+                                - {answer} as - {item_name} of {quantity} is not available. Delivery can't be met. 
+                        - Tools:
+						- `get_all_inventory`: Retrieve item name and available stock from inventory.
+
+						Prepare all the data required to pass to inventory agent as per below output format. 
+						Always be empathetic and helpful to the customer.
+                        
+                        - Output Format:
+                            - For a string with details of- amswer, items, total_price, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item}, quantity: {quantity}, ok_to_proceed: {ok_to_proceed}"
                     """
 
 INVENTORY_PROMPT = """
@@ -1127,6 +1225,16 @@ class MultiAgentWorkflow:
                 output_type=BeaverOrchestrator,
             ),
 
+            "extractor": Agent(
+                #model=OpenAIChatModel(model_name="gpt-4o-mini"),
+                model=openai_model,
+                name="ExtractionAgent",
+                model_settings=shared_model_settings,
+                system_prompt=EXTRACTION_PROMPT,
+                output_type=str,
+                tools=extraction_tools,
+            ),
+
             "inventory": Agent(
                 #model=OpenAIChatModel(model_name="gpt-4o-mini"),
                 model=openai_model, 
@@ -1171,12 +1279,13 @@ class MultiAgentWorkflow:
         }
 
         self.agent_usage_count = {
+            "extractor": 0,
             "inventory": 0,
             "quoting": 0,
             "sales": 0,
             "receipt": 0,
         }
-    
+    '''
     def extract_items_and_quantities(self, text: str) -> list[str]:
         """ 
         Utility method to extract item name from the 
@@ -1188,57 +1297,168 @@ class MultiAgentWorkflow:
         Returns: 
             list[str]: list of related requests
         """
-        print(f"---> Function (extract_items): Extracting request: '{text}'") 
-        results = []
-        text_lower = text.lower()
+        print(f"---> Function (extract_items_and_quantities): Extracting from request: '{text}'") 
+        text = text.lower()
 
-        for item in paper_supplies:
-            name = item["item_name"].lower()
-            if name in text_lower:
-                qty = 1
-                for token in text_lower.split():
-                    if token.isdigit():
-                        qty = int(token)
-                        break
-                results.append({"item_name": item["item_name"], "quantity": qty})
+        pattern = re.compile(
+            r'(?P<quantity>\d{1,3}(?:,\d{3})*)\s*'
+            r'(?P<unit>sheets?|reams?|rolls?|packs?|boxes?)?\s*'
+            r'(?:of\s+)?'
+            r'(?P<item>[a-zA-Z0-9\s\-()"]+)',
+            re.IGNORECASE
+        )
+        
+        results = []
+
+        for match in pattern.finditer(text):
+            quantity = int(match.group("quantity").replace(",", ""))
+            if quantity <= 0:
+                continue
+
+            results.append({
+                "item_name": match.group("item").strip(),
+                "quantity": quantity,
+                "unit": match.group("unit") or "units"
+            })
 
         return results
     
+    def normalize_items_to_sku(self, extracted_items) -> dict: 
+        """
+        Utility method to normalize items so that it meets stocks
+        available. 
+
+        Agrs: 
+            extracted_items (list[str]): List of customer request in string
+
+        Returns: 
+            dict: Diction of following items
+                sku: Stock Unit Available,
+                requested_quantity: 100,
+                unit": "sheet" or "roll" or "ream"
+                in_stock": True or False
+
+        """
+        print(f"---> Function (normalize_items_to_sku): Normalizing request.") 
+        print("Input Items ===> ", extracted_items)
+        
+        returned_items = []
+        # as_of_date = datetime.now().
+        for i in range(len(extracted_items)):
+            print(i, " ---> ", extracted_items[i])
+            returned_dict = {}
+
+            returned_dict["item_name"] =  extracted_items[i]['item_name'].lower().strip().replace('"', '')
+            returned_dict["requested_quantity"] = extracted_items[i]['quantity']
+            r_unit = extracted_items[i]['unit']
+            if (r_unit == "sheet" or r_unit == "sheets"):
+                r_unit = "sheets"
+            elif (r_unit == "ream" or r_unit == "reams"):
+                r_unit = "reams"
+            elif (r_unit == "roll" or r_unit == "rolls"):
+                    r_unit = "rolls"
+            elif (r_unit == "unit" or r_unit == "units"):
+                r_unit = "units"
+            else: 
+                r_unit = "units"    
+            
+            returned_dict["unit"] = r_unit
+
+            #stock_level = get_stock_level(returned_dict["item_name"], datetime.now())
+            stock_level = get_stock_level(extracted_items[i]['item_name'], datetime.now())
+            returned_dict["actual_quantity"] = stock_level
+            
+            if stock_level[returned_dict["item_name"]] > returned_dict["requested_quantity"]:     
+                returned_dict["in_stock"] = True
+            else: 
+                returned_dict["in_stock"] = False
+
+            returned_items.append(returned_dict)
+
+        return returned_items
+    '''
+
     def process_query(self, context: WorkflowContext) -> str:
         """
         Handle customer inquiries by using the inventory agent to check 
         the stock of the item.
         """
-        items = self.extract_items_and_quantities(context.original_request)
-        if not items:
-            return "Sorry, requested items are not available."
+        # = self.extract_items_and_quantities(context.original_request)
+        #("Items ===> ", items)
 
-        print("Matched items ---> ", items)
-        # Call quoting agent to generate financial report
-        prompt = f"""
+        #if not items:
+        #    return "Sorry, requested items are not available."
+
+        #("Matched items ---> ", items)
+        
+        ### Extraction Agent
+        # Call Extraction agent to find item_name, quantity and unit 
+        extraction_prompt = f"""
+            Customer Request: {context.original_request}
+        """
+        extraction_response = self.agents["extractor"].run_sync(
+            extraction_prompt,
+        )
+        self.agent_usage_count["extractor"] += 1
+
+        if not extraction_response: #.output.ok_to_proceed:
+            # If quoting agent indicates order cannot proceed, return a message
+            print(f"Order cannot be processed: {extraction_response}") #.output.answer}")
+            return extraction_response #.output.answer
+        ###
+        
+        # Call inventory agent to generate financial report
+        inventory_prompt = f"""
             Classification: QUERY
-            Items: {items}
             User Request: {context.original_request}
+            Extraction Context: extraction_response
         """
         inventory_response = self.agents["inventory"].run_sync(
-            prompt,
+            inventory_prompt,
         )
         self.agent_usage_count["inventory"] += 1
         return inventory_response.output.answer
 
     def process_order(self, context: WorkflowContext) -> str:
         
-        items = self.extract_items_and_quantities(context.original_request)
-        if not items:
-            return "Sorry, requested items are not available."
+        #items = self.extract_items_and_quantities(context.original_request)
+        #print("Items ===> ", items)  
 
-        print("Matched items ---> ", items)
+        #if not items:
+        #    return "Sorry, requested items are not available."
+
+        #print("Matched items ---> ", items)
+        
+        ### Extraction Agent
+        # Call Extraction agent to find item_name, quantity and unit 
+        extraction_prompt = f"""
+            Customer Request: {context.original_request}
+        """
+        extraction_response = self.agents["extractor"].run_sync(
+            extraction_prompt,
+        )
+        print()
+        print("CHECKING Extraction Agent ===> ", self.agents["extractor"])
+        print()
+        print("CHECKING Extraction Prompt ===> ", extraction_prompt)
+        print()
+        print("CHECKING Extraction response ===> ", extraction_response)
+        print()
+        self.agent_usage_count["extractor"] += 1
+
+        if not extraction_response: #.output.ok_to_proceed:
+            # If quoting agent indicates order cannot proceed, return a message
+            print(f"Order cannot be processed: {extraction_response}") #.output.answer}")
+            return extraction_response #.output.answer
+        ###
         
         inventory_prompt = f"""
             Classification: ORDER
-            ITEMS_JSON: {json.dumps(items, indent=2)}
             User Request: {context.original_request}
+            Extraction Context: extraction_response
         """
+        # ITEMS_JSON: {json.dumps(items, indent=2)}
+
         print()
         print("CHECKING Inventory Agent ===> ", self.agents["inventory"])
         print()
@@ -1376,15 +1596,7 @@ class MultiAgentWorkflow:
             response = self.process_order(context)
         else:
             response = "Invalid classification received from orchestration agent."
-
-        ##############
-        ### Check Usage
-        # print("Orchestrator Usage = ", self.agents["orchestrator"].usage())
-        # print("Inventory Usage = ", self.agents["inventory"].usage())
-        # print("Quoting Usage = ", self.agents["quoting"].usage())
-        # ("Sales Usage = ", self.agents["sales"].usage())
-        # print("Receipt Usage = ", self.agents["receipt"].usage())
-
+        
         return response
 
 # Run your test scenarios by writing them here. Make sure to keep track of them.
@@ -1470,13 +1682,6 @@ def run_test_scenarios():
         )
 
         time.sleep(0.3)
-    '''
-    print("Orchestrator usage:", multi_agent_workflow.agents["orchestrator"].usage())
-    print("Inventory usage:", multi_agent_workflow.agents["inventory"].usage())
-    print("Quoting usage:", multi_agent_workflow.agents["quoting"].usage())
-    print("Sales usage:", multi_agent_workflow.agents["sales"].usage())
-    print("Receipt usage:", multi_agent_workflow.agents["receipt"].usage())
-    '''
 
     # Final report
     final_date = quote_requests_sample["request_date"].max().strftime("%Y-%m-%d")
