@@ -694,6 +694,30 @@ def search_quote_history(search_terms: List[str], limit: int = 5) -> List[Dict]:
         result = conn.execute(text(query), params)
         return [dict(r) for r in result.mappings()]
 
+def date_check(supplier_delivery_date: str, requested_delivery_date: str) -> bool:
+    """
+    Checks if supplier date is greater than delivery date. 
+
+    Args:
+        date_1 (str): List of terms to match against customer requests and explanations.
+        date_2 (str): Maximum number of quote records to return. Default is 5.
+
+    Returns:
+        bool: True or False
+     
+    """
+
+    # Convert the string dates to a datetime object
+    supplier_delivery_date = datetime.fromisoformat(supplier_delivery_date_str)
+    requested_delivery_date = datetime.fromisoformat(requested_delivery_date_str)
+    
+    # Comparison
+    if supplier_delivery_date >= requested_delivery_date:
+        return True
+    else:
+        return False
+ 
+
 ########################
 ########################
 ########################
@@ -813,6 +837,16 @@ search_quote_history_tool = Tool(
     require_parameter_descriptions=True
 )
 
+date_check_tool = Tool(
+    name="date_check",
+    description ="""
+    Checks if supplier date is greater than delivery date. 
+    """,
+    function=search_quote_history,
+    require_parameter_descriptions=True
+)
+
+
 # Set up your agents and create an orchestration agent that will manage them.
 extraction_tools = [get_all_inventory_tool]
 
@@ -899,10 +933,14 @@ ORCHESTRATOR_PROMPT = """
                         - If only information is requested → QUERY
                         - If unclear → QUERY
                         - Do not explain, Output JSON only
-                        Return ONLY valid JSON matching this schema:
+                        
+						- Output Format:
+						Return ONLY valid JSON matching this schema:
                         {
                             "classification": "QUERY" | "ORDER"
                         }
+						
+						Pass these details to {ExtractionAgent}
                     """
 
 EXTRACTION_PROMPT = """
@@ -943,32 +981,37 @@ EXTRACTION_PROMPT = """
                         There can be multiple customer requests. These are stored in
                         a list element as logical grouping. 
 
-                        Please follow below steps for extraction: 
-                        - use the tool get_all_inventory to get distinct list of
-                        item_name and their stock from the inventory
-                        - Checkpoint: Please note that the item_name should be available 
-                        in the data structure {INEVNTORY_DATA}
-                        - read the custoner request and scan the above inventory data to find the best fit 
-                        item name from the inventory and find available stock. Use features like cosine similarity
-                        to find the best match. 
-                        - identify the quantity and unit requested from the customer request
-                        - if stock is less than quantity 
-                            - update 
-                                - {ok_to proceed} as False
-                                - {answer} as - {item_name} of {quantity} is not available. Delivery can't be met. 
-                        - Else 
-                            - update 
-                                - {ok_to proceed} as True
-                                - {answer} as - {item_name} of {quantity} is not available. Delivery can't be met. 
-                        - Tools:
+                        For each customer request, please follow below steps for extraction : 
+							- use the tool `get_all_inventory` to get distinct list of
+							item_name and their stock from the inventory
+							- Checkpoint: Please note that the item_name should be available 
+							in the data structure {INEVNTORY_DATA}
+							- read the custoner request and scan the above inventory data to find the best fit 
+							{item_name} from the inventory and find available {stock}. Use features like cosine similarity
+							to find the best match. 
+							- identify the {quantity} and {unit} requested {requested_delivery_date} and from the customer request
+							- if {stock} is less than {quantity} 
+								- update
+									- {ok_to proceed}: False
+									- {answer}: - {item_name} of {quantity} is not available. Delivery can't be met. 
+							- Else 
+								- update 
+									- {ok_to proceed}: True
+									- {answer}: {item_name} of {quantity} is available. Proceeding for next steps. 
+							- Move to the next item_name
+							- Prepare list / array of item_name's and list of corresponding quantity's
+						
+						- Tools:
 						- `get_all_inventory`: Retrieve item name and available stock from inventory.
 
 						Prepare all the data required to pass to inventory agent as per below output format. 
 						Always be empathetic and helpful to the customer.
                         
                         - Output Format:
-                            - For a string with details of- amswer, items, total_price, ok_to_proceed in the below format 
-                            - "answer: {answer}, items: {item}, quantity: {quantity}, ok_to_proceed: {ok_to_proceed}"
+                            - For a string with details of - answer, item_name's, quantity's, stock's, requested_delivery_date's, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, , stock: {stock}, {requested_delivery_date}: requested_delivery_date, ok_to_proceed: {ok_to_proceed}"
+							
+						Pass these details to {ExtractionAgent}	
                     """
 
 INVENTORY_PROMPT = """
@@ -977,52 +1020,64 @@ INVENTORY_PROMPT = """
                         You will receive the request which are identified as "QUERY" or "ORDER" 
                         Use ITEMS_JSON as the prime source for items and quantities.
                         Always follow below instructions for decision making: 
+						
+						For each {item_name}
+							If classification is QUERY: 
+							- Check stock using the tool `get_stock_level` for the item_name or item_names
+							- {ok_to_proceeed}: True
+								- if {stock} > 0, update 
+									- {answer}: {item_name} is available with {stock} units. 
+								- else, update
+									- {answer}: {item_name} is not available presently. 
+							- Do not modify inventory 
 
-                        If classification is QUERY:
-                        - Check stock and delivery
-                        - Do not modify inventory
-
-                        If classification is ORDER:
-                        - FIRST call get_cash_balance before any other action.
-                        - If insufficient cash → ok_to_proceed = False
-                            - Call get_cash_balance
-                        - Else follow the below steps
-                            - If quantity is not explicitly provided, assume quantity = 1.
-                            - Check stock
-                            - If insufficient, reorder and report delivery date
-
-                        - Expected Output:
-                        - Check if the stock is sufficient
-                        - If a restocking order was triggered, explicitly check the expected delivery date 
-                        - and the answer from `get_supplier_delivery_date` 
-                        1. Call `get_supplier_delivery_date` only for the customer requested item and not for any other item
-                        2. If the `get_supplier_delivery_date` is after the expected delivery date, response with ok_to_proceed = False.
-                        3. Explain the situation to a customer and inform them that the order will be not fulfilled immediately.
-
+							If classification is ORDER:
+							- Assume {minimum_cash_balance} is $ 1000. 
+							- Assume {minimum_item_in_stock} is 100. 
+							- Call `get_cash_balance` before any other action.
+							- if it is < {minimum_cash_balance} update
+								- {answer}: Internal Issues. Please come back later. 
+								- {ok_to_proceeed}: False
+							- else
+								- if {quantity} < {minimum_item_in_stock} update
+									- {ok_to_proceeed}: True
+									- Move to {QuotingAgent} for further quoting steps. 
+								- else
+									- call `get_supplier_delivery_date` only for the customer requested item_name's
+									- Use `date_check` tool to check if this date (supplier_delivery_date) greater than {requested_delivery_date} 
+									from {ExtractionAgent} and update
+										- {answer}: {item_name} can be delivered by {requested_delivery_date}. 
+										- {ok_to_proceed}: True
+										- Move to {QuotingAgent} for quoting. 
+									- else update : 
+										- {ok_to_proceed}: True
+										- {answer}: {item_name} can be delivered by {supplier_delivery_date}. 
+										- Move to {QuotingAgent} for order re-stocking with transaction_type as 'stock_orders'
+							- Move to next item_name 
+						
                         - Tools:
-                        - `get_all_inventory`: Inventory of all items
+                        - `get_cash_balance`: Inventory of all items
                         - `get_stock_level`: Provide available quantity of a specific item
                         - `get_supplier_delivery_date`: Estimated delivery date
-                        - `create_transaction`: Place order for restocking
+						- `date_check`: Compare supplier and delivery dates
 
-                        Always be empathetic and helpful to the customer.
-
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class InventoryAgentResponse(BaseModel):
-                            answer: str
-                            ok_to_proceed: bool
+						Prepare all the data required to pass to quoting agent as per below output format. 
+						Always be empathetic and helpful to the customer.
+                        
+                        - Output Format:
+                            - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, {unit}: unit, stock: {stock}, {requested_delivery_date}: requested_delivery_date, {ok_to_proceed}: ok_to_proceed"
+							
+						Pass these details to {QuotingAgent}	
 
                     """
 
 QUOTING_PROMPT = """
-						You are the Quote for the Beaver's Choice Paper supply company. 
+						You are the Quote Agent for the Beaver's Choice Paper supply company. 
 
 						Your task is to generate competitive and strategic sales quote based on:
 						- customer order request
-						- the current stock and estimated delivery date provided by the Inventory Agent
+						- the current stock and requested delivery date provided by the Inventory Agent
 						- historical quote and sales data
 
 
@@ -1052,92 +1107,59 @@ QUOTING_PROMPT = """
                             - `answer` with expected time of delivery the items
                             - `items` with list of items
                             - `total_price` with the total price of the item
-                            - `ok_to_proceed` with True if answer id valid or False otherwise
-                          of the return JSON object as mentioned below
+                            - `ok_to_proceed` with True if answer is valid or False otherwise
 
 						- Tools:
 						- `search_quote_history`: Retrieve previous similar offers for reference.
 						- `generate_financial_report`: Analyze pricing and sales trends.
 
-						You are not responsible to check stock or create transactions. Focus only on creating an optimized offer. 
+						You are not responsible to check stock. Focus only on creating an optimized offer. 
 						Always be empathetic and helpful to the customer.
                         
-                        - Output Format:
-                            - For a string with details of- amswer, items, total_price, ok_to_proceed in the below format 
-                            - "answer: {answer}, items: {item}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
+						- Output Format:
+                            - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, {unit}: unit, stock: {stock}, {requested_delivery_date}: requested_delivery_date, total_price: {total_price}, {ok_to_proceed}: ok_to_proceed"
+							
+						Pass these details to {SalesAgent}	
                         """
-                        
-'''
-- Output Format: 
-    - Add items: [{item, qty, unit_price}] to QuotingAgentResponse
-    - Return a JSON object using the following Pydantic schema:
-
-```python
-class QuotingAgentResponse(BaseModel):
-    answer: str
-    items: list
-    total_price: float
-    ok_to_proceed: bool 
-'''
 
 SALES_PROMPT = """
 						You are the Sales Agent for the Beaver's Choice Paper supply company.
 						The main responsibility is to complete the customer's order based 
 						on the quote provided by the Quote Agent and current inventory status.
 
-						- Follow below instructions for decision making: 
-                        - Pass per-item prices from Quoting → Sales
+						1. Assume the customer wants to proceed the order.
 
-						1. Assume the customer wants to proceed with the quoted order - no confirmation is needed.
-
-						2. Estimate the delivery date based on:
-							- Quantity of Order
-							- Present date
-							- Use `get_supplier_delivery_date` if required
-
-						3. Store the sale
-							- For each item Call `create_transaction` 
-                                - Do not pass unit price
+						2. Store the sale
+							- For each item_name Call `create_transaction` with {transaction_type} 'sales'
                                 - quantity = units ordered
-                                - Consider price = TOTAL price only that unit price numtiplied by quantity
+                                - price = unit multiplied by quantity
 
-						4. Reply to customer
+						3. Reply to customer
 							- Confirm if order is successful
 							- Include estimated delivery date.
 							
-						5. Please note
+						4. Please note
 							- No need generate new quote – this is done by Quoting Agent.
 							- This role isto verify feasibility and execute the transaction.
                         
-                        6. Populate the fields 
+                        5. Populate the fields 
                             - `answer` with expected time of delivery the items
-                            - `items` with list of items
+                            - `item_name` with list of items
                             - `total_price` with the total price of the item
-                            - - `ok_to_proceed` with True if answer id valid or False otherwise
-                          of the return JSON object as mentioned below
+                            - `ok_to_proceed` with True if answer id valid or False otherwise
 						
                         Always be empathetic and helpful to the customer.
 
 						- Tools:
-						- `get_supplier_delivery_date`: Estimated delivery date
 						- `create_transaction`: Store the sale record
 
                         - Output Format:
-                            - For a string with details of- amswer, items, total_price, ok_to_proceed in the below format 
-                            - "answer: {answer}, items: {item}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
+                            - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, {unit}: unit, stock: {stock}, {requested_delivery_date}: requested_delivery_date, total_price: {total_price}, {ok_to_proceed}: ok_to_proceed"
+							
+						Pass these details to {Receipt}
                         """
-                        
-'''
-- Output Format:       
-    - Return a JSON object using the following Pydantic schema:
-
-```python
-class SalesAgentResponse(BaseModel):
-    answer: str
-    items: list
-    total_price: float
-    ok_to_proceed: bool  
-'''
 
 RECEIPT_PROMPT = """    
 						You are the Receipt Agent for the Beaver's Choice Paper supply company.
@@ -1198,15 +1220,10 @@ RECEIPT_PROMPT = """
 						
 						Always be empathetic and helpful to the customer.
 
-                        - Output Format:       
-                        Return a JSON object using the following Pydantic schema:
-
-                        ```python
-                        class ReceiptAgentResponse(BaseModel):
-                            answer: str
-                            ok_to_proceed: bool 
+                        - Output Format:
+                            - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
+                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, {unit}: unit, stock: {stock}, {requested_delivery_date}: requested_delivery_date, total_price: {total_price},{ok_to_proceed}: ok_to_proceed"
                         """
-
 
 class WorkflowContext(BaseModel):
     """Shared context between agents"""
@@ -1285,98 +1302,6 @@ class MultiAgentWorkflow:
             "sales": 0,
             "receipt": 0,
         }
-    '''
-    def extract_items_and_quantities(self, text: str) -> list[str]:
-        """ 
-        Utility method to extract item name from the 
-        list of paper suplies
-
-        Agrs: 
-            text (str): customer request in string
-
-        Returns: 
-            list[str]: list of related requests
-        """
-        print(f"---> Function (extract_items_and_quantities): Extracting from request: '{text}'") 
-        text = text.lower()
-
-        pattern = re.compile(
-            r'(?P<quantity>\d{1,3}(?:,\d{3})*)\s*'
-            r'(?P<unit>sheets?|reams?|rolls?|packs?|boxes?)?\s*'
-            r'(?:of\s+)?'
-            r'(?P<item>[a-zA-Z0-9\s\-()"]+)',
-            re.IGNORECASE
-        )
-        
-        results = []
-
-        for match in pattern.finditer(text):
-            quantity = int(match.group("quantity").replace(",", ""))
-            if quantity <= 0:
-                continue
-
-            results.append({
-                "item_name": match.group("item").strip(),
-                "quantity": quantity,
-                "unit": match.group("unit") or "units"
-            })
-
-        return results
-    
-    def normalize_items_to_sku(self, extracted_items) -> dict: 
-        """
-        Utility method to normalize items so that it meets stocks
-        available. 
-
-        Agrs: 
-            extracted_items (list[str]): List of customer request in string
-
-        Returns: 
-            dict: Diction of following items
-                sku: Stock Unit Available,
-                requested_quantity: 100,
-                unit": "sheet" or "roll" or "ream"
-                in_stock": True or False
-
-        """
-        print(f"---> Function (normalize_items_to_sku): Normalizing request.") 
-        print("Input Items ===> ", extracted_items)
-        
-        returned_items = []
-        # as_of_date = datetime.now().
-        for i in range(len(extracted_items)):
-            print(i, " ---> ", extracted_items[i])
-            returned_dict = {}
-
-            returned_dict["item_name"] =  extracted_items[i]['item_name'].lower().strip().replace('"', '')
-            returned_dict["requested_quantity"] = extracted_items[i]['quantity']
-            r_unit = extracted_items[i]['unit']
-            if (r_unit == "sheet" or r_unit == "sheets"):
-                r_unit = "sheets"
-            elif (r_unit == "ream" or r_unit == "reams"):
-                r_unit = "reams"
-            elif (r_unit == "roll" or r_unit == "rolls"):
-                    r_unit = "rolls"
-            elif (r_unit == "unit" or r_unit == "units"):
-                r_unit = "units"
-            else: 
-                r_unit = "units"    
-            
-            returned_dict["unit"] = r_unit
-
-            #stock_level = get_stock_level(returned_dict["item_name"], datetime.now())
-            stock_level = get_stock_level(extracted_items[i]['item_name'], datetime.now())
-            returned_dict["actual_quantity"] = stock_level
-            
-            if stock_level[returned_dict["item_name"]] > returned_dict["requested_quantity"]:     
-                returned_dict["in_stock"] = True
-            else: 
-                returned_dict["in_stock"] = False
-
-            returned_items.append(returned_dict)
-
-        return returned_items
-    '''
 
     def process_query(self, context: WorkflowContext) -> str:
         """
@@ -1604,7 +1529,7 @@ def run_test_scenarios():
     print("Initializing Database...")
     init_database(db_engine)
     try:
-        quote_requests_sample = pd.read_csv("quote_requests_sample.csv")
+        quote_requests_sample = pd.read_csv("quote_requests_sample1.csv")
         quote_requests_sample["request_date"] = pd.to_datetime(
             quote_requests_sample["request_date"], format="%m/%d/%y", errors="coerce"
         )
@@ -1630,6 +1555,12 @@ def run_test_scenarios():
     current_cash = report["cash_balance"]
     current_inventory = report["inventory_value"]
 
+    #################### CHeck Inventory Data
+    print("Printing inventory Data... ")
+    print(get_all_inventory("2025-04-01"))
+    print("End printing inventory Data... ")
+    ####################
+    
     ############
     ############
     ############
