@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 from pydantic_ai.tools import Tool
 from pydantic_ai.settings import ModelSettings
 from pydantic import BaseModel
-from typing import Dict, Literal
+from typing import Dict, List, Literal, Optional
 from pydantic_ai import Agent
 # from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.models.openai import OpenAIChatModel
@@ -475,7 +475,7 @@ def get_supplier_delivery_date(input_date_str: str, quantity: int) -> str:
     """
     # Debug log (comment out in production if needed)
     print(f"---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '{input_date_str}'")
-
+    print("[TOOL][get_supplier_delivery_date] as_of_date =", input_date_str)
     # Attempt to parse the input date
     try:
         input_date_dt = datetime.fromisoformat(input_date_str.split("T")[0])
@@ -516,7 +516,7 @@ def get_cash_balance(as_of_date: Union[str, datetime]) -> float:
     """
     # Debug log (comment out in production if needed)
     print(f"---> Function (get_cash_balance): Get cash balance as of '{as_of_date}'")
-
+    print("[TOOL][get_cash_balance] as_of_date =", as_of_date)
     try:
         # Convert date to ISO format if it's a datetime object
         if isinstance(as_of_date, datetime):
@@ -862,6 +862,16 @@ sales_tools = [create_transaction_tool, get_supplier_delivery_date_tool]
 class BeaverOrchestrator(BaseModel):
     classification: Literal["QUERY", "ORDER"]
 
+class ExtractedItem(BaseModel):
+    raw_name: str
+    quantity: int
+    unit: str
+    stock: int
+
+class ExtractionResult(BaseModel):
+    items: List[ExtractedItem]
+    requested_delivery_date: Optional[str]
+
 '''
 class ExtractionAgentResponse(BaseModel):
     answer: str
@@ -928,12 +938,12 @@ ORCHESTRATOR_PROMPT = """
 
 EXTRACTION_PROMPT = """
                         This is a technical work for Beaver's Choice Paper Supply. 
-                        You are expert in extracting information like 
-                        - item_name
-                        - quantity
-                        - unit
-                        from a set of customer request. Example customer request 
-                        is given below: 
+                        You are expert in extracting information:
+                        - item raw name as mentioned by the customer
+                        - quantity (integer)
+                        - unit (sheets, reams, rolls, units)
+                        - requested delivery date (if any)
+                        from a set of customer request. Example customer request is given below: 
 
                         Example -  
                             [
@@ -959,6 +969,10 @@ EXTRACTION_PROMPT = """
                                 }
                             ]
 
+                        Do NOT check inventory.
+                        Do NOT decide availability.
+                        Do NOT summarize.
+                        
                         The customer request data is stored in dictionary with keys: 
                         - item_name, quantity and unit
                         There can be multiple customer requests. These are stored in
@@ -982,10 +996,8 @@ EXTRACTION_PROMPT = """
 									- {ok_to_proceed}: True
 									- {answer}: {item_name} is available. Proceeding for next steps.  
 						
-                        - Prepare list / array of item_name's and list of corresponding quantity's, unit's, stock's, ok_to_proceed's
-                        - Please note you do not take any decision regarding inventory just pass ok_to_proceed and othet details  
-                          to {InventoryAgent} using below output format. 
-						
+                        - Prepare list / array of item_name's and list of corresponding quantity's, unit's, stock's, ok_to_proceed's, requested_delivery_date's.
+							
 						- Tools:
 						- `get_all_inventory`: Retrieve item name and available stock from inventory.
 
@@ -993,12 +1005,30 @@ EXTRACTION_PROMPT = """
 						Always be empathetic and helpful to the customer.
                         
                         - Output Format:
-                            - For a string with details of - answer, item_name's, quantity's, unit's, stock's, requested_delivery_date's in the below format 
-                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, requested_delivery_date: {requested_delivery_date}, ok_to_proceed: {ok_to_proceed}"
-							
+							- ExtractionResult
+							- Please note ExtractionResult contaons List of dictionaries and corresponding delivery date: 
+							[
+								{
+									'item_name': 'a4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\n i need these supplies delivered by april 15', 
+									'quantity': 200, 
+									'unit': 'sheets'
+									'stock': 300
+								}, 
+								{
+									'item_name': 'Photo paper\n- 200 sheets \n i need these supplies delivered by april 12', 
+									'quantity': 202, 
+									'unit': 'units',
+									'stock': 400
+								}
+							]
+							2025-04-15
+
 						Pass these details to {IndventoryAgent}	
                     """
-
+'''
+- For a string with details of - answer, item_name's, quantity's, unit's, stock's, requested_delivery_date's in the below format 
+- "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, requested_delivery_date: {requested_delivery_date}, ok_to_proceed: {ok_to_proceed}"
+'''
 INVENTORY_PROMPT = """
                         You are the Inventory Agent for the Beaver's Choice Paper supply company.
                         You will receive below details from {ExtractionAgent}: 
@@ -1033,12 +1063,12 @@ INVENTORY_PROMPT = """
 									- {ok_to_proceed}: False 
 									- {answer}: {item_name} is not available with {quantity} units. 
 							
-							- Call `get_cash_balance` before any other action to get the current {cash_balance}
+							- Call `get_cash_balance` with {requested_delivery_date} as paraameter before any other action to get the current {cash_balance}
 							- if {requested_quantity} from customer request < {minimum_item_in_stock} update
 								- {ok_to_proceeed}: True
 								- Move to {QuotingAgent} for further quoting steps. 
 							- else
-								- call `get_supplier_delivery_date` only for the customer requested item_name's
+								- call `get_supplier_delivery_date` for {item_name} and {requested_delivery_date} only for the customer requested item_name's
 								- Use `date_check` tool to check if this date {supplier_delivery_date} greater than {requested_delivery_date}
 								from {ExtractionAgent} and update
 									- {ok_to_proceed}: True
@@ -1279,7 +1309,7 @@ class MultiAgentWorkflow:
                 name="ExtractionAgent",
                 model_settings=shared_model_settings,
                 system_prompt=EXTRACTION_PROMPT,
-                output_type=str,
+                output_type=ExtractionResult,
                 tools=extraction_tools,
             ),
 
@@ -1345,6 +1375,10 @@ class MultiAgentWorkflow:
         extraction_response = self.agents["extractor"].run_sync(
             extraction_prompt,
         )
+
+        extracted_items = extraction_response.output.items
+        requested_delivery_date = extraction_response.output.requested_delivery_date
+
         self.agent_usage_count["extractor"] += 1
 
         if not extraction_response:
@@ -1352,11 +1386,11 @@ class MultiAgentWorkflow:
             print(f"Order cannot be processed: {extraction_response}") 
             return extraction_response #.output.answer
         
-        # Call inventory agent to generate financial report
+        # Call inventory agent
         inventory_prompt = f"""
             Classification: QUERY
-            User Request: {context.original_request}
-            Extraction Context: extraction_response
+            extracted_items: {extracted_items}
+            requested_delivery_date: {requested_delivery_date}
         """
         inventory_response = self.agents["inventory"].run_sync(
             inventory_prompt,
@@ -1371,23 +1405,35 @@ class MultiAgentWorkflow:
         extraction_response = self.agents["extractor"].run_sync(
             extraction_prompt,
         )
+        extracted_items = extraction_response.output.items
+        requested_delivery_date = extraction_response.output.requested_delivery_date
+        
         print()
-        print("CHECKING Extraction Agent ===> ", self.agents["extractor"])
+        print(">>>>>>>>>> CHECKING Extraction prompt ===> ", extraction_prompt)
+        print(">>>>>>>>>> CHECKING Extraction Items ===> ", extracted_items)
+        print(">>>>>>>>>> CHECKING requested_delivery_date ===> ", requested_delivery_date)
         print()
 
         self.agent_usage_count["extractor"] += 1
-        print(">>>>>>>>>> extraction_response = ", extraction_response)
 
         if not extraction_response: #.output.ok_to_proceed:
             # If quoting agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {extraction_response}") #.output.answer}")
             return extraction_response
         
+        '''
         inventory_prompt = f"""
             Classification: ORDER
             User Request: {context.original_request}
             Extraction Context: extraction_response
         """
+        '''
+        inventory_prompt = f"""
+            Classification: ORDER
+            extracted_items: {extracted_items}
+            requested_delivery_date: {requested_delivery_date}
+        """
+
         # ITEMS_JSON: {json.dumps(items, indent=2)}
 
         print()
@@ -1402,6 +1448,7 @@ class MultiAgentWorkflow:
         self.agent_usage_count["inventory"] += 1
         
         print(">>>>>>>>>> inventory_response = ", inventory_response)
+        print(">>>>>>>>>> inventory_response = ", type(inventory_response))
 
         if not inventory_response:
             # If inventory agent indicates order cannot proceed, return a message
@@ -1525,7 +1572,7 @@ def run_test_scenarios():
     print("Initializing Database...")
     init_database(db_engine)
     try:
-        quote_requests_sample = pd.read_csv("quote_requests_sample.csv")
+        quote_requests_sample = pd.read_csv("quote_requests_sample1.csv")
         quote_requests_sample["request_date"] = pd.to_datetime(
             quote_requests_sample["request_date"], format="%m/%d/%y", errors="coerce"
         )
