@@ -1669,7 +1669,8 @@ class MultiAgentWorkflow:
                 pass
             else:
                 # Trigger re-stock flow
-                items = restock_decision.items_to_restock
+                #items = restock_decision.items_to_restock
+                items = RestockDecision.items_to_restock
                 current_stock = post_sale_inventory[item]
                 restock_qty = max(0, minimum_item_in_stock - current_stock)
                 for item in items:
@@ -1829,9 +1830,13 @@ def run_test_scenarios():
     print(f"Final Inventory: ${final_report['inventory_value']:.2f}")
 
     #################
+    print(" ----------------- ")
     print(">>>>>>>> Glossy paper ---> ", get_stock_level("Glossy paper", request_date))
     print(">>>>>>>> Cardstock ---> ", get_stock_level("Cardstock", request_date))
     print(">>>>>>>> Colored paper ---> ", get_stock_level("Colored paper", request_date))
+    print(" ----------------- ")
+    print("get_all_inventory --->", get_all_inventory(request_date))
+    print(" ----------------- ")
     #################   
 
     print("\n<--- Agent Usage Summary --->")
