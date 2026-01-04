@@ -310,26 +310,6 @@ def create_transaction(
         if transaction_type not in {"stock_orders", "sales"}:
             raise ValueError("Transaction type must be 'stock_orders' or 'sales'")
 
-        ################ Commenting for time being miving this to QuotingAgent
-        # Calculate discount based on the quantity of items 
-        '''
-        print("---> Check for quantity = ", quantity)
-        discount = 0
-        if quantity < 100:
-            discount = 0.05
-            print("---> small quantity")
-        elif quantity < 500:
-            discount = 0.10
-            print("---> medium quantity")
-        elif quantity < 1000:
-            discount = 0.15   
-            print("---> large quantity") 
-        price -= price*discount
-        print("---> discounted price = ", price)
-        # call a simple discount function apply_discount(item_name, transaction_type, quantity, price, date)        
-        '''
-        ################
-
         # Prepare transaction record as a single-row DataFrame
         transaction = pd.DataFrame([{
             "item_name": item_name,
@@ -338,12 +318,14 @@ def create_transaction(
             "price": price,
             "transaction_date": date_str,
         }])
-
+        print(">>>>>>>>>>>>>> Inserted row details ---")
+        print(">>>CREATE_TRANSACTION ---> ", item_name, " -- ", transaction_type, " -- ", quantity, " -- ", price, " -- ", date_str)
         # Insert the record into the database
         transaction.to_sql("transactions", db_engine, if_exists="append", index=False)
 
         # Fetch and return the ID of the inserted row
         result = pd.read_sql("SELECT last_insert_rowid() as id", db_engine)
+        
         return int(result.iloc[0]["id"])
 
     except Exception as e:
@@ -475,7 +457,7 @@ def get_supplier_delivery_date(input_date_str: str, quantity: int) -> str:
     """
     # Debug log (comment out in production if needed)
     print(f"---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '{input_date_str}'")
-    print("[TOOL][get_supplier_delivery_date] as_of_date =", input_date_str)
+
     # Attempt to parse the input date
     try:
         input_date_dt = datetime.fromisoformat(input_date_str.split("T")[0])
@@ -516,7 +498,6 @@ def get_cash_balance(as_of_date: Union[str, datetime]) -> float:
     """
     # Debug log (comment out in production if needed)
     print(f"---> Function (get_cash_balance): Get cash balance as of '{as_of_date}'")
-    print("[TOOL][get_cash_balance] as_of_date =", as_of_date)
     try:
         # Convert date to ISO format if it's a datetime object
         if isinstance(as_of_date, datetime):
@@ -694,13 +675,13 @@ def search_quote_history(search_terms: List[str], limit: int = 5) -> List[Dict]:
         result = conn.execute(text(query), params)
         return [dict(r) for r in result.mappings()]
 
-def date_check(supplier_delivery_date_str: str, requested_delivery_date_str: str) -> bool:
+def date_check(supplier_delivery_date_str: str, request_date_str: str) -> bool:
     """
     Checks if supplier date is greater than delivery date. 
 
     Args:
         supplier_delivery_date_str (str): List of terms to match against customer requests and explanations.
-        requested_delivery_date_str (str): Maximum number of quote records to return. Default is 5.
+        request_date_str (str): Maximum number of quote records to return. Default is 5.
 
     Returns:
         bool: True or False
@@ -709,14 +690,47 @@ def date_check(supplier_delivery_date_str: str, requested_delivery_date_str: str
 
     # Convert the string dates to a datetime object
     supplier_delivery_date = datetime.fromisoformat(supplier_delivery_date_str)
-    requested_delivery_date = datetime.fromisoformat(requested_delivery_date_str)
+    request_date = datetime.fromisoformat(request_date_str)
     
     # Comparison
-    if supplier_delivery_date >= requested_delivery_date:
+    if supplier_delivery_date >= request_date:
         return True
     else:
         return False
  
+minimum_item_in_stock = 100
+
+def re_stock(request_date: str, item_name: str, quantity: int, price: float) -> dict:
+    """
+    Re-stock an item with minimum_item_in_stock[100].
+
+    Args:
+        request_date (str): Date for re-stock
+        item_name: Item name
+        quantity: Quantity required
+        price: Price
+
+    Returns:
+        dict: A dictionary mapping True, False and corresponding message.
+    """
+    txn = create_transaction(
+        item_name = item_name,
+        transaction_type = "stock_orders",
+        quantity = quantity,
+        price = price * quantiyy,
+        date = request_date
+    )
+
+    if txn:
+        return {
+            "ok_to_proceed": True,
+            "answer": f"Restocked {restock_quantity} units of {item_name}"
+        }
+
+    return {
+        "ok_to_proceed": False,
+        "answer": "Re-stock failed"
+    }
 
 ########################
 ########################
@@ -846,21 +860,32 @@ date_check_tool = Tool(
     require_parameter_descriptions=True
 )
 
+re_stock_tool = Tool(
+    name="re_stock",
+    description ="""
+    Re-stock an item with minimum_item_in_stock[100]. 
+    """,
+    function=re_stock,
+    require_parameter_descriptions=True
+)
+
 
 # Set up your agents and create an orchestration agent that will manage them.
 extraction_tools = [get_all_inventory_tool]
 
 inventory_tools = [get_all_inventory_tool, get_supplier_delivery_date_tool,
-                          create_transaction_tool, get_cash_balance_tool, date_check_tool]
-quoting_tools = [search_quote_history_tool] #, generate_financial_report_tool]
-# generate_quote_tool, 
-# discounting_tools = [calculate_discount_tool]
-sales_tools = [create_transaction_tool, get_supplier_delivery_date_tool]
+                          get_cash_balance_tool, date_check_tool]
+quoting_tools = [search_quote_history_tool]
+sales_tools = [create_transaction_tool, generate_financial_report]
+
+re_stocking_tools = [re_stock_tool]
+
 # reporting_tools = [generate_financial_report_tool, get_cash_balance_tool, search_quote_history_tool]
 
 # Define output model for the orchestration agent
 class BeaverOrchestrator(BaseModel):
     classification: Literal["QUERY", "ORDER"]
+    request_date: str
 
 class ExtractedItem(BaseModel):
     raw_name: str
@@ -870,7 +895,31 @@ class ExtractedItem(BaseModel):
 
 class ExtractionResult(BaseModel):
     items: List[ExtractedItem]
-    requested_delivery_date: Optional[str]
+    request_date: Optional[str]
+
+class InventoryDecision(BaseModel): 
+    ok_to_proceed: bool
+    answer: str
+
+class RestockDecision(BaseModel):
+    restock_required: bool
+    items_to_restock: List[str]
+
+    reason: str
+
+# REMOVED    items: list[dict] = []
+'''
+Sample Data: 
+{
+  "ok_to_proceed": true,
+  "reason": "All items available before requested date",
+  "items": [
+    {"item": "A4 paper", "qty": 200, "stock": 272},
+    {"item": "Cardstock", "qty": 100, "stock": 595}
+  ]
+}
+'''
+
 
 '''
 class ExtractionAgentResponse(BaseModel):
@@ -916,10 +965,10 @@ shared_model_settings = ModelSettings(
 ORCHESTRATOR_PROMPT = """
                         You are a request classifier for Beaver's Choice Paper Supply.
 
-                        Classify the customer request into exactly one of:
-
+                        Classify the {customer_request} into exactly one of:
                         - QUERY: asking for information only (availability, stock, delivery dates, reports, pricing history)
                         - ORDER: intent to buy, order, purchase, need items, quantities, or deadlines
+                        and extract {request_date} 
 
                         Rules:
                         - If intent to buy is implied → ORDER
@@ -931,6 +980,7 @@ ORCHESTRATOR_PROMPT = """
 						Return ONLY valid JSON matching this schema:
                         {
                             "classification": "QUERY" | "ORDER"
+                            "request_date": "YYYY-MM-DD"
                         }
 						
 						Pass these details to {ExtractionAgent}
@@ -939,6 +989,7 @@ ORCHESTRATOR_PROMPT = """
 EXTRACTION_PROMPT = """
                         This is a technical work for Beaver's Choice Paper Supply. 
                         You are expert in extracting information:
+                        - request_date - date on which the request is created
                         - item raw name as mentioned by the customer
                         - quantity (integer)
                         - unit (sheets, reams, rolls, units)
@@ -948,12 +999,12 @@ EXTRACTION_PROMPT = """
                         Example -  
                             [
                                 {
-                                    'item_name': 'a4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\n i need these supplies delivered by april 15', 
+                                    'item_name': 'a4 glossy paper', 
                                     'quantity': 200, 
                                     'unit': 'sheets'
                                 }, 
                                 {
-                                    'item_name': 'Photo paper\n- 200 sheets \n i need these supplies delivered by april 12', 
+                                    'item_name': 'Photo paper', 
                                     'quantity': 202, 
                                     'unit': 'units'
                                 }, 
@@ -983,9 +1034,9 @@ EXTRACTION_PROMPT = """
 							Also note the stock of these item_names from this dictionary. 
 							
                         Now for each customer request, please follow below steps: 
-							- Read the custoner request and scan the above list of item_names data to find the best fit 
+							- Read the custoner request and scan the above list of item_names data to find the ONLY ONE BEST MATCH 
 							{item_name} from the inventory and find available {stock}. Use features like "cosine similarity"
-							to find the best match. 
+							to find the ONLY ONE best match. 
 							
 							if no match found 
 								- update
@@ -996,7 +1047,7 @@ EXTRACTION_PROMPT = """
 									- {ok_to_proceed}: True
 									- {answer}: {item_name} is available. Proceeding for next steps.  
 						
-                        - Prepare list / array of item_name's and list of corresponding quantity's, unit's, stock's, ok_to_proceed's, requested_delivery_date's.
+                        - Prepare list / array of item_name's and list of corresponding quantity's, unit's, stock's, ok_to_proceed's, request_date's.
 							
 						- Tools:
 						- `get_all_inventory`: Retrieve item name and available stock from inventory.
@@ -1021,18 +1072,18 @@ EXTRACTION_PROMPT = """
 									'stock': 400
 								}
 							]
-							2025-04-15
+							request_date: 2025-04-15
 
 						Pass these details to {IndventoryAgent}	
                     """
 '''
-- For a string with details of - answer, item_name's, quantity's, unit's, stock's, requested_delivery_date's in the below format 
-- "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, requested_delivery_date: {requested_delivery_date}, ok_to_proceed: {ok_to_proceed}"
+- For a string with details of - answer, item_name's, quantity's, unit's, stock's, request_date's in the below format 
+- "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, request_date: {request_date}, ok_to_proceed: {ok_to_proceed}"
 '''
 INVENTORY_PROMPT = """
                         You are the Inventory Agent for the Beaver's Choice Paper supply company.
                         You will receive below details from {ExtractionAgent}: 
-                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {requested_delivery_date}, {ok_to_proceed}
+                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {request_date}, {ok_to_proceed}
                         and pass them for further processing. 
 						
 						For a customer_request for each {item_name}, if {ok_to_proceed} is False for atleast one {item_name}
@@ -1055,24 +1106,24 @@ INVENTORY_PROMPT = """
 							- Do not modify inventory 
 
 							If classification is ORDER:
-							- Assume {minimum_cash_balance} is $ 1000. 
-							- Assume {minimum_item_in_stock} is 100. 
+							- Assume {minimum_cash_balance} = $1000 
+							- Assume {minimum_item_in_stock} = 100 
 							
 							If {ok_to_proceeed} is False from {ExtractionAgent}
 								- return with below details 
 									- {ok_to_proceed}: False 
 									- {answer}: {item_name} is not available with {quantity} units. 
 							
-							- Call `get_cash_balance` with {requested_delivery_date} as paraameter before any other action to get the current {cash_balance}
+							- Call `get_cash_balance` with {request_date} as paraameter before any other action to get the current {cash_balance}
 							- if {requested_quantity} from customer request < {minimum_item_in_stock} update
 								- {ok_to_proceeed}: True
 								- Move to {QuotingAgent} for further quoting steps. 
 							- else
-								- call `get_supplier_delivery_date` for {item_name} and {requested_delivery_date} only for the customer requested item_name's
-								- Use `date_check` tool to check if this date {supplier_delivery_date} greater than {requested_delivery_date}
+								- call `get_supplier_delivery_date` for {item_name} and {request_date}
+								- Use `date_check` tool to check if this date {supplier_delivery_date} greater than {request_date}
 								from {ExtractionAgent} and update
 									- {ok_to_proceed}: True
-									- {answer}: {item_name} can be delivered by {requested_delivery_date}. 
+									- {answer}: {item_name} can be delivered by {request_date}. 
 									- Move to {QuotingAgent} for quoting steps with {transaction_type} as 'sales'
 								- else update : 
 									- {ok_to_proceed}: False
@@ -1085,19 +1136,22 @@ INVENTORY_PROMPT = """
 
 						Prepare all the data required to pass to quoting agent as per below output format. 
 						Always be empathetic and helpful to the customer.
-                        
-                        - Output Format:
-                            - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
-                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, requested_delivery_date: {requested_delivery_date}, transaction_type: {transaction_type}, ok_to_proceed: {ok_to_proceed}"
-							
-						Pass these details to {QuotingAgent}	
 
+                        - Output Format:
+                            - {InventoryDecision}
+                            - Only decide {ok_to_proceed} and {answer}
+                            - DO NOT contruct items list
+                            Rules:
+                            - ok_to_proceed: boolean
+                            - reason: short string
+
+						Pass these details to {QuotingAgent}	
                     """
 
 QUOTING_PROMPT = """
 						You are the Quote Agent for the Beaver's Choice Paper supply company. 
                         You will receive below details from {InventoryAgent}: 
-                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {requested_delivery_date}, {transaction_type}{ok_to_proceed}
+                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {request_date}, {transaction_type} and {ok_to_proceed}
                         and pass them for further processing. 
 
 						Your task is to generate competitive and strategic sales quote based on:
@@ -1106,8 +1160,8 @@ QUOTING_PROMPT = """
 						- historical quote and sales data
 
 						Please remember the below lower limits: 
-						- Assume {minimum_cash_balance} is $ 1000. 
-						- Assume {minimum_item_in_stock} is 100.
+						- Assume {minimum_cash_balance} = $1000
+						- Assume {minimum_item_in_stock} = 100
 
 						- Always follow below instructions for decision making: 
 
@@ -1136,7 +1190,7 @@ QUOTING_PROMPT = """
                                 - {answer} with expected time of delivery the items
                                 - {item_name} with list of items
                                 - {total_price} with the total price of the item
-                                - {requested_delivery_date} as passed from {InventoryAgent}
+                                - {request_date} as passed from {InventoryAgent}
                                 - {transaction_type} as passed from {InventoryAgent}
                                 - Move to {SalesAgent}
                             - When quote calculation produces error 
@@ -1152,7 +1206,7 @@ QUOTING_PROMPT = """
                         
 						- Output Format:
                             - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
-                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, total_price: {total_price}, requested_delivery_date: {requested_delivery_date}, transaction_type: {transaction_type}, ok_to_proceed: {ok_to_proceed}"
+                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, total_price: {total_price}, requested_delivery_date: {request_date}, transaction_type: {transaction_type}, ok_to_proceed: {ok_to_proceed}"
 							
 						Pass these details to {SalesAgent}	
                         """
@@ -1164,19 +1218,14 @@ SALES_PROMPT = """
                         Also complete the re-stock request initiated by the {QuotingAgent}. 
 
                         You will receive below details from {QuotingAgent}: 
-                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {total_price}, {requested_delivery_date}, {transaction_type}, {ok_to_proceed}"
+                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {total_price}, {request_date}, {transaction_type}, {ok_to_proceed}"
                         and pass them for further processing. 
-						
-						Please remember the below lower limits: 
-						- Assume {minimum_cash_balance} is $ 1000. 
-						- Assume {minimum_item_in_stock} is 100.
 
 						1. Assume the customer wants to proceed the order.
 
 						2. Store the sale
-							- For each item_name Call `create_transaction` with {transaction_type} as passed from {QuotingAgent}
-                                - quantity = units ordered
-                                - price = unit multiplied by quantity
+                            - For each {item_name}, call `create_transaction` to store the order in the system.
+                                - Include: {item_name}(s), {transaction_type} as 'sales', {quantity}, {total_price} [multiply {quantity} and {unit}] and {requested_delivery_date}
 
 						3. Reply to customer
 							- Confirm if order is successful
@@ -1190,27 +1239,28 @@ SALES_PROMPT = """
                             - `ok_to_proceed` as True
                             - `answer` as -  with expected time of delivery the items
                             - `item_name` with list of items
-                            - `total_price` with the total price of the item
+                            - `total_price` = {quantity}*{unit}
                             -  Move to {ReceiptAgent}
                            Else 
                             - `ok_to_proceed` as False
                             - `answer` as the error message
                             -  Do not move to {ReceiptAgent}
 							
-						   One final step before closing {SalesAgent}. Use `get_all_inventory` to check the stock of each
-						   {item_names}. If the {stock} goes below {minimum_item_in_stock}, use `create_transaction` tool 
-						   with {transaction_type} as 'stock_orders' to re-stock the {item_name} with quantity as {minimum_item_in_stock}
+                           Use `generate_financial_report` and note and display below items after re-stocking
+                            - {cash_balance}
+                            - {inventory_value}
 						
                         Always be empathetic and helpful to the customer.
 
 						- Tools:
 						- `create_transaction`: Store the sale record 
+                        - `generate_financial_report': to generate financial report
 
                         - Output Format:
                             - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
-                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, requested_delivery_date: {requested_delivery_date}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
+                            - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, request_date: {request_date}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
 							
-						Pass these details to {Receipt}
+						Pass these details to {ReceiptAgent}
                         """
 
 RECEIPT_PROMPT = """    
@@ -1219,7 +1269,7 @@ RECEIPT_PROMPT = """
 						as a token of acknowledgement. 
 						
                         You will receive below details from {SalesAgent}: 
-                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {requested_delivery_date}, {total_price}, {ok_to_proceed}"
+                            - {answer}, {item_name}, {quantity}, {unit}, {stock}, {request_date}, {total_price}, {ok_to_proceed}"
                         and pass them for further processing.
 
 						Your job is to generate a complete and professional **customer receipt** based on the finalized order.
@@ -1230,7 +1280,7 @@ RECEIPT_PROMPT = """
 						- Delivery date, if any
 
 						- The receipt contains the following:
-						- Follow a simple ASCII format. 
+						- Generate a well-formatted `.txt` invoice block using ASCII layout. 
 							- Receipt No: format it as RCPT-YYYY-MM-DD 
 							- Receipt Date- use present date
 							- Customer name, address and email — use `<placeholder>` if missing
@@ -1282,8 +1332,42 @@ RECEIPT_PROMPT = """
 
                             - Output Format:
                                 - Form a string with details of - amswer, item_name's, quantity's, unit, stock, requested_delivery_date, ok_to_proceed in the below format 
-                                - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, requested_delivery_date: {requested_delivery_date}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
+                                - "answer: {answer}, items: {item_name}, quantity: {quantity}, unit: {unit}, stock: {stock}, requested_delivery_date: {request_date}, total_price: {total_price}, ok_to_proceed: {ok_to_proceed}"
+                        
+                        Pass these details to {Re_StockAgent} 
+
                         """
+
+RE_STOCK_PROMPT = """
+                    You are a Re-stock Agent.
+                    You will receive below details from {ReceiptAgent}: 
+                    - {answer}, {item_name}, {quantity}, {unit}, {stock}, {request_date}, {total_price}, {ok_to_proceed}
+
+                    Rules:
+                    - DO NOT explain
+                    - DO NOT assume stock values
+                    - DO NOT write natural language reasoning
+
+                    Input:
+                    - inventory_items [{item_name, stock}]
+                    - {minimum_item_in_stock} = 100
+
+                    Please follow the below business logic:
+                    For each {item_name}
+                    - If {stock} < {minimum_item_in_stock}
+                        - {restock_quantity} = {minimum_item_in_stock} - {stock}
+                        - Call `re_stock` tool with below details:
+                            - {request_date}
+                            - {item_name}
+                            - {restock_quantity}
+                            - {unit}
+
+                    - Tools:
+						- `re_stock`: Re-stock an item with minimum_item_in_stock[100]. 
+
+                    Output Format:
+                    - RestockDecision	
+                """
 ##################
 
 class WorkflowContext(BaseModel):
@@ -1319,7 +1403,7 @@ class MultiAgentWorkflow:
                 name="InventoryAgent",
                 model_settings=shared_model_settings,
                 system_prompt=INVENTORY_PROMPT,
-                output_type=str,
+                output_type=InventoryDecision,
                 tools=inventory_tools,
             ),
 
@@ -1329,7 +1413,6 @@ class MultiAgentWorkflow:
                 name="QuotingAgent",
                 model_settings=shared_model_settings,
                 system_prompt=QUOTING_PROMPT,
-                # output_type=QuotingAgentResponse,
                 output_type=str,
                 tools=quoting_tools,
                 retries=2
@@ -1341,7 +1424,6 @@ class MultiAgentWorkflow:
                 name="SalesAgent",
                 model_settings=shared_model_settings,
                 system_prompt=SALES_PROMPT,
-                # output_type=SalesAgentResponse,
                 output_type=str,
                 tools=sales_tools,
             ),
@@ -1354,6 +1436,15 @@ class MultiAgentWorkflow:
                 system_prompt=RECEIPT_PROMPT,
                 output_type=str,
             ),
+
+            "re_stock": Agent(
+                #model=OpenAIChatModel(model_name="gpt-4o-mini"),
+                model=openai_model,
+                name="Re_StockAgent",
+                model_settings=shared_model_settings,
+                system_prompt=RE_STOCK_PROMPT,
+                output_type=RestockDecision,
+            ),
         }
 
         self.agent_usage_count = {
@@ -1362,6 +1453,7 @@ class MultiAgentWorkflow:
             "quoting": 0,
             "sales": 0,
             "receipt": 0,
+            "re_stock": 0,
         }
 
     def process_query(self, context: WorkflowContext) -> str:
@@ -1385,7 +1477,17 @@ class MultiAgentWorkflow:
             # If quoting agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {extraction_response}") 
             return extraction_response #.output.answer
-        
+        ############
+        inventory_items = [
+            {
+                "item_name": item.raw_name,
+                "quantity": item.quantity,
+                "stock": item.stock,
+            }
+            for item in extracted_items
+        ]
+        ############
+
         # Call inventory agent
         inventory_prompt = f"""
             Classification: QUERY
@@ -1395,10 +1497,13 @@ class MultiAgentWorkflow:
         inventory_response = self.agents["inventory"].run_sync(
             inventory_prompt,
         )
+
         self.agent_usage_count["inventory"] += 1
         return inventory_response
 
     def process_order(self, context: WorkflowContext) -> str:
+        
+        #final_response = ""
         extraction_prompt = f"""
             Customer Request: {context.original_request}
         """
@@ -1406,12 +1511,11 @@ class MultiAgentWorkflow:
             extraction_prompt,
         )
         extracted_items = extraction_response.output.items
-        requested_delivery_date = extraction_response.output.requested_delivery_date
+        request_date = extraction_response.output.request_date
         
         print()
-        print(">>>>>>>>>> CHECKING Extraction prompt ===> ", extraction_prompt)
         print(">>>>>>>>>> CHECKING Extraction Items ===> ", extracted_items)
-        print(">>>>>>>>>> CHECKING requested_delivery_date ===> ", requested_delivery_date)
+        print(">>>>>>>>>> CHECKING request_date ===> ", request_date)
         print()
 
         self.agent_usage_count["extractor"] += 1
@@ -1420,24 +1524,24 @@ class MultiAgentWorkflow:
             # If quoting agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {extraction_response}") #.output.answer}")
             return extraction_response
-        
-        '''
+
+        inventory_items = [
+            {
+                "item_name": item.raw_name,
+                "quantity": item.quantity,
+                "stock": item.stock,
+            }
+            for item in extracted_items
+        ]
+
         inventory_prompt = f"""
             Classification: ORDER
-            User Request: {context.original_request}
-            Extraction Context: extraction_response
-        """
-        '''
-        inventory_prompt = f"""
-            Classification: ORDER
-            extracted_items: {extracted_items}
-            requested_delivery_date: {requested_delivery_date}
+            inventory_items: {inventory_items}
+            request_date: {request_date}
         """
 
         # ITEMS_JSON: {json.dumps(items, indent=2)}
 
-        print()
-        print("CHECKING Inventory Agent ===> ", self.agents["inventory"])
         print()
         print("CHECKING Inventory Agent - prompt ===> ", inventory_prompt)
         print()
@@ -1447,93 +1551,143 @@ class MultiAgentWorkflow:
         )
         self.agent_usage_count["inventory"] += 1
         
-        print(">>>>>>>>>> inventory_response = ", inventory_response)
-        print(">>>>>>>>>> inventory_response = ", type(inventory_response))
+        print(">>>>>>>>>> inventory_response = ", inventory_response.output)
 
+        final_inventory_decision = {
+            "ok_to_proceed": inventory_response.output.ok_to_proceed,
+            "answer": inventory_response.output.answer,
+            "items": inventory_items,   # ✅ injected deterministically
+        }
+        print(">>>>>>>>>>Items from inventory_response = ", final_inventory_decision["items"])
+        
+        '''
         if not inventory_response:
             # If inventory agent indicates order cannot proceed, return a message
             print(f"Order cannot be processed: {inventory_response.output.answer}")
             return inventory_response
+        '''
+        if not final_inventory_decision["ok_to_proceed"]:
+            return inventory_response
+        else: 
+            # Call quoting agent to generate a quote based on the order
+            quote_prompt = f"""
+                Classification: ORDER
+                User Request: {context.original_request}
+                Inventory Context: {inventory_response} 
+            """
+            print()
+            print("CHECKING Quote Agent - prompt ===> ",quote_prompt)
+            print()
 
-        # Call quoting agent to generate a quote based on the order
-        quote_prompt = f"""
-            Classification: ORDER
-            User Request: {context.original_request}
-            Inventory Context: {inventory_response} 
-        """
-        print()
-        print("CHECKING Quote Agent ===> ", self.agents["quoting"])
-        print()
-        print("CHECKING Quote Agent - prompt ===> ",quote_prompt)
-        print()
+            quoting_response = self.agents["quoting"].run_sync(
+                quote_prompt,
+            )
 
-        quoting_response = self.agents["quoting"].run_sync(
-            quote_prompt,
-        )
+            self.agent_usage_count["quoting"] += 1
+            
+            print(">>>>>>>>>> quoting_response", quoting_response)
+            if not quoting_response: 
+                # If quoting agent indicates order cannot proceed, return a message
+                print(f"Order cannot be processed: {quoting_response}") #.output.answer}")
+                return quoting_response #.output.answer
+                # print("Inventory / Quote level warning, but proceeding to sale... ")
 
-        self.agent_usage_count["quoting"] += 1
-        
-        print(">>>>>>>>>> quoting_response", quoting_response)
-        if not quoting_response: 
-            # If quoting agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {quoting_response}") #.output.answer}")
-            return quoting_response #.output.answer
-            # print("Inventory / Quote level warning, but proceeding to sale... ")
+            # Call sales agent to finalize the order
+            sales_prompt = f"""
+                Classification: ORDER
+                User Request: {context.original_request}
+                Inventory Context: {inventory_response}
+                Quoting Context: {quoting_response}
+            """
+            # .answer}
+            sales_response = self.agents["sales"].run_sync(
+                sales_prompt,
+            )
+            print()
+            print("CHECKING Sales Agent - prompt ===> ",sales_prompt)
+            print()
 
-        # Call sales agent to finalize the order
-        sales_prompt = f"""
-            Classification: ORDER
-            User Request: {context.original_request}
-            Inventory Context: {inventory_response}
-            Quoting Context: {quoting_response}
-        """
-        # .answer}
-        sales_response = self.agents["sales"].run_sync(
-            sales_prompt,
-        )
-        print()
-        print("CHECKING Sales Agent ===> ", self.agents["sales"])
-        print()
-        print("CHECKING Sales Agent - prompt ===> ",sales_prompt)
-        print()
+            self.agent_usage_count["sales"] += 1
+            
+            print(">>>>>>>>>> sales_response", sales_response)
+            
+            if not sales_response: 
+                # If sales agent indicates order cannot proceed, return a message
+                print(f"Order cannot be processed: {sales_response}") #.output.answer}")
+                return sales_response 
 
-        self.agent_usage_count["sales"] += 1
-        
-        print(">>>>>>>>>> sales_response", sales_response)
-        
-        if not sales_response: 
-            # If sales agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {sales_response}") #.output.answer}")
-            return sales_response 
+            # Call receipt agent to generate an receipt for the order
+            receipt_prompt = f"""
+                Classification: ORDER
+                User Request: {context.original_request}
+                Inventory Context: {inventory_response}
+                Quoting Context: {quoting_response} 
+                Sales Context: {sales_response} 
+            """
+            print()
+            print("CHECKING Receipt Agent - prompt ===> ",receipt_prompt)
+            print()
 
-        # Call receipt agent to generate an receipt for the order
-        receipt_prompt = f"""
-            Classification: ORDER
-            User Request: {context.original_request}
-            Inventory Context: {inventory_response}
-            Quoting Context: {quoting_response} 
-            Sales Context: {sales_response} 
-        """
-        print()
-        print("CHECKING Receipt Agent ===> ", self.agents["receipt"])
-        print()
-        print("CHECKING Receipt Agent - prompt ===> ",receipt_prompt)
-        print()
+            # Discount Context: {discount_response.output.answer}
+            receipt_response = self.agents["receipt"].run_sync(
+                receipt_prompt,
+            )
+            self.agent_usage_count["receipt"] += 1
+            print(">>>>>>>>>> receipt_response", receipt_response)
 
-        # Discount Context: {discount_response.output.answer}
-        receipt_response = self.agents["receipt"].run_sync(
-            receipt_prompt,
-        )
-        self.agent_usage_count["receipt"] += 1
-        print(">>>>>>>>>> receipt_response", receipt_response)
+            if not receipt_response:
+                # If receipt agent indicates order cannot proceed, return a message
+                print(f"Order cannot be processed: {inventory_response.output}")
+                return receipt_response
 
-        if not receipt_response:
-            # If receipt agent indicates order cannot proceed, return a message
-            print(f"Order cannot be processed: {inventory_response.output}")
-            return receipt_response
+            # Call re_stock agent to generate an receipt for the order
+            post_sale_inventory = get_all_inventory(request_date)
 
-        # Return the final response from the receipt agent
-        return receipt_response
+            re_stock_prompt = f"""
+                Classification: ORDER
+                User Request: {context.original_request}
+                Inventory Context: {inventory_response}
+                Quoting Context: {quoting_response} 
+                Sales Context: {sales_response} 
+                Receipt Context: {receipt_response}
+            """
+                
+            print()
+            print("CHECKING Re_stock Agent - prompt ===> ",re_stock_prompt)
+            print()
+            
+            re_stock_response = self.agents["re_stock"].run_sync(
+                re_stock_prompt,
+            )
+            self.agent_usage_count["re_stock"] += 1
+            print(">>>>>>>>>> re_stock_response", re_stock_response)
+
+            decision: RestockDecision = re_stock_response.output
+
+            if not decision.restock_required:
+                # No re-stock needed → continue workflow
+                pass
+            else:
+                # Trigger re-stock flow
+                items = restock_decision.items_to_restock
+                current_stock = post_sale_inventory[item]
+                restock_qty = max(0, minimum_item_in_stock - current_stock)
+                for item in items:
+                    create_transaction(
+                        item_name=item,
+                        transaction_type="stock_orders",
+                        quantity=restock_qty,
+                        price=restock_qty * unit_cost,
+                        date=request_date
+                    )
+
+            if not re_stock_response:
+                # If re_stock agent indicates order cannot proceed, return a message
+                print(f"Order cannot be processed: {re_stock.output}")
+                return re_stock_response
+
+            # Return the final response from the re_stock agent
+            return re_stock_response
 
     def run(self, customer_request: str) -> str:
         """
@@ -1555,6 +1709,8 @@ class MultiAgentWorkflow:
         print(f"CHECKPOINT-0.1 ---> context - ", context)
         print(f"CHECKPOINT-0.2 ---> Orchestration Agent classified request as: {orchestration_response.output.classification}")
 
+        print("CHECKPOINT-0.1 ---> ", orchestration_response)
+
         # Step 2: Based on classification, route to appropriate agents
         if orchestration_response.output.classification == "QUERY":
             # Handle inquiries with quoting and evaluation agents
@@ -1572,15 +1728,19 @@ def run_test_scenarios():
     print("Initializing Database...")
     init_database(db_engine)
     try:
-        quote_requests_sample = pd.read_csv("quote_requests_sample1.csv")
+        quote_requests_sample = pd.read_csv("quote_requests_sample2.csv")
         quote_requests_sample["request_date"] = pd.to_datetime(
             quote_requests_sample["request_date"], format="%m/%d/%y", errors="coerce"
         )
         quote_requests_sample.dropna(subset=["request_date"], inplace=True)
         quote_requests_sample = quote_requests_sample.sort_values("request_date")
+
+        print(">>>>>>>>>>>>>>> Request Sample ---> ", quote_requests_sample)
+        print(">>>>>>>>>>>>>>> Request Sample ---> ", quote_requests_sample.columns)
     except Exception as e:
         print(f"FATAL: Error loading test data: {e}")
         return
+    
     ''' Duplicate Code Hence commented
     # quote_requests_sample = pd.read_csv("quote_requests_sample.csv")
     quote_requests_sample = pd.read_csv("quote_requests_sample1.csv")
@@ -1611,8 +1771,8 @@ def run_test_scenarios():
     results = []
     for idx, row in quote_requests_sample.iterrows():
         #################### CHeck Inventory Data
-        print("Printing inventory Data... ")
-        print(get_all_inventory("2025-04-01"))
+        print(">>>>>>>>>> ---> Printing inventory Data... ")
+        print(get_all_inventory("2025-04-01"))   
         print("End printing inventory Data... ")
         ####################
         request_date = row["request_date"].strftime("%Y-%m-%d")
@@ -1632,9 +1792,9 @@ def run_test_scenarios():
         ############
         ############
         ############
-
+        
         response = multi_agent_workflow.run(request_with_date)
-
+        # Commenting for NOW ===================>>>>>
         # Update state
         report = generate_financial_report(request_date)
         current_cash = report["cash_balance"]
@@ -1653,15 +1813,26 @@ def run_test_scenarios():
                 "response": response,
             }
         )
-
+         
         time.sleep(0.3)
 
     # Final report
     final_date = quote_requests_sample["request_date"].max().strftime("%Y-%m-%d")
-    final_report = generate_financial_report(final_date)
-    print("\n<--- FINAL FINANCIAL REPORT --->")
+    print(">>>>>>>>>>>>> final_date ---> ", final_date)
+
+    as_of_now = datetime.now()
+    print(">>>>>>>>>>>>> final_date ---> ", as_of_now.isoformat())
+    final_report = generate_financial_report(as_of_now.isoformat())
+
+    print("\n<--- FINAL FINANCIAL REPORT REVISED --->")
     print(f"Final Cash: ${final_report['cash_balance']:.2f}")
     print(f"Final Inventory: ${final_report['inventory_value']:.2f}")
+
+    #################
+    print(">>>>>>>> Glossy paper ---> ", get_stock_level("Glossy paper", request_date))
+    print(">>>>>>>> Cardstock ---> ", get_stock_level("Cardstock", request_date))
+    print(">>>>>>>> Colored paper ---> ", get_stock_level("Colored paper", request_date))
+    #################   
 
     print("\n<--- Agent Usage Summary --->")
     for agent, count in multi_agent_workflow.agent_usage_count.items():
