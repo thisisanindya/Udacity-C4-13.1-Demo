@@ -3,9 +3,11 @@ Loading openai_api_key...
 Checking OPENAI_API_KEY =  voc-822346846168865391158168c5c2a6e896b0.00021708
 Model ===>  OpenAIChatModel()
 Initializing Database...
+>>>>>>>>>>>>>>> Request Sample --->                job need_size     event                                            request request_date
+0  office manager     small  ceremony  I would like to request the following paper su...   2025-04-01
+>>>>>>>>>>>>>>> Request Sample --->  Index(['job', 'need_size', 'event', 'request', 'request_date'], dtype='object')
 ---> Function (generate_financial_report): Get financial report as of '2025-04-01'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
-[TOOL][get_cash_balance] as_of_date = 2025-04-01
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
@@ -24,7 +26,7 @@ Initializing Database...
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-01'
-Printing inventory Data... 
+>>>>>>>>>> ---> Printing inventory Data... 
 ---> Function (get_all_inventory): Get inventory data as of '2025-04-01'
 {'100 lb cover stock': 636.0, '80 lb text paper': 249.0, 'A4 paper': 272.0, 'Banner paper': 793.0, 'Butcher paper': 365.0, 'Cardstock': 595.0, 'Colored paper': 788.0, 'Crepe paper': 234.0, 'Glossy paper': 587.0, 'Invitation cards': 526.0, 'Kraft paper': 493.0, 'Large poster paper (24x36 inches)': 699.0, 'Paper plates': 748.0, 'Patterned paper': 548.0, 'Photo paper': 423.0, 'Presentation folders': 389.0, 'Rolls of banner paper (36-inch width)': 546.0, 'Table covers': 736.0}
 End printing inventory Data... 
@@ -36,115 +38,54 @@ Cash Balance: $45059.70
 Inventory Value: $4940.30
 CHECKPOINT-0.0 --->  I would like to request the following paper supplies for the ceremony: 
 
-- 200 sheets of A4 glossy paper
-- 100 sheets of heavy cardstock (white)
-- 100 sheets of colored paper (assorted colors)
-
+- 500 sheets of A4 glossy paper
+- 500 sheets of heavy cardstock (white)
+- 500 sheets of colored paper (assorted colors)
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251230173627' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\n\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20260104150442' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 500 sheets of A4 glossy paper\n- 500 sheets of heavy cardstock (white)\n- 500 sheets of colored paper (assorted colors)\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
+CHECKPOINT-0.1 --->  AgentRunResult(output=BeaverOrchestrator(classification='ORDER', request_date='2025-04-01'))
 ---> Function (get_all_inventory): Get inventory data as of '2025-04-01'
 
->>>>>>>>>> CHECKING Extraction prompt ===>  
-            Customer Request: I would like to request the following paper supplies for the ceremony: 
+>>>>>>>>>> CHECKING Extraction Items ===>  [ExtractedItem(raw_name='Glossy paper', quantity=500, unit='sheets', stock=587), ExtractedItem(raw_name='Cardstock', quantity=500, unit='sheets', stock=595), ExtractedItem(raw_name='Colored paper', quantity=500, unit='sheets', stock=788)]
+>>>>>>>>>> CHECKING request_date ===>  2025-04-01
 
-- 200 sheets of A4 glossy paper
-- 100 sheets of heavy cardstock (white)
-- 100 sheets of colored paper (assorted colors)
-
-I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-        
->>>>>>>>>> CHECKING Extraction Items ===>  [ExtractedItem(raw_name='A4 paper', quantity=200, unit='sheets', stock=272), ExtractedItem(raw_name='Cardstock', quantity=100, unit='sheets', stock=595), ExtractedItem(raw_name='Colored paper', quantity=100, unit='sheets', stock=788)]
->>>>>>>>>> CHECKING requested_delivery_date ===>  2025-04-15
-
-
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
 
 CHECKING Inventory Agent - prompt ===>  
             Classification: ORDER
-            extracted_items: [ExtractedItem(raw_name='A4 paper', quantity=200, unit='sheets', stock=272), ExtractedItem(raw_name='Cardstock', quantity=100, unit='sheets', stock=595), ExtractedItem(raw_name='Colored paper', quantity=100, unit='sheets', stock=788)]
-            requested_delivery_date: 2025-04-15
+            inventory_items: [{'item_name': 'Glossy paper', 'quantity': 500, 'stock': 587}, {'item_name': 'Cardstock', 'quantity': 500, 'stock': 595}, {'item_name': 'Colored paper', 'quantity': 500, 'stock': 788}]
+            request_date: 2025-04-01
         
 
----> Function (get_cash_balance): Get cash balance as of '2025-04-15'
-[TOOL][get_cash_balance] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
->>>>>>>>>> inventory_response =  AgentRunResult(output='Since all items are available and can be delivered by the requested delivery date, I will proceed with the quoting steps.\n\nHere are the details for the quoting agent:\n\n- answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n\nNow, I will format the output for the quoting agent. \n\nOutput:\n```\n"answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n``` \n\nI will now pass these details to the Quoting Agent.')
->>>>>>>>>> inventory_response =  <class 'pydantic_ai.run.AgentRunResult'>
-
-CHECKING Quote Agent ===>  Agent(model=OpenAIChatModel(), name='QuotingAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
+---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
+>>>>>>>>>> inventory_response =  ok_to_proceed=True answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'
+>>>>>>>>>>Items from inventory_response =  [{'item_name': 'Glossy paper', 'quantity': 500, 'stock': 587}, {'item_name': 'Cardstock', 'quantity': 500, 'stock': 595}, {'item_name': 'Colored paper', 'quantity': 500, 'stock': 788}]
 
 CHECKING Quote Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I would like to request the following paper supplies for the ceremony: 
+                Classification: ORDER
+                User Request: I would like to request the following paper supplies for the ceremony: 
 
-- 200 sheets of A4 glossy paper
-- 100 sheets of heavy cardstock (white)
-- 100 sheets of colored paper (assorted colors)
-
+- 500 sheets of A4 glossy paper
+- 500 sheets of heavy cardstock (white)
+- 500 sheets of colored paper (assorted colors)
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-            Inventory Context: AgentRunResult(output='Since all items are available and can be delivered by the requested delivery date, I will proceed with the quoting steps.\n\nHere are the details for the quoting agent:\n\n- answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n\nNow, I will format the output for the quoting agent. \n\nOutput:\n```\n"answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n``` \n\nI will now pass these details to the Quoting Agent.') 
-        
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.')) 
+            
 
 ---> Function (search_quote_history): Search quote history.
 ---> Function (search_quote_history): Search quote history.
----> Function (search_quote_history): Search quote history.
->>>>>>>>>> quoting_response AgentRunResult(output='To create a competitive quote for the requested paper supplies, I will analyze the historical quotes and pricing for similar items. \n\n### Historical Pricing Analysis:\n1. **A4 Glossy Paper**:\n   - Previous quotes for A4 glossy paper indicate a price of approximately $0.20 per sheet for bulk orders.\n   - A bulk discount was applied in previous orders when quantities exceeded 500 sheets.\n\n2. **Heavy Cardstock (White)**:\n   - The historical price for high-quality cardstock is around $0.15 per sheet.\n   - Discounts were also applied for larger orders.\n\n3. **Colored Paper (Assorted Colors)**:\n   - The price for assorted colored paper is typically around $0.10 per sheet.\n\n### Quote Calculation:\n- **A4 Glossy Paper**: \n  - Quantity: 200 sheets\n  - Price per sheet: $0.20\n  - Total: 200 * $0.20 = $40.00\n\n- **Heavy Cardstock (White)**: \n  - Quantity: 100 sheets\n  - Price per sheet: $0.15\n  - Total: 100 * $0.15 = $15.00\n\n- **Colored Paper (Assorted Colors)**: \n  - Quantity: 100 sheets\n  - Price per sheet: $0.10\n  - Total: 100 * $0.10 = $10.00\n\n### Total Price Calculation:\n- Total Price = $40.00 (A4 Glossy Paper) + $15.00 (Heavy Cardstock) + $10.00 (Colored Paper) = **$65.00**\n\n### Final Quote:\n- Since the quantities are below the threshold for bulk discounts, no additional discounts will be applied.\n\n### Output Preparation:\n- The expected delivery date is April 15, 2025, and all items are available in stock.\n\nNow, I will format the output for the Sales Agent:\n\n```\n"answer: All requested items can be delivered by April 15, 2025, items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: 272, 595, 788, total_price: 65.00, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n```')
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-01
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-01
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-01
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-01
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-01
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-01
-
-CHECKING Sales Agent ===>  Agent(model=OpenAIChatModel(), name='SalesAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Sales Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I would like to request the following paper supplies for the ceremony: 
-
-- 200 sheets of A4 glossy paper
-- 100 sheets of heavy cardstock (white)
-- 100 sheets of colored paper (assorted colors)
-
-I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-            Inventory Context: AgentRunResult(output='Since all items are available and can be delivered by the requested delivery date, I will proceed with the quoting steps.\n\nHere are the details for the quoting agent:\n\n- answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n\nNow, I will format the output for the quoting agent. \n\nOutput:\n```\n"answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n``` \n\nI will now pass these details to the Quoting Agent.')
-            Quoting Context: AgentRunResult(output='To create a competitive quote for the requested paper supplies, I will analyze the historical quotes and pricing for similar items. \n\n### Historical Pricing Analysis:\n1. **A4 Glossy Paper**:\n   - Previous quotes for A4 glossy paper indicate a price of approximately $0.20 per sheet for bulk orders.\n   - A bulk discount was applied in previous orders when quantities exceeded 500 sheets.\n\n2. **Heavy Cardstock (White)**:\n   - The historical price for high-quality cardstock is around $0.15 per sheet.\n   - Discounts were also applied for larger orders.\n\n3. **Colored Paper (Assorted Colors)**:\n   - The price for assorted colored paper is typically around $0.10 per sheet.\n\n### Quote Calculation:\n- **A4 Glossy Paper**: \n  - Quantity: 200 sheets\n  - Price per sheet: $0.20\n  - Total: 200 * $0.20 = $40.00\n\n- **Heavy Cardstock (White)**: \n  - Quantity: 100 sheets\n  - Price per sheet: $0.15\n  - Total: 100 * $0.15 = $15.00\n\n- **Colored Paper (Assorted Colors)**: \n  - Quantity: 100 sheets\n  - Price per sheet: $0.10\n  - Total: 100 * $0.10 = $10.00\n\n### Total Price Calculation:\n- Total Price = $40.00 (A4 Glossy Paper) + $15.00 (Heavy Cardstock) + $10.00 (Colored Paper) = **$65.00**\n\n### Final Quote:\n- Since the quantities are below the threshold for bulk discounts, no additional discounts will be applied.\n\n### Output Preparation:\n- The expected delivery date is April 15, 2025, and all items are available in stock.\n\nNow, I will format the output for the Sales Agent:\n\n```\n"answer: All requested items can be delivered by April 15, 2025, items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: 272, 595, 788, total_price: 65.00, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n```')
-        
-
->>>>>>>>>> sales_response AgentRunResult(output="The order has been successfully processed! Here are the details:\n\n- **Items Ordered**: A4 glossy paper, heavy cardstock, colored paper\n- **Quantities**: 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock, 100 sheets of colored paper\n- **Total Price**: $65.00\n- **Estimated Delivery Date**: April 15, 2025\n\nAdditionally, I have ensured that the stock levels are maintained by placing a re-stock order for each item. \n\nThank you for your order! If you have any further questions or need assistance, feel free to ask. \n\nHere's the summary:\n```\nanswer: Order successful, items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: 272, 595, 788, requested_delivery_date: 2025-04-15, total_price: 65.00, ok_to_proceed: True\n```")
-
-CHECKING Receipt Agent ===>  Agent(model=OpenAIChatModel(), name='ReceiptAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Receipt Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I would like to request the following paper supplies for the ceremony: 
-
-- 200 sheets of A4 glossy paper
-- 100 sheets of heavy cardstock (white)
-- 100 sheets of colored paper (assorted colors)
-
-I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-            Inventory Context: AgentRunResult(output='Since all items are available and can be delivered by the requested delivery date, I will proceed with the quoting steps.\n\nHere are the details for the quoting agent:\n\n- answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n- answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True\n\nNow, I will format the output for the quoting agent. \n\nOutput:\n```\n"answer: A4 paper can be delivered by 2025-04-15, items: A4 paper, quantity: 200, unit: sheets, stock: 272, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Cardstock can be delivered by 2025-04-15, items: Cardstock, quantity: 100, unit: sheets, stock: 595, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n"answer: Colored paper can be delivered by 2025-04-15, items: Colored paper, quantity: 100, unit: sheets, stock: 788, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n``` \n\nI will now pass these details to the Quoting Agent.')
-            Quoting Context: AgentRunResult(output='To create a competitive quote for the requested paper supplies, I will analyze the historical quotes and pricing for similar items. \n\n### Historical Pricing Analysis:\n1. **A4 Glossy Paper**:\n   - Previous quotes for A4 glossy paper indicate a price of approximately $0.20 per sheet for bulk orders.\n   - A bulk discount was applied in previous orders when quantities exceeded 500 sheets.\n\n2. **Heavy Cardstock (White)**:\n   - The historical price for high-quality cardstock is around $0.15 per sheet.\n   - Discounts were also applied for larger orders.\n\n3. **Colored Paper (Assorted Colors)**:\n   - The price for assorted colored paper is typically around $0.10 per sheet.\n\n### Quote Calculation:\n- **A4 Glossy Paper**: \n  - Quantity: 200 sheets\n  - Price per sheet: $0.20\n  - Total: 200 * $0.20 = $40.00\n\n- **Heavy Cardstock (White)**: \n  - Quantity: 100 sheets\n  - Price per sheet: $0.15\n  - Total: 100 * $0.15 = $15.00\n\n- **Colored Paper (Assorted Colors)**: \n  - Quantity: 100 sheets\n  - Price per sheet: $0.10\n  - Total: 100 * $0.10 = $10.00\n\n### Total Price Calculation:\n- Total Price = $40.00 (A4 Glossy Paper) + $15.00 (Heavy Cardstock) + $10.00 (Colored Paper) = **$65.00**\n\n### Final Quote:\n- Since the quantities are below the threshold for bulk discounts, no additional discounts will be applied.\n\n### Output Preparation:\n- The expected delivery date is April 15, 2025, and all items are available in stock.\n\nNow, I will format the output for the Sales Agent:\n\n```\n"answer: All requested items can be delivered by April 15, 2025, items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: 272, 595, 788, total_price: 65.00, requested_delivery_date: 2025-04-15, transaction_type: sales, ok_to_proceed: True"\n```') 
-            Sales Context: AgentRunResult(output="The order has been successfully processed! Here are the details:\n\n- **Items Ordered**: A4 glossy paper, heavy cardstock, colored paper\n- **Quantities**: 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock, 100 sheets of colored paper\n- **Total Price**: $65.00\n- **Estimated Delivery Date**: April 15, 2025\n\nAdditionally, I have ensured that the stock levels are maintained by placing a re-stock order for each item. \n\nThank you for your order! If you have any further questions or need assistance, feel free to ask. \n\nHere's the summary:\n```\nanswer: Order successful, items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: 272, 595, 788, requested_delivery_date: 2025-04-15, total_price: 65.00, ok_to_proceed: True\n```") 
-        
-
->>>>>>>>>> receipt_response AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                Unit Price   Line Total\n200  A4 Glossy Paper               0.20        40.00\n100  Heavy Cardstock (White)       0.15        15.00\n100  Colored Paper (Assorted)      0.10        10.00\n\nSubtotal: 65.00\nDiscount: 0.00\nTotal Amount Due: 65.00\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\nanswer: Receipt No: RCPT-2025-04-01, Total Amount: 65.00, Discount: 0.00, Grand Total: 65.00, items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: 272, 595, 788, requested_delivery_date: 2025-04-15, total_price: 65.00, ok_to_proceed: True")
+>>>>>>>>>> quoting_response AgentRunResult(output="Based on the customer's request and the inventory context, I have prepared a competitive quote for the requested paper supplies. \n\n### Quote Details:\n- **Items Requested**:\n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n### Pricing Calculation:\n1. **A4 Glossy Paper**: \n   - Price per sheet: $0.20\n   - Total for 500 sheets: $100.00\n\n2. **Heavy Cardstock (White)**: \n   - Price per sheet: $0.15\n   - Total for 500 sheets: $75.00\n\n3. **Colored Paper (Assorted Colors)**: \n   - Price per sheet: $0.12\n   - Total for 500 sheets: $60.00\n\n### Total Price Calculation:\n- Total Price = $100.00 (Glossy) + $75.00 (Cardstock) + $60.00 (Colored) = **$235.00**\n\n### Remarks:\n- A discount has been applied due to the high volume of the order, making it more attractive for the customer.\n\n### Delivery Information:\n- All items can be delivered by **April 1, 2025**, as confirmed by the inventory context.\n\n### Final Quote:\n- **Total Price**: $235.00\n- **Delivery Date**: April 1, 2025\n\nNow, I will prepare the output string to pass to the Sales Agent.\n\n```plaintext\nanswer: All items can be delivered by April 1, 2025., items: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors), quantity: 500, unit: sheets, stock: sufficient, total_price: 235.00, requested_delivery_date: 2025-04-01, transaction_type: ORDER, ok_to_proceed: True\n```")
+>>>>>>>>>>>>>> Inserted row details ---
+>>>CREATE_TRANSACTION --->  A4 glossy paper  --  sales  --  500  --  100.0  --  2025-04-01
+>>>>>>>>>>>>>> Inserted row details ---
+>>>CREATE_TRANSACTION --->  heavy cardstock (white)  --  sales  --  500  --  75.0  --  2025-04-01
+>>>>>>>>>>>>>> Inserted row details ---
+>>>CREATE_TRANSACTION --->  colored paper (assorted colors)  --  sales  --  500  --  60.0  --  2025-04-01
 ---> Function (generate_financial_report): Get financial report as of '2025-04-01'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
-[TOOL][get_cash_balance] as_of_date = 2025-04-01
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
@@ -163,233 +104,113 @@ I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-01'
-Response: AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                Unit Price   Line Total\n200  A4 Glossy Paper               0.20        40.00\n100  Heavy Cardstock (White)       0.15        15.00\n100  Colored Paper (Assorted)      0.10        10.00\n\nSubtotal: 65.00\nDiscount: 0.00\nTotal Amount Due: 65.00\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\nanswer: Receipt No: RCPT-2025-04-01, Total Amount: 65.00, Discount: 0.00, Grand Total: 65.00, items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: 272, 595, 788, requested_delivery_date: 2025-04-15, total_price: 65.00, ok_to_proceed: True")
-Updated Cash: $45059.70
-Updated Inventory: $4940.30
-Printing inventory Data... 
----> Function (get_all_inventory): Get inventory data as of '2025-04-01'
-{'100 lb cover stock': 636.0, '80 lb text paper': 249.0, 'A4 paper': 272.0, 'Banner paper': 793.0, 'Butcher paper': 365.0, 'Cardstock': 595.0, 'Colored paper': 788.0, 'Crepe paper': 234.0, 'Glossy paper': 587.0, 'Invitation cards': 526.0, 'Kraft paper': 493.0, 'Large poster paper (24x36 inches)': 699.0, 'Paper plates': 748.0, 'Patterned paper': 548.0, 'Photo paper': 423.0, 'Presentation folders': 389.0, 'Rolls of banner paper (36-inch width)': 546.0, 'Table covers': 736.0}
-End printing inventory Data... 
-
-<--- Request 2 --->
-Context: hotel manager organizing parade
-Request Date: 2025-04-03
-Cash Balance: $45059.70
-Inventory Value: $4940.30
-CHECKPOINT-0.0 --->  I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251230173742' original_request='I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)'
-CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (get_all_inventory): Get inventory data as of '2025-04-03'
-
->>>>>>>>>> CHECKING Extraction prompt ===>  
-            Customer Request: I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)
-        
->>>>>>>>>> CHECKING Extraction Items ===>  [ExtractedItem(raw_name='colorful poster paper', quantity=500, unit='sheets', stock=788), ExtractedItem(raw_name='balloons for the parade', quantity=200, unit='units', stock=0), ExtractedItem(raw_name='streamers', quantity=300, unit='rolls', stock=0)]
->>>>>>>>>> CHECKING requested_delivery_date ===>  2025-04-15
-
-
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Inventory Agent - prompt ===>  
-            Classification: ORDER
-            extracted_items: [ExtractedItem(raw_name='colorful poster paper', quantity=500, unit='sheets', stock=788), ExtractedItem(raw_name='balloons for the parade', quantity=200, unit='units', stock=0), ExtractedItem(raw_name='streamers', quantity=300, unit='rolls', stock=0)]
-            requested_delivery_date: 2025-04-15
-        
-
----> Function (get_cash_balance): Get cash balance as of '2025-04-15'
-[TOOL][get_cash_balance] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
->>>>>>>>>> inventory_response =  AgentRunResult(output='Since one of the items, "balloons for the parade," is not available (stock is 0), I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. **colorful poster paper**\n   - quantity: 500\n   - unit: sheets\n   - stock: 788\n   - ok_to_proceed: True\n   - answer: colorful poster paper can be delivered by 2025-04-15.\n\n2. **balloons for the parade**\n   - quantity: 200\n   - unit: units\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\n3. **streamers**\n   - quantity: 300\n   - unit: rolls\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\nSince at least one item is not available, I will not proceed to the quoting agent. \n\nFinal output:\n"answer: Can\'t deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"')
->>>>>>>>>> inventory_response =  <class 'pydantic_ai.run.AgentRunResult'>
-
-CHECKING Quote Agent ===>  Agent(model=OpenAIChatModel(), name='QuotingAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Quote Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)
-            Inventory Context: AgentRunResult(output='Since one of the items, "balloons for the parade," is not available (stock is 0), I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. **colorful poster paper**\n   - quantity: 500\n   - unit: sheets\n   - stock: 788\n   - ok_to_proceed: True\n   - answer: colorful poster paper can be delivered by 2025-04-15.\n\n2. **balloons for the parade**\n   - quantity: 200\n   - unit: units\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\n3. **streamers**\n   - quantity: 300\n   - unit: rolls\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\nSince at least one item is not available, I will not proceed to the quoting agent. \n\nFinal output:\n"answer: Can\'t deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"') 
-        
-
->>>>>>>>>> quoting_response AgentRunResult(output='"answer: Can\'t deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: False"')
-
-CHECKING Sales Agent ===>  Agent(model=OpenAIChatModel(), name='SalesAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
 
 CHECKING Sales Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)
-            Inventory Context: AgentRunResult(output='Since one of the items, "balloons for the parade," is not available (stock is 0), I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. **colorful poster paper**\n   - quantity: 500\n   - unit: sheets\n   - stock: 788\n   - ok_to_proceed: True\n   - answer: colorful poster paper can be delivered by 2025-04-15.\n\n2. **balloons for the parade**\n   - quantity: 200\n   - unit: units\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\n3. **streamers**\n   - quantity: 300\n   - unit: rolls\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\nSince at least one item is not available, I will not proceed to the quoting agent. \n\nFinal output:\n"answer: Can\'t deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"')
-            Quoting Context: AgentRunResult(output='"answer: Can\'t deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: False"')
-        
+                Classification: ORDER
+                User Request: I would like to request the following paper supplies for the ceremony: 
 
->>>>>>>>>> sales_response AgentRunResult(output='It seems that we cannot proceed with the order as some items are not available in stock. Here are the details:\n\n- **Colorful Poster Paper**: \n  - Quantity: 500 sheets\n  - Stock: 788\n  - Delivery Date: April 15, 2025\n\n- **Balloons for the Parade**: \n  - Quantity: 200 units\n  - Stock: 0\n  - Delivery Status: Not available\n\n- **Streamers**: \n  - Quantity: 300 rolls\n  - Stock: 0\n  - Delivery Status: Not available\n\nSince both the balloons and streamers are out of stock, we cannot fulfill the order as requested. \n\nIf you would like, I can assist you in placing a restock order for the items that are currently unavailable. Please let me know how you would like to proceed!')
+- 500 sheets of A4 glossy paper
+- 500 sheets of heavy cardstock (white)
+- 500 sheets of colored paper (assorted colors)
+I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'))
+                Quoting Context: AgentRunResult(output="Based on the customer's request and the inventory context, I have prepared a competitive quote for the requested paper supplies. \n\n### Quote Details:\n- **Items Requested**:\n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n### Pricing Calculation:\n1. **A4 Glossy Paper**: \n   - Price per sheet: $0.20\n   - Total for 500 sheets: $100.00\n\n2. **Heavy Cardstock (White)**: \n   - Price per sheet: $0.15\n   - Total for 500 sheets: $75.00\n\n3. **Colored Paper (Assorted Colors)**: \n   - Price per sheet: $0.12\n   - Total for 500 sheets: $60.00\n\n### Total Price Calculation:\n- Total Price = $100.00 (Glossy) + $75.00 (Cardstock) + $60.00 (Colored) = **$235.00**\n\n### Remarks:\n- A discount has been applied due to the high volume of the order, making it more attractive for the customer.\n\n### Delivery Information:\n- All items can be delivered by **April 1, 2025**, as confirmed by the inventory context.\n\n### Final Quote:\n- **Total Price**: $235.00\n- **Delivery Date**: April 1, 2025\n\nNow, I will prepare the output string to pass to the Sales Agent.\n\n```plaintext\nanswer: All items can be delivered by April 1, 2025., items: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors), quantity: 500, unit: sheets, stock: sufficient, total_price: 235.00, requested_delivery_date: 2025-04-01, transaction_type: ORDER, ok_to_proceed: True\n```")
+            
 
-CHECKING Receipt Agent ===>  Agent(model=OpenAIChatModel(), name='ReceiptAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
+>>>>>>>>>> sales_response AgentRunResult(output='Your order has been successfully processed! Here are the details:\n\n- **Items Ordered**:\n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n- **Total Price**: $235.00\n- **Estimated Delivery Date**: April 1, 2025\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.\n\nHere’s a summary of the transaction:\n- **Answer**: All items can be delivered by April 1, 2025.\n- **Items**: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors)\n- **Quantity**: 500\n- **Unit**: sheets\n- **Stock**: sufficient\n- **Request Date**: 2025-04-01\n- **Total Price**: 235.00\n- **OK to Proceed**: True\n\nAdditionally, here are the financial details after re-stocking:\n- **Cash Balance**: $45,294.70\n- **Inventory Value**: $4,940.30\n\nIf you need anything else, just let me know!')
 
 CHECKING Receipt Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I would like to place an order for 500 sheets of colorful poster paper, 300 roll of streamers, and 200 balloons for the parade. Please deliver the supplies by April 15, 2025. Thank you. (Date of request: 2025-04-03)
-            Inventory Context: AgentRunResult(output='Since one of the items, "balloons for the parade," is not available (stock is 0), I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. **colorful poster paper**\n   - quantity: 500\n   - unit: sheets\n   - stock: 788\n   - ok_to_proceed: True\n   - answer: colorful poster paper can be delivered by 2025-04-15.\n\n2. **balloons for the parade**\n   - quantity: 200\n   - unit: units\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\n3. **streamers**\n   - quantity: 300\n   - unit: rolls\n   - stock: 0\n   - ok_to_proceed: False\n   - answer: Can\'t deliver as one or few items are not available.\n\nSince at least one item is not available, I will not proceed to the quoting agent. \n\nFinal output:\n"answer: Can\'t deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"')
-            Quoting Context: AgentRunResult(output='"answer: Can\'t deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: False"') 
-            Sales Context: AgentRunResult(output='It seems that we cannot proceed with the order as some items are not available in stock. Here are the details:\n\n- **Colorful Poster Paper**: \n  - Quantity: 500 sheets\n  - Stock: 788\n  - Delivery Date: April 15, 2025\n\n- **Balloons for the Parade**: \n  - Quantity: 200 units\n  - Stock: 0\n  - Delivery Status: Not available\n\n- **Streamers**: \n  - Quantity: 300 rolls\n  - Stock: 0\n  - Delivery Status: Not available\n\nSince both the balloons and streamers are out of stock, we cannot fulfill the order as requested. \n\nIf you would like, I can assist you in placing a restock order for the items that are currently unavailable. Please let me know how you would like to proceed!') 
-        
+                Classification: ORDER
+                User Request: I would like to request the following paper supplies for the ceremony: 
 
->>>>>>>>>> receipt_response AgentRunResult(output="```\nanswer: Can't deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False\n```")
----> Function (generate_financial_report): Get financial report as of '2025-04-03'
----> Function (get_cash_balance): Get cash balance as of '2025-04-03'
-[TOOL][get_cash_balance] as_of_date = 2025-04-03
----> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-03'
----> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-03'
----> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-03'
-Response: AgentRunResult(output="```\nanswer: Can't deliver as one or few items are not available, items: colorful poster paper, balloons for the parade, streamers, quantity: 500, 200, 300, unit: sheets, units, rolls, stock: 788, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False\n```")
-Updated Cash: $45079.70
-Updated Inventory: $4940.30
-Printing inventory Data... 
+- 500 sheets of A4 glossy paper
+- 500 sheets of heavy cardstock (white)
+- 500 sheets of colored paper (assorted colors)
+I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'))
+                Quoting Context: AgentRunResult(output="Based on the customer's request and the inventory context, I have prepared a competitive quote for the requested paper supplies. \n\n### Quote Details:\n- **Items Requested**:\n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n### Pricing Calculation:\n1. **A4 Glossy Paper**: \n   - Price per sheet: $0.20\n   - Total for 500 sheets: $100.00\n\n2. **Heavy Cardstock (White)**: \n   - Price per sheet: $0.15\n   - Total for 500 sheets: $75.00\n\n3. **Colored Paper (Assorted Colors)**: \n   - Price per sheet: $0.12\n   - Total for 500 sheets: $60.00\n\n### Total Price Calculation:\n- Total Price = $100.00 (Glossy) + $75.00 (Cardstock) + $60.00 (Colored) = **$235.00**\n\n### Remarks:\n- A discount has been applied due to the high volume of the order, making it more attractive for the customer.\n\n### Delivery Information:\n- All items can be delivered by **April 1, 2025**, as confirmed by the inventory context.\n\n### Final Quote:\n- **Total Price**: $235.00\n- **Delivery Date**: April 1, 2025\n\nNow, I will prepare the output string to pass to the Sales Agent.\n\n```plaintext\nanswer: All items can be delivered by April 1, 2025., items: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors), quantity: 500, unit: sheets, stock: sufficient, total_price: 235.00, requested_delivery_date: 2025-04-01, transaction_type: ORDER, ok_to_proceed: True\n```") 
+                Sales Context: AgentRunResult(output='Your order has been successfully processed! Here are the details:\n\n- **Items Ordered**:\n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n- **Total Price**: $235.00\n- **Estimated Delivery Date**: April 1, 2025\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.\n\nHere’s a summary of the transaction:\n- **Answer**: All items can be delivered by April 1, 2025.\n- **Items**: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors)\n- **Quantity**: 500\n- **Unit**: sheets\n- **Stock**: sufficient\n- **Request Date**: 2025-04-01\n- **Total Price**: 235.00\n- **OK to Proceed**: True\n\nAdditionally, here are the financial details after re-stocking:\n- **Cash Balance**: $45,294.70\n- **Inventory Value**: $4,940.30\n\nIf you need anything else, just let me know!') 
+            
+
+>>>>>>>>>> receipt_response AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                     Unit Price   Line Total\n500  A4 Glossy Paper                  0.20        100.00\n500  Heavy Cardstock (White)          0.15         75.00\n500  Colored Paper (Assorted Colors)  0.12         60.00\n\nSubtotal: 235.00\nDiscount (10%): -23.50\nTotal Amount Due: 211.50\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\nanswer: Receipt No: RCPT-2025-04-01, Total Amount: 235.00, Discount: 23.50, Grand Total: 211.50, items: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors), quantity: 500, unit: sheets, stock: sufficient, requested_delivery_date: 2025-04-15, total_price: 211.50, ok_to_proceed: True")
 ---> Function (get_all_inventory): Get inventory data as of '2025-04-01'
-{'100 lb cover stock': 636.0, '80 lb text paper': 249.0, 'A4 paper': 272.0, 'Banner paper': 793.0, 'Butcher paper': 365.0, 'Cardstock': 595.0, 'Colored paper': 788.0, 'Crepe paper': 234.0, 'Glossy paper': 587.0, 'Invitation cards': 526.0, 'Kraft paper': 493.0, 'Large poster paper (24x36 inches)': 699.0, 'Paper plates': 748.0, 'Patterned paper': 548.0, 'Photo paper': 423.0, 'Presentation folders': 389.0, 'Rolls of banner paper (36-inch width)': 546.0, 'Table covers': 736.0}
-End printing inventory Data... 
 
-<--- Request 3 --->
-Context: school board resouorce manager organizing conference
-Request Date: 2025-04-04
-Cash Balance: $45079.70
-Inventory Value: $4940.30
-CHECKPOINT-0.0 --->  I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20251230173813' original_request='I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)'
-CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
----> Function (get_all_inventory): Get inventory data as of '2025-04-04'
+CHECKING Re_stock Agent - prompt ===>  
+                Classification: ORDER
+                User Request: I would like to request the following paper supplies for the ceremony: 
 
->>>>>>>>>> CHECKING Extraction prompt ===>  
-            Customer Request: I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)
-        
->>>>>>>>>> CHECKING Extraction Items ===>  [ExtractedItem(raw_name='A4 paper', quantity=10000, unit='sheets', stock=272), ExtractedItem(raw_name='A3 paper', quantity=5000, unit='sheets', stock=0), ExtractedItem(raw_name='printer paper', quantity=500, unit='reams', stock=0)]
->>>>>>>>>> CHECKING requested_delivery_date ===>  2025-04-15
+- 500 sheets of A4 glossy paper
+- 500 sheets of heavy cardstock (white)
+- 500 sheets of colored paper (assorted colors)
+I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'))
+                Quoting Context: AgentRunResult(output="Based on the customer's request and the inventory context, I have prepared a competitive quote for the requested paper supplies. \n\n### Quote Details:\n- **Items Requested**:\n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n### Pricing Calculation:\n1. **A4 Glossy Paper**: \n   - Price per sheet: $0.20\n   - Total for 500 sheets: $100.00\n\n2. **Heavy Cardstock (White)**: \n   - Price per sheet: $0.15\n   - Total for 500 sheets: $75.00\n\n3. **Colored Paper (Assorted Colors)**: \n   - Price per sheet: $0.12\n   - Total for 500 sheets: $60.00\n\n### Total Price Calculation:\n- Total Price = $100.00 (Glossy) + $75.00 (Cardstock) + $60.00 (Colored) = **$235.00**\n\n### Remarks:\n- A discount has been applied due to the high volume of the order, making it more attractive for the customer.\n\n### Delivery Information:\n- All items can be delivered by **April 1, 2025**, as confirmed by the inventory context.\n\n### Final Quote:\n- **Total Price**: $235.00\n- **Delivery Date**: April 1, 2025\n\nNow, I will prepare the output string to pass to the Sales Agent.\n\n```plaintext\nanswer: All items can be delivered by April 1, 2025., items: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors), quantity: 500, unit: sheets, stock: sufficient, total_price: 235.00, requested_delivery_date: 2025-04-01, transaction_type: ORDER, ok_to_proceed: True\n```") 
+                Sales Context: AgentRunResult(output='Your order has been successfully processed! Here are the details:\n\n- **Items Ordered**:\n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n- **Total Price**: $235.00\n- **Estimated Delivery Date**: April 1, 2025\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.\n\nHere’s a summary of the transaction:\n- **Answer**: All items can be delivered by April 1, 2025.\n- **Items**: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors)\n- **Quantity**: 500\n- **Unit**: sheets\n- **Stock**: sufficient\n- **Request Date**: 2025-04-01\n- **Total Price**: 235.00\n- **OK to Proceed**: True\n\nAdditionally, here are the financial details after re-stocking:\n- **Cash Balance**: $45,294.70\n- **Inventory Value**: $4,940.30\n\nIf you need anything else, just let me know!') 
+                Receipt Context: AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                     Unit Price   Line Total\n500  A4 Glossy Paper                  0.20        100.00\n500  Heavy Cardstock (White)          0.15         75.00\n500  Colored Paper (Assorted Colors)  0.12         60.00\n\nSubtotal: 235.00\nDiscount (10%): -23.50\nTotal Amount Due: 211.50\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\nanswer: Receipt No: RCPT-2025-04-01, Total Amount: 235.00, Discount: 23.50, Grand Total: 211.50, items: A4 glossy paper, heavy cardstock (white), colored paper (assorted colors), quantity: 500, unit: sheets, stock: sufficient, requested_delivery_date: 2025-04-15, total_price: 211.50, ok_to_proceed: True")
+            
 
-
-CHECKING Inventory Agent ===>  Agent(model=OpenAIChatModel(), name='InventoryAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Inventory Agent - prompt ===>  
-            Classification: ORDER
-            extracted_items: [ExtractedItem(raw_name='A4 paper', quantity=10000, unit='sheets', stock=272), ExtractedItem(raw_name='A3 paper', quantity=5000, unit='sheets', stock=0), ExtractedItem(raw_name='printer paper', quantity=500, unit='reams', stock=0)]
-            requested_delivery_date: 2025-04-15
-        
-
----> Function (get_cash_balance): Get cash balance as of '2025-04-15'
-[TOOL][get_cash_balance] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
----> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-15'
-[TOOL][get_supplier_delivery_date] as_of_date = 2025-04-15
->>>>>>>>>> inventory_response =  AgentRunResult(output='Since one of the items, "A3 paper," is not available with the requested quantity, I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. A4 paper: \n   - quantity: 10000\n   - unit: sheets\n   - stock: 272\n   - ok_to_proceed: False (not available with 10000 units)\n\n2. A3 paper: \n   - quantity: 5000\n   - unit: sheets\n   - stock: 0\n   - ok_to_proceed: False (not available with 5000 units)\n\n3. printer paper: \n   - quantity: 500\n   - unit: reams\n   - stock: 0\n   - ok_to_proceed: False (not available with 500 units)\n\nSince at least one item is not available, I will not proceed further to any of the agents.\n\nOutput:\n"answer: Can\'t deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"')
->>>>>>>>>> inventory_response =  <class 'pydantic_ai.run.AgentRunResult'>
-
-CHECKING Quote Agent ===>  Agent(model=OpenAIChatModel(), name='QuotingAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Quote Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)
-            Inventory Context: AgentRunResult(output='Since one of the items, "A3 paper," is not available with the requested quantity, I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. A4 paper: \n   - quantity: 10000\n   - unit: sheets\n   - stock: 272\n   - ok_to_proceed: False (not available with 10000 units)\n\n2. A3 paper: \n   - quantity: 5000\n   - unit: sheets\n   - stock: 0\n   - ok_to_proceed: False (not available with 5000 units)\n\n3. printer paper: \n   - quantity: 500\n   - unit: reams\n   - stock: 0\n   - ok_to_proceed: False (not available with 500 units)\n\nSince at least one item is not available, I will not proceed further to any of the agents.\n\nOutput:\n"answer: Can\'t deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"') 
-        
-
->>>>>>>>>> quoting_response AgentRunResult(output='"answer: Can\'t deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: False"')
-
-CHECKING Sales Agent ===>  Agent(model=OpenAIChatModel(), name='SalesAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Sales Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)
-            Inventory Context: AgentRunResult(output='Since one of the items, "A3 paper," is not available with the requested quantity, I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. A4 paper: \n   - quantity: 10000\n   - unit: sheets\n   - stock: 272\n   - ok_to_proceed: False (not available with 10000 units)\n\n2. A3 paper: \n   - quantity: 5000\n   - unit: sheets\n   - stock: 0\n   - ok_to_proceed: False (not available with 5000 units)\n\n3. printer paper: \n   - quantity: 500\n   - unit: reams\n   - stock: 0\n   - ok_to_proceed: False (not available with 500 units)\n\nSince at least one item is not available, I will not proceed further to any of the agents.\n\nOutput:\n"answer: Can\'t deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"')
-            Quoting Context: AgentRunResult(output='"answer: Can\'t deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: False"')
-        
-
->>>>>>>>>> sales_response AgentRunResult(output='It seems that we are unable to fulfill your order due to insufficient stock for some of the requested items. Here are the details:\n\n1. **A4 paper**: \n   - Quantity: 10,000 sheets\n   - Stock: 272 sheets (not available with the requested quantity)\n\n2. **A3 paper**: \n   - Quantity: 5,000 sheets\n   - Stock: 0 sheets (not available)\n\n3. **Printer paper**: \n   - Quantity: 500 reams\n   - Stock: 0 reams (not available)\n\nUnfortunately, since at least one item is not available, we cannot proceed with the order. \n\nIf you would like to adjust your order or inquire about alternative options, please let me know how I can assist you further!')
-
-CHECKING Receipt Agent ===>  Agent(model=OpenAIChatModel(), name='ReceiptAgent', end_strategy='early', model_settings={'temperature': 0.0, 'max_tokens': 1024}, output_type=<class 'str'>, instrument=None)
-
-CHECKING Receipt Agent - prompt ===>  
-            Classification: ORDER
-            User Request: I need to order 10,000 sheets of A4 paper, 5,000 sheets of A3 paper, and 500 reams of printer paper. The supplies must be delivered by April 15, 2025, for our upcoming conference. Please confirm the order and delivery schedule. (Date of request: 2025-04-04)
-            Inventory Context: AgentRunResult(output='Since one of the items, "A3 paper," is not available with the requested quantity, I will update the response accordingly.\n\n- final ok_to_proceed: False\n- answer: Can\'t deliver as one or few items are not available.\n\nHere are the details for the items:\n\n1. A4 paper: \n   - quantity: 10000\n   - unit: sheets\n   - stock: 272\n   - ok_to_proceed: False (not available with 10000 units)\n\n2. A3 paper: \n   - quantity: 5000\n   - unit: sheets\n   - stock: 0\n   - ok_to_proceed: False (not available with 5000 units)\n\n3. printer paper: \n   - quantity: 500\n   - unit: reams\n   - stock: 0\n   - ok_to_proceed: False (not available with 500 units)\n\nSince at least one item is not available, I will not proceed further to any of the agents.\n\nOutput:\n"answer: Can\'t deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False"')
-            Quoting Context: AgentRunResult(output='"answer: Can\'t deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: False"') 
-            Sales Context: AgentRunResult(output='It seems that we are unable to fulfill your order due to insufficient stock for some of the requested items. Here are the details:\n\n1. **A4 paper**: \n   - Quantity: 10,000 sheets\n   - Stock: 272 sheets (not available with the requested quantity)\n\n2. **A3 paper**: \n   - Quantity: 5,000 sheets\n   - Stock: 0 sheets (not available)\n\n3. **Printer paper**: \n   - Quantity: 500 reams\n   - Stock: 0 reams (not available)\n\nUnfortunately, since at least one item is not available, we cannot proceed with the order. \n\nIf you would like to adjust your order or inquire about alternative options, please let me know how I can assist you further!') 
-        
-
->>>>>>>>>> receipt_response AgentRunResult(output="```\nanswer: Can't deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False\n```")
----> Function (generate_financial_report): Get financial report as of '2025-04-04'
----> Function (get_cash_balance): Get cash balance as of '2025-04-04'
-[TOOL][get_cash_balance] as_of_date = 2025-04-04
----> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-04'
----> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-04'
-Response: AgentRunResult(output="```\nanswer: Can't deliver as one or few items are not available, items: A4 paper, A3 paper, printer paper, quantity: 10000, 5000, 500, unit: sheets, sheets, reams, stock: 272, 0, 0, requested_delivery_date: 2025-04-15, ok_to_proceed: False\n```")
-Updated Cash: $45079.70
+>>>>>>>>>> re_stock_response AgentRunResult(output=RestockDecision(restock_required=False, items_to_restock=[], reason='Stock is sufficient.'))
+---> Function (generate_financial_report): Get financial report as of '2025-04-01'
+---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-01'
+Response: AgentRunResult(output=RestockDecision(restock_required=False, items_to_restock=[], reason='Stock is sufficient.'))
+Updated Cash: $45294.70
 Updated Inventory: $4940.30
----> Function (generate_financial_report): Get financial report as of '2025-04-04'
----> Function (get_cash_balance): Get cash balance as of '2025-04-04'
-[TOOL][get_cash_balance] as_of_date = 2025-04-04
----> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-04'
----> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-04'
----> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-04'
+>>>>>>>>>>>>> final_date --->  2025-04-01
+>>>>>>>>>>>>> final_date --->  2026-01-04T15:05:31.892810
+---> Function (generate_financial_report): Get financial report as of '2026-01-04T15:05:31.892810'
+---> Function (get_cash_balance): Get cash balance as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Paper plates' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Photo paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for '80 lb text paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Table covers' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Butcher paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Kraft paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Banner paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Presentation folders' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Patterned paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2026-01-04T15:05:31.892810'
+---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2026-01-04T15:05:31.892810'
 
-<--- FINAL FINANCIAL REPORT --->
-Final Cash: $45079.70
+<--- FINAL FINANCIAL REPORT REVISED --->
+Final Cash: $45294.70
 Final Inventory: $4940.30
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
+>>>>>>>> Glossy paper --->  {'item_name': 'Glossy paper', 'current_stock': 587.0}
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-01'
+>>>>>>>> Cardstock --->  {'item_name': 'Cardstock', 'current_stock': 595.0}
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-01'
+>>>>>>>> Colored paper --->  {'item_name': 'Colored paper', 'current_stock': 788.0}
 
 <--- Agent Usage Summary --->
-Extractor Agent: 3 times
-Inventory Agent: 3 times
-Quoting Agent: 3 times
-Sales Agent: 3 times
-Receipt Agent: 3 times
+Extractor Agent: 1 times
+Inventory Agent: 1 times
+Quoting Agent: 1 times
+Sales Agent: 1 times
+Receipt Agent: 1 times
+Re_stock Agent: 1 times
 project student$ 
