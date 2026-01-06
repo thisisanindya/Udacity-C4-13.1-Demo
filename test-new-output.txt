@@ -1,11 +1,8 @@
 project student$ python test-new-Dec25.py
 Loading openai_api_key... 
-Checking OPENAI_API_KEY =  voc-822346--------------021708
+Checking OPENAI_API_KEY =  voc-8223.................021708
 Model ===>  OpenAIChatModel()
 Initializing Database...
->>>>>>>>>>>>>>> Request Sample --->                job need_size     event                                            request request_date
-0  office manager     small  ceremony  I would like to request the following paper su...   2025-04-01
->>>>>>>>>>>>>>> Request Sample --->  Index(['job', 'need_size', 'event', 'request', 'request_date'], dtype='object')
 ---> Function (generate_financial_report): Get financial report as of '2025-04-01'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
@@ -26,10 +23,6 @@ Initializing Database...
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-01'
->>>>>>>>>> ---> Printing inventory Data... 
----> Function (get_all_inventory): Get inventory data as of '2025-04-01'
-{'100 lb cover stock': 636.0, '80 lb text paper': 249.0, 'A4 paper': 272.0, 'Banner paper': 793.0, 'Butcher paper': 365.0, 'Cardstock': 595.0, 'Colored paper': 788.0, 'Crepe paper': 234.0, 'Glossy paper': 587.0, 'Invitation cards': 526.0, 'Kraft paper': 493.0, 'Large poster paper (24x36 inches)': 699.0, 'Paper plates': 748.0, 'Patterned paper': 548.0, 'Photo paper': 423.0, 'Presentation folders': 389.0, 'Rolls of banner paper (36-inch width)': 546.0, 'Table covers': 736.0}
-End printing inventory Data... 
 
 <--- Request 1 --->
 Context: office manager organizing ceremony
@@ -38,22 +31,22 @@ Cash Balance: $45059.70
 Inventory Value: $4940.30
 CHECKPOINT-0.0 --->  I would like to request the following paper supplies for the ceremony: 
 
-- 500 sheets of A4 glossy paper
-- 500 sheets of heavy cardstock (white)
-- 500 sheets of colored paper (assorted colors)
+- 200 sheets of A4 glossy paper
+- 100 sheets of heavy cardstock (white)
+- 100 sheets of colored paper (assorted colors)
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-CHECKPOINT-0.1 ---> context -  request_id='REQ_20260104154357' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 500 sheets of A4 glossy paper\n- 500 sheets of heavy cardstock (white)\n- 500 sheets of colored paper (assorted colors)\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
+CHECKPOINT-0.1 ---> context -  request_id='REQ_20260106173002' original_request='I would like to request the following paper supplies for the ceremony: \n\n- 200 sheets of A4 glossy paper\n- 100 sheets of heavy cardstock (white)\n- 100 sheets of colored paper (assorted colors)\nI need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)'
 CHECKPOINT-0.2 ---> Orchestration Agent classified request as: ORDER
 CHECKPOINT-0.1 --->  AgentRunResult(output=BeaverOrchestrator(classification='ORDER', request_date='2025-04-01'))
 ---> Function (get_all_inventory): Get inventory data as of '2025-04-01'
 
->>>>>>>>>> CHECKING Extraction Items ===>  [ExtractedItem(raw_name='Glossy paper', quantity=500, unit='sheets', stock=587), ExtractedItem(raw_name='Cardstock', quantity=500, unit='sheets', stock=595), ExtractedItem(raw_name='Colored paper', quantity=500, unit='sheets', stock=788)]
+>>>>>>>>>> CHECKING Extraction Items ===>  [ExtractedItem(raw_name='Glossy paper', quantity=200, unit='sheets', stock=587), ExtractedItem(raw_name='Cardstock', quantity=100, unit='sheets', stock=595), ExtractedItem(raw_name='Colored paper', quantity=100, unit='sheets', stock=788)]
 >>>>>>>>>> CHECKING request_date ===>  2025-04-01
 
 
 CHECKING Inventory Agent - prompt ===>  
             Classification: ORDER
-            inventory_items: [{'item_name': 'Glossy paper', 'quantity': 500, 'stock': 587}, {'item_name': 'Cardstock', 'quantity': 500, 'stock': 595}, {'item_name': 'Colored paper', 'quantity': 500, 'stock': 788}]
+            inventory_items: [{'item_name': 'Glossy paper', 'quantity': 200, 'stock': 587}, {'item_name': 'Cardstock', 'quantity': 100, 'stock': 595}, {'item_name': 'Colored paper', 'quantity': 100, 'stock': 788}]
             request_date: 2025-04-01
         
 
@@ -61,29 +54,29 @@ CHECKING Inventory Agent - prompt ===>
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
 ---> Function (get_supplier_delivery_date): Get estimated delivery date in as of '2025-04-01'
->>>>>>>>>> inventory_response =  ok_to_proceed=True answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'
->>>>>>>>>>Items from inventory_response =  [{'item_name': 'Glossy paper', 'quantity': 500, 'stock': 587}, {'item_name': 'Cardstock', 'quantity': 500, 'stock': 595}, {'item_name': 'Colored paper', 'quantity': 500, 'stock': 788}]
+>>>>>>>>>> inventory_response =  ok_to_proceed=True answer='Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02.'
+>>>>>>>>>>Items from inventory_response =  [{'item_name': 'Glossy paper', 'quantity': 200, 'stock': 587}, {'item_name': 'Cardstock', 'quantity': 100, 'stock': 595}, {'item_name': 'Colored paper', 'quantity': 100, 'stock': 788}]
 
 CHECKING Quote Agent - prompt ===>  
                 Classification: ORDER
                 User Request: I would like to request the following paper supplies for the ceremony: 
 
-- 500 sheets of A4 glossy paper
-- 500 sheets of heavy cardstock (white)
-- 500 sheets of colored paper (assorted colors)
+- 200 sheets of A4 glossy paper
+- 100 sheets of heavy cardstock (white)
+- 100 sheets of colored paper (assorted colors)
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.')) 
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02.')) 
             
 
 ---> Function (search_quote_history): Search quote history.
 ---> Function (search_quote_history): Search quote history.
->>>>>>>>>> quoting_response AgentRunResult(output='Based on the customer\'s request and the inventory context, I have analyzed the required items and historical pricing data. Here’s the breakdown:\n\n1. **Items Requested**:\n   - 500 sheets of A4 glossy paper\n   - 500 sheets of heavy cardstock (white)\n   - 500 sheets of colored paper (assorted colors)\n\n2. **Delivery Date**: All items can be delivered by April 1, 2025, which is before the requested delivery date of April 15, 2025.\n\n3. **Historical Pricing**:\n   - A4 glossy paper: Based on previous quotes, the price is approximately $0.15 per sheet.\n   - Heavy cardstock: Similar pricing as the previous quotes at $0.15 per sheet.\n   - Colored paper: Priced at $0.10 per sheet.\n\n4. **Calculating Total Price**:\n   - A4 glossy paper: 500 sheets x $0.15 = $75.00\n   - Heavy cardstock: 500 sheets x $0.15 = $75.00\n   - Colored paper: 500 sheets x $0.10 = $50.00\n   - **Total Price**: $75.00 + $75.00 + $50.00 = $200.00\n\n5. **Discounts**: Given the volume of the order, I will apply a bulk discount, rounding the total down to $180.00 to make it more attractive for the customer.\n\n6. **Final Quote**:\n   - Price per unit for glossy paper: $0.15\n   - Price per unit for cardstock: $0.15\n   - Price per unit for colored paper: $0.10\n   - Total price after discount: $180.00\n\nNow, I will prepare the output for the Sales Agent.\n\nOutput:\n"answer: Glossy paper, cardstock, and colored paper can be delivered by 2025-04-01. Discount applied due to high volume., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 500, 500, 500, unit: sheets, stock: sufficient, total_price: 180.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"')
+>>>>>>>>>> quoting_response AgentRunResult(output='Based on the customer\'s request and the inventory context, here is the analysis and quote preparation:\n\n1. **Customer\'s Request**:\n   - 200 sheets of A4 glossy paper\n   - 100 sheets of heavy cardstock (white)\n   - 100 sheets of colored paper (assorted colors)\n   - Delivery required by April 15, 2025\n\n2. **Inventory Context**:\n   - A4 glossy paper can be delivered by April 5, 2025\n   - Heavy cardstock can be delivered by April 2, 2025\n   - Colored paper can be delivered by April 2, 2025\n\n3. **Pricing History**:\n   - No specific historical quotes for the exact items requested were found.\n   - A previous order for similar supplies (500 sheets of A4 white cardstock, 200 sheets of A3 colored paper, and 300 envelopes) was quoted at a total of $110 with bulk discounts applied.\n\n4. **Competitive Quote Calculation**:\n   - **A4 Glossy Paper**: Assuming a price of $0.20 per sheet, total = 200 sheets * $0.20 = $40.00\n   - **Heavy Cardstock**: Assuming a price of $0.15 per sheet, total = 100 sheets * $0.15 = $15.00\n   - **Colored Paper**: Assuming a price of $0.10 per sheet, total = 100 sheets * $0.10 = $10.00\n   - **Total Price**: $40.00 + $15.00 + $10.00 = $65.00\n\n5. **Remarks**: \n   - No discounts applied as the quantities do not meet bulk order thresholds based on historical data.\n\nNow, I will prepare the output for the Sales Agent:\n\n- **Answer**: "Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02."\n- **Items**: "A4 glossy paper, heavy cardstock, colored paper"\n- **Quantities**: "200, 100, 100"\n- **Unit**: "sheets"\n- **Stock**: "Available"\n- **Total Price**: "$65.00"\n- **Requested Delivery Date**: "2025-04-15"\n- **Transaction Type**: "ORDER"\n- **Ok to Proceed**: True\n\nFinal output:\n\n"answer: Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: Available, total_price: $65.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"')
 >>>>>>>>>>>>>> Inserted row details ---
->>>CREATE_TRANSACTION --->  A4 glossy paper  --  sales  --  500  --  75.0  --  2025-04-01
+>>>CREATE_TRANSACTION --->  A4 glossy paper  --  sales  --  200  --  40.0  --  2025-04-01
 >>>>>>>>>>>>>> Inserted row details ---
->>>CREATE_TRANSACTION --->  colored paper  --  sales  --  500  --  50.0  --  2025-04-01
+>>>CREATE_TRANSACTION --->  heavy cardstock  --  sales  --  100  --  15.0  --  2025-04-01
 >>>>>>>>>>>>>> Inserted row details ---
->>>CREATE_TRANSACTION --->  heavy cardstock  --  sales  --  500  --  75.0  --  2025-04-01
+>>>CREATE_TRANSACTION --->  colored paper  --  sales  --  100  --  10.0  --  2025-04-01
 ---> Function (generate_financial_report): Get financial report as of '2025-04-01'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
@@ -109,47 +102,55 @@ CHECKING Sales Agent - prompt ===>
                 Classification: ORDER
                 User Request: I would like to request the following paper supplies for the ceremony: 
 
-- 500 sheets of A4 glossy paper
-- 500 sheets of heavy cardstock (white)
-- 500 sheets of colored paper (assorted colors)
+- 200 sheets of A4 glossy paper
+- 100 sheets of heavy cardstock (white)
+- 100 sheets of colored paper (assorted colors)
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'))
-                Quoting Context: AgentRunResult(output='Based on the customer\'s request and the inventory context, I have analyzed the required items and historical pricing data. Here’s the breakdown:\n\n1. **Items Requested**:\n   - 500 sheets of A4 glossy paper\n   - 500 sheets of heavy cardstock (white)\n   - 500 sheets of colored paper (assorted colors)\n\n2. **Delivery Date**: All items can be delivered by April 1, 2025, which is before the requested delivery date of April 15, 2025.\n\n3. **Historical Pricing**:\n   - A4 glossy paper: Based on previous quotes, the price is approximately $0.15 per sheet.\n   - Heavy cardstock: Similar pricing as the previous quotes at $0.15 per sheet.\n   - Colored paper: Priced at $0.10 per sheet.\n\n4. **Calculating Total Price**:\n   - A4 glossy paper: 500 sheets x $0.15 = $75.00\n   - Heavy cardstock: 500 sheets x $0.15 = $75.00\n   - Colored paper: 500 sheets x $0.10 = $50.00\n   - **Total Price**: $75.00 + $75.00 + $50.00 = $200.00\n\n5. **Discounts**: Given the volume of the order, I will apply a bulk discount, rounding the total down to $180.00 to make it more attractive for the customer.\n\n6. **Final Quote**:\n   - Price per unit for glossy paper: $0.15\n   - Price per unit for cardstock: $0.15\n   - Price per unit for colored paper: $0.10\n   - Total price after discount: $180.00\n\nNow, I will prepare the output for the Sales Agent.\n\nOutput:\n"answer: Glossy paper, cardstock, and colored paper can be delivered by 2025-04-01. Discount applied due to high volume., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 500, 500, 500, unit: sheets, stock: sufficient, total_price: 180.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"')
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02.'))
+                Quoting Context: AgentRunResult(output='Based on the customer\'s request and the inventory context, here is the analysis and quote preparation:\n\n1. **Customer\'s Request**:\n   - 200 sheets of A4 glossy paper\n   - 100 sheets of heavy cardstock (white)\n   - 100 sheets of colored paper (assorted colors)\n   - Delivery required by April 15, 2025\n\n2. **Inventory Context**:\n   - A4 glossy paper can be delivered by April 5, 2025\n   - Heavy cardstock can be delivered by April 2, 2025\n   - Colored paper can be delivered by April 2, 2025\n\n3. **Pricing History**:\n   - No specific historical quotes for the exact items requested were found.\n   - A previous order for similar supplies (500 sheets of A4 white cardstock, 200 sheets of A3 colored paper, and 300 envelopes) was quoted at a total of $110 with bulk discounts applied.\n\n4. **Competitive Quote Calculation**:\n   - **A4 Glossy Paper**: Assuming a price of $0.20 per sheet, total = 200 sheets * $0.20 = $40.00\n   - **Heavy Cardstock**: Assuming a price of $0.15 per sheet, total = 100 sheets * $0.15 = $15.00\n   - **Colored Paper**: Assuming a price of $0.10 per sheet, total = 100 sheets * $0.10 = $10.00\n   - **Total Price**: $40.00 + $15.00 + $10.00 = $65.00\n\n5. **Remarks**: \n   - No discounts applied as the quantities do not meet bulk order thresholds based on historical data.\n\nNow, I will prepare the output for the Sales Agent:\n\n- **Answer**: "Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02."\n- **Items**: "A4 glossy paper, heavy cardstock, colored paper"\n- **Quantities**: "200, 100, 100"\n- **Unit**: "sheets"\n- **Stock**: "Available"\n- **Total Price**: "$65.00"\n- **Requested Delivery Date**: "2025-04-15"\n- **Transaction Type**: "ORDER"\n- **Ok to Proceed**: True\n\nFinal output:\n\n"answer: Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: Available, total_price: $65.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"')
             
 
->>>>>>>>>> sales_response AgentRunResult(output='Your order has been successfully processed! Here are the details:\n\n- **Items Ordered**: \n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n- **Total Price**: $180.00\n\n- **Estimated Delivery Date**: April 1, 2025\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.\n\nHere are the financial details after processing your order:\n- **Cash Balance**: $45,259.70\n- **Inventory Value**: $4,940.30\n\nI hope this information is helpful!')
+>>>>>>>>>> sales_response AgentRunResult(output='The order has been successfully processed! Here are the details:\n\n- **Items Ordered**: A4 glossy paper, heavy cardstock, colored paper\n- **Quantities**: 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock, 100 sheets of colored paper\n- **Total Price**: $65.00\n- **Requested Delivery Date**: April 15, 2025\n\n### Delivery Schedule:\n- A4 glossy paper will be delivered by **April 5, 2025**.\n- Heavy cardstock will be delivered by **April 2, 2025**.\n- Colored paper will be delivered by **April 2, 2025**.\n\n### Financial Summary:\n- **Cash Balance**: $45,124.70\n- **Inventory Value**: $4,940.30\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.')
 
 CHECKING Receipt Agent - prompt ===>  
                 Classification: ORDER
                 User Request: I would like to request the following paper supplies for the ceremony: 
 
-- 500 sheets of A4 glossy paper
-- 500 sheets of heavy cardstock (white)
-- 500 sheets of colored paper (assorted colors)
+- 200 sheets of A4 glossy paper
+- 100 sheets of heavy cardstock (white)
+- 100 sheets of colored paper (assorted colors)
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'))
-                Quoting Context: AgentRunResult(output='Based on the customer\'s request and the inventory context, I have analyzed the required items and historical pricing data. Here’s the breakdown:\n\n1. **Items Requested**:\n   - 500 sheets of A4 glossy paper\n   - 500 sheets of heavy cardstock (white)\n   - 500 sheets of colored paper (assorted colors)\n\n2. **Delivery Date**: All items can be delivered by April 1, 2025, which is before the requested delivery date of April 15, 2025.\n\n3. **Historical Pricing**:\n   - A4 glossy paper: Based on previous quotes, the price is approximately $0.15 per sheet.\n   - Heavy cardstock: Similar pricing as the previous quotes at $0.15 per sheet.\n   - Colored paper: Priced at $0.10 per sheet.\n\n4. **Calculating Total Price**:\n   - A4 glossy paper: 500 sheets x $0.15 = $75.00\n   - Heavy cardstock: 500 sheets x $0.15 = $75.00\n   - Colored paper: 500 sheets x $0.10 = $50.00\n   - **Total Price**: $75.00 + $75.00 + $50.00 = $200.00\n\n5. **Discounts**: Given the volume of the order, I will apply a bulk discount, rounding the total down to $180.00 to make it more attractive for the customer.\n\n6. **Final Quote**:\n   - Price per unit for glossy paper: $0.15\n   - Price per unit for cardstock: $0.15\n   - Price per unit for colored paper: $0.10\n   - Total price after discount: $180.00\n\nNow, I will prepare the output for the Sales Agent.\n\nOutput:\n"answer: Glossy paper, cardstock, and colored paper can be delivered by 2025-04-01. Discount applied due to high volume., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 500, 500, 500, unit: sheets, stock: sufficient, total_price: 180.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"') 
-                Sales Context: AgentRunResult(output='Your order has been successfully processed! Here are the details:\n\n- **Items Ordered**: \n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n- **Total Price**: $180.00\n\n- **Estimated Delivery Date**: April 1, 2025\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.\n\nHere are the financial details after processing your order:\n- **Cash Balance**: $45,259.70\n- **Inventory Value**: $4,940.30\n\nI hope this information is helpful!') 
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02.'))
+                Quoting Context: AgentRunResult(output='Based on the customer\'s request and the inventory context, here is the analysis and quote preparation:\n\n1. **Customer\'s Request**:\n   - 200 sheets of A4 glossy paper\n   - 100 sheets of heavy cardstock (white)\n   - 100 sheets of colored paper (assorted colors)\n   - Delivery required by April 15, 2025\n\n2. **Inventory Context**:\n   - A4 glossy paper can be delivered by April 5, 2025\n   - Heavy cardstock can be delivered by April 2, 2025\n   - Colored paper can be delivered by April 2, 2025\n\n3. **Pricing History**:\n   - No specific historical quotes for the exact items requested were found.\n   - A previous order for similar supplies (500 sheets of A4 white cardstock, 200 sheets of A3 colored paper, and 300 envelopes) was quoted at a total of $110 with bulk discounts applied.\n\n4. **Competitive Quote Calculation**:\n   - **A4 Glossy Paper**: Assuming a price of $0.20 per sheet, total = 200 sheets * $0.20 = $40.00\n   - **Heavy Cardstock**: Assuming a price of $0.15 per sheet, total = 100 sheets * $0.15 = $15.00\n   - **Colored Paper**: Assuming a price of $0.10 per sheet, total = 100 sheets * $0.10 = $10.00\n   - **Total Price**: $40.00 + $15.00 + $10.00 = $65.00\n\n5. **Remarks**: \n   - No discounts applied as the quantities do not meet bulk order thresholds based on historical data.\n\nNow, I will prepare the output for the Sales Agent:\n\n- **Answer**: "Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02."\n- **Items**: "A4 glossy paper, heavy cardstock, colored paper"\n- **Quantities**: "200, 100, 100"\n- **Unit**: "sheets"\n- **Stock**: "Available"\n- **Total Price**: "$65.00"\n- **Requested Delivery Date**: "2025-04-15"\n- **Transaction Type**: "ORDER"\n- **Ok to Proceed**: True\n\nFinal output:\n\n"answer: Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: Available, total_price: $65.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"') 
+                Sales Context: AgentRunResult(output='The order has been successfully processed! Here are the details:\n\n- **Items Ordered**: A4 glossy paper, heavy cardstock, colored paper\n- **Quantities**: 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock, 100 sheets of colored paper\n- **Total Price**: $65.00\n- **Requested Delivery Date**: April 15, 2025\n\n### Delivery Schedule:\n- A4 glossy paper will be delivered by **April 5, 2025**.\n- Heavy cardstock will be delivered by **April 2, 2025**.\n- Colored paper will be delivered by **April 2, 2025**.\n\n### Financial Summary:\n- **Cash Balance**: $45,124.70\n- **Inventory Value**: $4,940.30\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.') 
             
 
->>>>>>>>>> receipt_response AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                     Unit Price   Line Total\n500  A4 glossy paper                  0.15        75.00\n500  Heavy cardstock (white)          0.15        75.00\n500  Colored paper (assorted colors)  0.10        50.00\n\nSubtotal: 200.00\nDiscount (10%): -20.00\nTotal Amount Due: 180.00\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\nanswer: Glossy paper, cardstock, and colored paper can be delivered by 2025-04-01. Discount applied due to high volume., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 500, 500, 500, unit: sheets, stock: sufficient, total_price: 180.00, requested_delivery_date: 2025-04-15, ok_to_proceed: True")
----> Function (get_all_inventory): Get inventory data as of '2025-04-01'
+>>>>>>>>>> receipt_response AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                Unit Price   Line Total\n200  A4 Glossy Paper            0.20         40.00\n100  Heavy Cardstock (White)    0.15         15.00\n100  Colored Paper (Assorted)    0.10         10.00\n\nSubtotal: 65.00\nDiscount: 0.00\nTotal Amount Due: 65.00\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\n- answer: Receipt No: RCPT-2025-04-01, Total Amount: 65.00, Discount: 0.00, Grand Total: 65.00, ok_to_proceed: True")
+>>>>>>>>>> receipt_restock_response --->  AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                Unit Price   Line Total\n200  A4 Glossy Paper            0.20         40.00\n100  Heavy Cardstock (White)    0.15         15.00\n100  Colored Paper (Assorted)    0.10         10.00\n\nSubtotal: 65.00\nDiscount: 0.00\nTotal Amount Due: 65.00\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\n- answer: Receipt No: RCPT-2025-04-01, Total Amount: 65.00, Discount: 0.00, Grand Total: 65.00, ok_to_proceed: True")
 
 CHECKING Re_stock Agent - prompt ===>  
                 Classification: ORDER
                 User Request: I would like to request the following paper supplies for the ceremony: 
 
-- 500 sheets of A4 glossy paper
-- 500 sheets of heavy cardstock (white)
-- 500 sheets of colored paper (assorted colors)
+- 200 sheets of A4 glossy paper
+- 100 sheets of heavy cardstock (white)
+- 100 sheets of colored paper (assorted colors)
 I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 2025-04-01)
-                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-01. Cardstock can be delivered by 2025-04-01. Colored paper can be delivered by 2025-04-01.'))
-                Quoting Context: AgentRunResult(output='Based on the customer\'s request and the inventory context, I have analyzed the required items and historical pricing data. Here’s the breakdown:\n\n1. **Items Requested**:\n   - 500 sheets of A4 glossy paper\n   - 500 sheets of heavy cardstock (white)\n   - 500 sheets of colored paper (assorted colors)\n\n2. **Delivery Date**: All items can be delivered by April 1, 2025, which is before the requested delivery date of April 15, 2025.\n\n3. **Historical Pricing**:\n   - A4 glossy paper: Based on previous quotes, the price is approximately $0.15 per sheet.\n   - Heavy cardstock: Similar pricing as the previous quotes at $0.15 per sheet.\n   - Colored paper: Priced at $0.10 per sheet.\n\n4. **Calculating Total Price**:\n   - A4 glossy paper: 500 sheets x $0.15 = $75.00\n   - Heavy cardstock: 500 sheets x $0.15 = $75.00\n   - Colored paper: 500 sheets x $0.10 = $50.00\n   - **Total Price**: $75.00 + $75.00 + $50.00 = $200.00\n\n5. **Discounts**: Given the volume of the order, I will apply a bulk discount, rounding the total down to $180.00 to make it more attractive for the customer.\n\n6. **Final Quote**:\n   - Price per unit for glossy paper: $0.15\n   - Price per unit for cardstock: $0.15\n   - Price per unit for colored paper: $0.10\n   - Total price after discount: $180.00\n\nNow, I will prepare the output for the Sales Agent.\n\nOutput:\n"answer: Glossy paper, cardstock, and colored paper can be delivered by 2025-04-01. Discount applied due to high volume., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 500, 500, 500, unit: sheets, stock: sufficient, total_price: 180.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"') 
-                Sales Context: AgentRunResult(output='Your order has been successfully processed! Here are the details:\n\n- **Items Ordered**: \n  - 500 sheets of A4 glossy paper\n  - 500 sheets of heavy cardstock (white)\n  - 500 sheets of colored paper (assorted colors)\n\n- **Total Price**: $180.00\n\n- **Estimated Delivery Date**: April 1, 2025\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.\n\nHere are the financial details after processing your order:\n- **Cash Balance**: $45,259.70\n- **Inventory Value**: $4,940.30\n\nI hope this information is helpful!') 
-                Receipt Context: AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                     Unit Price   Line Total\n500  A4 glossy paper                  0.15        75.00\n500  Heavy cardstock (white)          0.15        75.00\n500  Colored paper (assorted colors)  0.10        50.00\n\nSubtotal: 200.00\nDiscount (10%): -20.00\nTotal Amount Due: 180.00\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\nanswer: Glossy paper, cardstock, and colored paper can be delivered by 2025-04-01. Discount applied due to high volume., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 500, 500, 500, unit: sheets, stock: sufficient, total_price: 180.00, requested_delivery_date: 2025-04-15, ok_to_proceed: True")
+                Inventory Context: AgentRunResult(output=InventoryDecision(ok_to_proceed=True, answer='Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02.'))
+                Quoting Context: AgentRunResult(output='Based on the customer\'s request and the inventory context, here is the analysis and quote preparation:\n\n1. **Customer\'s Request**:\n   - 200 sheets of A4 glossy paper\n   - 100 sheets of heavy cardstock (white)\n   - 100 sheets of colored paper (assorted colors)\n   - Delivery required by April 15, 2025\n\n2. **Inventory Context**:\n   - A4 glossy paper can be delivered by April 5, 2025\n   - Heavy cardstock can be delivered by April 2, 2025\n   - Colored paper can be delivered by April 2, 2025\n\n3. **Pricing History**:\n   - No specific historical quotes for the exact items requested were found.\n   - A previous order for similar supplies (500 sheets of A4 white cardstock, 200 sheets of A3 colored paper, and 300 envelopes) was quoted at a total of $110 with bulk discounts applied.\n\n4. **Competitive Quote Calculation**:\n   - **A4 Glossy Paper**: Assuming a price of $0.20 per sheet, total = 200 sheets * $0.20 = $40.00\n   - **Heavy Cardstock**: Assuming a price of $0.15 per sheet, total = 100 sheets * $0.15 = $15.00\n   - **Colored Paper**: Assuming a price of $0.10 per sheet, total = 100 sheets * $0.10 = $10.00\n   - **Total Price**: $40.00 + $15.00 + $10.00 = $65.00\n\n5. **Remarks**: \n   - No discounts applied as the quantities do not meet bulk order thresholds based on historical data.\n\nNow, I will prepare the output for the Sales Agent:\n\n- **Answer**: "Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02."\n- **Items**: "A4 glossy paper, heavy cardstock, colored paper"\n- **Quantities**: "200, 100, 100"\n- **Unit**: "sheets"\n- **Stock**: "Available"\n- **Total Price**: "$65.00"\n- **Requested Delivery Date**: "2025-04-15"\n- **Transaction Type**: "ORDER"\n- **Ok to Proceed**: True\n\nFinal output:\n\n"answer: Glossy paper can be delivered by 2025-04-05. Cardstock can be delivered by 2025-04-02. Colored paper can be delivered by 2025-04-02., items: A4 glossy paper, heavy cardstock, colored paper, quantity: 200, 100, 100, unit: sheets, stock: Available, total_price: $65.00, requested_delivery_date: 2025-04-15, transaction_type: ORDER, ok_to_proceed: True"') 
+                Sales Context: AgentRunResult(output='The order has been successfully processed! Here are the details:\n\n- **Items Ordered**: A4 glossy paper, heavy cardstock, colored paper\n- **Quantities**: 200 sheets of A4 glossy paper, 100 sheets of heavy cardstock, 100 sheets of colored paper\n- **Total Price**: $65.00\n- **Requested Delivery Date**: April 15, 2025\n\n### Delivery Schedule:\n- A4 glossy paper will be delivered by **April 5, 2025**.\n- Heavy cardstock will be delivered by **April 2, 2025**.\n- Colored paper will be delivered by **April 2, 2025**.\n\n### Financial Summary:\n- **Cash Balance**: $45,124.70\n- **Inventory Value**: $4,940.30\n\nThank you for your order! If you have any further questions or need assistance, feel free to ask.') 
+                Receipt Context: AgentRunResult(output="```\nReceipt No: RCPT-2025-04-01\nDate: 2025-04-01\n\nName: <placeholder>\nAddress: <placeholder>\nEmail: <placeholder>\n\nItems:\nQty  Description                Unit Price   Line Total\n200  A4 Glossy Paper            0.20         40.00\n100  Heavy Cardstock (White)    0.15         15.00\n100  Colored Paper (Assorted)    0.10         10.00\n\nSubtotal: 65.00\nDiscount: 0.00\nTotal Amount Due: 65.00\n\nExpected Delivery Date: 2025-04-15\n\n- Thank You For Dealing with Beaver's Company -\n```\n\n- answer: Receipt No: RCPT-2025-04-01, Total Amount: 65.00, Discount: 0.00, Grand Total: 65.00, ok_to_proceed: True")
             
 
->>>>>>>>>> re_stock_response AgentRunResult(output=RestockDecision(restock_required=False, items_to_restock=[], reason='Stock is sufficient for all items.'))
+>>>>>>>>>>>>>> Inserted row details ---
+>>>CREATE_TRANSACTION --->  A4 glossy paper  --  stock_orders  --  200  --  40.0  --  2025-04-15
+>>>>>>>>>>>>>> Inserted row details ---
+>>>CREATE_TRANSACTION --->  heavy cardstock  --  stock_orders  --  100  --  15.0  --  2025-04-15
+>>>>>>>>>>>>>> Inserted row details ---
+>>>CREATE_TRANSACTION --->  colored paper  --  stock_orders  --  100  --  10.0  --  2025-04-15
+>>>>>>>>>> re_stock_response --->  AgentRunResult(output='ok_to_proceed:True')
+>>>>>>>>>> re_stock_response --->  ok_to_proceed
+>>>>>>>>>> re_stock_response --->  True
 ---> Function (generate_financial_report): Get financial report as of '2025-04-01'
 ---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
@@ -170,46 +171,34 @@ I need these supplies delivered by April 15, 2025. Thank you. (Date of request: 
 ---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-01'
 ---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-01'
-Response: AgentRunResult(output=RestockDecision(restock_required=False, items_to_restock=[], reason='Stock is sufficient for all items.'))
-Updated Cash: $45259.70
+Response: True
+Updated Cash: $45124.70
 Updated Inventory: $4940.30
 >>>>>>>>>>>>> final_date --->  2025-04-01
->>>>>>>>>>>>> final_date --->  2026-01-04T15:44:39.241564
----> Function (generate_financial_report): Get financial report as of '2026-01-04T15:44:39.241564'
----> Function (get_cash_balance): Get cash balance as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Paper plates' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Photo paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Colored paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for '80 lb text paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Table covers' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Butcher paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Kraft paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Banner paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Presentation folders' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Patterned paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'A4 paper' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Invitation cards' as of '2026-01-04T15:44:39.241564'
----> Function (get_stock_level): Get stock for 'Crepe paper' as of '2026-01-04T15:44:39.241564'
+---> Function (generate_financial_report): Get financial report as of '2025-04-01'
+---> Function (get_cash_balance): Get cash balance as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Paper plates' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for '100 lb cover stock' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Rolls of banner paper (36-inch width)' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Photo paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for '80 lb text paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Large poster paper (24x36 inches)' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Table covers' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Butcher paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Kraft paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Banner paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Presentation folders' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Patterned paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'A4 paper' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Invitation cards' as of '2025-04-01'
+---> Function (get_stock_level): Get stock for 'Crepe paper' as of '2025-04-01'
 
 <--- FINAL FINANCIAL REPORT REVISED --->
-Final Cash: $45259.70
+Final Cash: $45124.70
 Final Inventory: $4940.30
- ----------------- 
----> Function (get_stock_level): Get stock for 'Glossy paper' as of '2025-04-01'
->>>>>>>> Glossy paper --->  {'item_name': 'Glossy paper', 'current_stock': 587.0}
----> Function (get_stock_level): Get stock for 'Cardstock' as of '2025-04-01'
->>>>>>>> Cardstock --->  {'item_name': 'Cardstock', 'current_stock': 595.0}
----> Function (get_stock_level): Get stock for 'Colored paper' as of '2025-04-01'
->>>>>>>> Colored paper --->  {'item_name': 'Colored paper', 'current_stock': 788.0}
- ----------------- 
----> Function (get_all_inventory): Get inventory data as of '2025-04-01'
-get_all_inventory ---> {'100 lb cover stock': 636.0, '80 lb text paper': 249.0, 'A4 paper': 272.0, 'Banner paper': 793.0, 'Butcher paper': 365.0, 'Cardstock': 595.0, 'Colored paper': 788.0, 'Crepe paper': 234.0, 'Glossy paper': 587.0, 'Invitation cards': 526.0, 'Kraft paper': 493.0, 'Large poster paper (24x36 inches)': 699.0, 'Paper plates': 748.0, 'Patterned paper': 548.0, 'Photo paper': 423.0, 'Presentation folders': 389.0, 'Rolls of banner paper (36-inch width)': 546.0, 'Table covers': 736.0}
- ----------------- 
 
 <--- Agent Usage Summary --->
 Extractor Agent: 1 times
